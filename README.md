@@ -6,4 +6,4 @@
 - Torsten Kloss **Projektteilnehmer**
 
 ## Live Projekt
-Das Live Projekt kann unter der URL [Live Vorschau](https://wbhprojekt2022.vercel.app/) beterachtet werden.
+Das Live Projekt kann unter der URL [Live Vorschau](https://termintool.vercel.app/) beterachtet werden.
