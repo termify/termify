@@ -28,15 +28,15 @@ function HamburgerIcon({open}:{open:boolean}){
     return(
         <div className="h-full flex flex-col justify-around" >
             <motion.div 
-                animate={open ? {} : {rotateZ:-45,y: 8}}
+                animate={open ? {rotateZ:-45,y: 8} : {}}
                 className="bg-slate-900 w-full h-1" 
             />
             <motion.div 
-                animate={open ? {} : {opacity:0}}
+                animate={open ? {opacity:0} : {}}
                 className="bg-slate-900 w-full h-1" /
             >
             <motion.div 
-                animate={open ? {} : {rotateZ:45, y:-8}}
+                animate={open ? {rotateZ:45, y:-8} : {}}
                 className="bg-slate-900 w-full h-1" 
             />
         </div>
