@@ -20,8 +20,8 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
                 ref={divRef}
                 initial={{y:-yOffset}}
                 animate={open ? {y:0} : {y:-yOffset}}
-                transition={{ease:"linear", duration:.15}}
-                className="bg-slate-50 flex flex-col w-screen shadow-xl"
+                transition={{ duration:.15}}
+                className="flex flex-col w-screen shadow-xl bg-slate-800"
             >
                 <div className="flex justify-end items-center p-4 bg-slate-900" >
                     <h2 className="flex-grow text-center font-bold text-2xl bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" >Navigation</h2>
