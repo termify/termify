@@ -6,5 +6,5 @@ interface Modal{
 }
 
 export function Modal({children}:Modal){
-    return ReactDOM.createPortal(<div className="fixed top-0 left-0 h-screen w-screen" >{children}</div>,document.getElementById("modal") as HTMLElement);
+    return ReactDOM.createPortal(<div className="fixed top-0 left-0 h-0" >{children}</div>,document.getElementById("modal") as HTMLElement);
 }

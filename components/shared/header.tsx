@@ -2,6 +2,7 @@ import { AiFillSchedule } from "react-icons/ai";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Sidebar } from "../sidebar";
+import useDocument from "../hooks/useDocument";
 
 export default function Header(){
     return(
@@ -15,14 +16,16 @@ export default function Header(){
 function Hamburger(){
 
     const [open, setOpen] = useState<boolean>(false);
+    const { loaded } = useDocument();
 
+    
     return(
         <div>
-            <div className="w-6 h-6 xl:hidden" onClick={()=>{setOpen(value => !value)}} >
+            <div className="w-6 h-6 xl:hidden" onClick={()=>setOpen(true)} >
                 <HamburgerIcon />
             </div>
             {
-                open && <Sidebar closeSidebar={setOpen} />
+                loaded && <Sidebar open={open} setOpen={setOpen} />
             }
         </div>
     )

@@ -2,27 +2,34 @@ import { Modal } from "./shared/modal";
 import { motion } from "framer-motion";
 import { FaWindowClose } from "react-icons/fa";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
-export function Sidebar({closeSidebar}:{closeSidebar:React.Dispatch<React.SetStateAction<boolean>>}){
+export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<React.SetStateAction<boolean>>}){
+    
+    const [yOffset, setYOffsset] = useState<number>(500);
+    const divRef = useRef<HTMLDivElement>(null);
+
+    useEffect(()=>{
+        setYOffsset(divRef.current!.offsetHeight);
+    },[])
+
     return(
         <Modal>
-            <div >
-                <motion.div
-                    initial={{x:window.innerWidth}}
-                    animate={{x:window.innerWidth - (window.innerWidth / 2)}}
-                    transition={{ease:"linear"}}
-                    className="bg-slate-50 flex flex-col h-screen p-2 w-1/2 shadow-md"
-                >
-                    <div className="flex justify-end p-2" >
-                        <FaWindowClose onClick={()=>closeSidebar(false)}  className="text-slate-900 h-6 w-6" />
-                    </div>
-                    <div className="flex-grow mt-8 flex flex-col" >
-                        <SidebarLink name={"Home"} to={"/"} />
-                    </div>
-                </motion.div>
-            </div>
+            <motion.div
+                ref={divRef}
+                initial={{y:-yOffset}}
+                animate={open ? {y:0} : {y:-yOffset}}
+                transition={{ease:"linear", duration:.15}}
+                className="bg-slate-50 flex flex-col w-screen p-2 shadow-xl"
+            >
+                <div className="flex justify-end p-2" >
+                    <FaWindowClose onClick={()=>setOpen(false)}  className="text-slate-900 h-6 w-6" />
+                </div>
+                <div className="flex-grow my-8 flex flex-col" >
+                    <SidebarLink name={"Home"} to={"/"} />
+                </div>
+            </motion.div>
         </Modal>
     )
 }
