@@ -28,9 +28,9 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
                     <FaWindowClose onClick={()=>setOpen(false)}  className="bg-gradient-to-r from-sky-400 to-emerald-500 h-6 w-6 p-0.5" />
                 </div>
                 <div className="flex-grow py-8 flex flex-col gap-3 bg-slate-800 shadow-xl" >
-                    <SidebarLink name={"Startseite"} to={"/"} />
-                    <SidebarLink name={"Registrieren"} to={"/register"} />
-                    <SidebarLink name={"Login"} to={"/login"} />
+                    <SidebarLink name={"Startseite"} to={"/"} onClick={()=>setOpen(false)} />
+                    <SidebarLink name={"Registrieren"} to={"/register"} onClick={()=>setOpen(false)} />
+                    <SidebarLink name={"Login"} to={"/login"} onClick={()=>setOpen(false)} />
                 </div>
             </motion.div>
         </Modal>
@@ -40,16 +40,17 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
 interface SidebarLink{
     name: string;
     to: string;
+    onClick: () => void
 }
 
-function SidebarLink({name, to}:SidebarLink){
+function SidebarLink({name, to, onClick}:SidebarLink){
 
     const router = useRouter();
 
     return(
         <div className="text-center text-slate-100" >
-            <Link href={to} >
-                <a className={`${router.asPath === to ? "bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" : ""}`} >{name}</a>
+            <Link href={to}  >
+                <a onClick={onClick} className={`${router.asPath === to ? "bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" : ""}`} >{name}</a>
             </Link>
         </div>
     )
