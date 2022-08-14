@@ -26,8 +26,10 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
                 <div className="flex justify-end p-2" >
                     <FaWindowClose onClick={()=>setOpen(false)}  className="text-slate-900 h-6 w-6" />
                 </div>
-                <div className="flex-grow my-8 flex flex-col" >
-                    <SidebarLink name={"Home"} to={"/"} />
+                <div className="flex-grow my-8 flex flex-col gap-3" >
+                    <SidebarLink name={"Startseite"} to={"/"} />
+                    <SidebarLink name={"Registrieren"} to={"/register"} />
+                    <SidebarLink name={"Login"} to={"/login"} />
                 </div>
             </motion.div>
         </Modal>

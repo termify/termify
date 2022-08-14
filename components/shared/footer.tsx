@@ -9,15 +9,6 @@ export default function Footer(){
             <FooterSection>
                 <FooterSectionLink name={"Home"} to={"/"} />
             </FooterSection>
-            <div>
-                Infoblock 2
-            </div>
-            <div>
-                Infoblock 3
-            </div>
-            <div>
-                Infoblock 4
-            </div>
         </footer>
     )
 }
