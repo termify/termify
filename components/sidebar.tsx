@@ -28,14 +28,38 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
                     <FaWindowClose onClick={()=>setOpen(false)}  className="bg-gradient-to-r from-sky-400 to-emerald-500 h-6 w-6 p-0.5" />
                 </div>
                 <div className="flex-grow py-8 flex flex-col gap-3 bg-slate-800 shadow-xl" >
-                    <SidebarLink name={"Startseite"} to={"/"} onClick={()=>setOpen(false)} />
-                    <SidebarLink name={"Registrieren"} to={"/register"} onClick={()=>setOpen(false)} />
-                    <SidebarLink name={"Login"} to={"/login"} onClick={()=>setOpen(false)} />
+                    <RegisterLink onClick={()=>setOpen(false)} />
+                    <LoginLink onClick={()=>setOpen(false)} />
+                    <SidebarLink name={"Home"} to={"/"} onClick={()=>setOpen(false)} />
                 </div>
             </motion.div>
         </Modal>
     )
 }
+
+
+function RegisterLink({onClick}:{onClick: () => void}){
+    return(
+        <div className="text-center w-1/2 mx-auto rounded p-0.5 bg-gradient-to-r bg-clip-padding from-sky-400 to-emerald-500" >
+            <div className="bg-slate-800 p-1.5" >
+                <Link href={"/register"}  >
+                    <a className="p-2 bg-gradient-to-r w-full from-sky-400 to-emerald-500 bg-clip-text text-transparent" onClick={onClick} >Registrieren</a>
+                </Link>
+            </div>
+        </div>
+    )
+}
+
+function LoginLink({onClick}:{onClick: () => void}){
+    return(
+        <div className="text-center w-1/2 mx-auto rounded p-2 bg-gradient-to-r from-sky-400 to-emerald-500" >
+            <Link href={"/login"}  >
+                <a className=" rounded text-slate-50" onClick={onClick} >Login</a>
+            </Link>
+        </div>
+    )
+}
+
 
 interface SidebarLink{
     name: string;
@@ -50,7 +74,8 @@ function SidebarLink({name, to, onClick}:SidebarLink){
     return(
         <div className="text-center text-slate-100" >
             <Link href={to}  >
-                <a onClick={onClick} className={`${router.asPath === to ? "bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" : ""}`} >{name}</a>
+                {/* <a onClick={onClick} className={`${router.asPath === to ? "bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" : ""}`} >{name}</a> */}
+                <a onClick={onClick} className={`${router.asPath === to ? "" : ""}`} >{name}</a>
             </Link>
         </div>
     )
