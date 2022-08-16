@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app'
 import Header from '../components/shared/header'
 import Footer from '../components/shared/footer'
 import Container from '../components/shared/container'
+import { Toaster } from 'react-hot-toast'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -12,6 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </Container>
       <Footer />
+      <Toaster />
     </div>
   )
 }
