@@ -60,7 +60,22 @@ export default function AuthForm({authType, setDone}:AuthForm){
     }
 
     async function login(){
+        const {msg,error}:AuthResponse = await (await fetch("/api/auth",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                type:"login"
+            },
+            body:JSON.stringify(formData)
+        })).json();
 
+        if (error){
+            toast.error(msg);
+            return;
+        }
+
+        toast.success(msg);
+        setDone(true);
     }
 
     return(
