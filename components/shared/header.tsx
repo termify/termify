@@ -10,7 +10,7 @@ export default function Header(){
             <>
                 <Link href={"/"} >
                     <h1 className="text-2xl font-bold flex items-center gap-2 " >
-                        <p className="bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" >TerminApp</p>
+                        <p className="bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" >{process.env.APP_NAME}</p>
                         <AiFillSchedule className="bg-gradient-to-r from-sky-400 to-emerald-500 xl:h-12 xl:w-12" />
                     </h1>
                 </Link>

@@ -48,18 +48,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         });
     }
 
-
 }
 
 
 async function registerAccount(authData:RequestBody): Promise<boolean>{
-    const {error, user} = await db.auth.signUp({
+    const {error, user, session} = await db.auth.signUp({
         email: authData.email,
         password: authData.password
     });
 
     return error ? true : false;
-
 }
 
 async function loginAccount(authData:RequestBody): Promise<boolean>{
@@ -68,8 +66,5 @@ async function loginAccount(authData:RequestBody): Promise<boolean>{
         password: authData.password
     });
 
-    console.log("USER",user)
-
     return error ? true : false;
-
 }

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { Modal } from "./modal";
 import GradientButton from "./utility/gradientButton";
 import Textinput from "./utility/textinput";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface AuthForm{
     authType: "register" | "login";
@@ -25,6 +27,8 @@ export default function AuthForm({authType, setDone}:AuthForm){
         password:""
     });
 
+    const [showModal, setShowModal] = useState<boolean>(false);
+
     async function handleOnClick(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
 
@@ -40,6 +44,8 @@ export default function AuthForm({authType, setDone}:AuthForm){
     } 
 
     async function register(){
+        setShowModal(true);
+
         const {msg,error}:AuthResponse = await (await fetch("/api/auth",{
             method:"POST",
             headers:{
@@ -60,6 +66,9 @@ export default function AuthForm({authType, setDone}:AuthForm){
     }
 
     async function login(){
+
+        setShowModal(true);
+
         const {msg,error}:AuthResponse = await (await fetch("/api/auth",{
             method:"POST",
             headers:{
@@ -86,6 +95,13 @@ export default function AuthForm({authType, setDone}:AuthForm){
                 <Textinput value={formData.password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setFormData({...formData,password: e.target.value})} placeholder="Password" type={"password"} required />
                 <GradientButton buttontext={authType  === "register" ? "Registrieren" : "Einloggen"} design={"filled"} type={"submit"} />
             </form>
+            {
+                showModal && <Modal>
+                    <div className="bg-slate-900/50 w-screen h-screen flex justify-center items-center" >
+                        <AiOutlineLoading3Quarters className="w-12 h-12 text-emerald-400 animate-spin" />
+                    </div>
+                </Modal>
+            }
         </div>
     )
 }
