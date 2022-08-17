@@ -22,19 +22,19 @@ export default function Schedule({date}:Schedule){
 
     return (
         <div>
-            <div className="flex w-full" >   
+            <div className="flex w-full my-2" >   
                 {
                     ["Mo.","Di.","Mi.","Do.","Fr.","Sa.","So."].map((e,i) => <DateDay key={e} dateName={e} isSunday={i === 6} />)
                 }
             </div>
-            <div className="bg-slate-500/25 flex flex-wrap " >
+            <div className="bg-slate-300/25 flex flex-wrap " >
                 {
                     Array.from({length:gap})
                     .map((e,i) => <ScheduleDay key={i} hidden />)
                 }
                 {
                     Array.from({length:daysInMonth})
-                    .map((e,i) => <ScheduleDay key={i} dayNumber={i+1} hidden={false} />)
+                    .map((e,i) => <ScheduleDay key={i} dayNumber={i+1} hidden={false} date={date} />)
                 }
             </div>
         </div>
@@ -50,14 +50,15 @@ function DateDay({dateName, isSunday}:{dateName:string, isSunday:boolean}){
 interface ScheduleDay{
     dayNumber?: number;
     hidden: boolean;
+    date?: ScheduleDate;
 }
 
-function ScheduleDay({dayNumber, hidden}:ScheduleDay){
+function ScheduleDay({dayNumber, hidden, date}:ScheduleDay){
 
     if (hidden) return <div className="w-[14.2857%] h-14 xl:h-24" />
 
     return(
-        <div className="bg-gradient-to-t from-slate-100 to-slate-300 w-[14.2857%] h-14 border border-slate-500 flex justify-center items-center text-xl font-bold select-none transition-all xl:hover:scale-110 xl:hover:shadow-xl xl:h-24" >
+        <div className={`${new Date(date?.year as number,date?.month as number,dayNumber).toDateString() === new Date().toDateString() ? "bg-gradient-to-b from-emerald-300 to-emerald-500 text-emerald-900" : "bg-gradient-to-b from-slate-100 to-slate-300 text-slate-900"}  w-[14.2857%] h-14 border border-slate-500 flex justify-center items-center text-xl font-bold select-none transition-all xl:hover:scale-110 xl:hover:shadow-xl xl:h-24`} >
             {dayNumber}
         </div>
     )
