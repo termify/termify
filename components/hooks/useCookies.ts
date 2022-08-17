@@ -11,12 +11,13 @@ interface UseCookie{
 
 type CookieResponse = [any,boolean];
 
+// TODO: Use Cookies fertig stellen
 export default function useCookies({type, name, value}:UseCookie ): CookieResponse{
 
     const [cookie, setCookie] = useState();
 
     useEffect(()=>{
-        
+
     },[])
 
     return [cookie, true]
