@@ -4,6 +4,7 @@ import { Modal } from "./modal";
 import GradientButton from "./utility/gradientButton";
 import Textinput from "./utility/textinput";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import Link from "next/link";
 
 interface AuthForm{
     authType: "register" | "login";
@@ -89,10 +90,11 @@ export default function AuthForm({authType, setDone}:AuthForm){
 
     return(
         <div className="h-full w-full" >
-            <h1 className="text-center text-2xl my-4 text-slate-900" >{authType === "register" ? "Erstellen Sie sich noch heute einen Account" : "Login"}</h1>
+            <h1 className="text-center text-3xl my-4 text-slate-900" >{authType === "register" ? "Erstellen Sie sich noch heute einen Account" : "Login"}</h1>
             <form onSubmit={handleOnClick} className="flex flex-col gap-4 items-center"  >
                 <Textinput value={formData.email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{setFormData({...formData,email:e.target.value})}} placeholder="Email" type={"email"} required />
                 <Textinput value={formData.password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setFormData({...formData,password: e.target.value})} placeholder="Password" type={"password"} required />
+                <ContextSwitcher register={authType === "register"} />
                 <GradientButton buttontext={authType  === "register" ? "Registrieren" : "Einloggen"} design={"filled"} type={"submit"} />
             </form>
             {
@@ -104,4 +106,23 @@ export default function AuthForm({authType, setDone}:AuthForm){
             }
         </div>
     )
+}
+
+function ContextSwitcher({register}:{register:boolean}){
+
+    return(
+        <div className="text-xs">
+            {
+                register ? 
+                    <Link href={"/login"} >
+                        <a>Sie haben schon einen Account?</a>
+                    </Link>
+                    :
+                    <Link href={"/register"} >
+                        <a>Noch keinen Account?</a>
+                    </Link>
+            }
+        </div>
+    )
+
 }
