@@ -108,7 +108,7 @@ export function ChangeMonth({date, setDate}:{date:ScheduleDate, setDate:React.Di
     const [monthName, setMonthName] = useState<string>("")
 
     useEffect(()=>{
-        setMonthName(ScheduleClass.parseMonthNumberToString(date.month,"de"));
+        setMonthName(ScheduleClass.parseMonthNumberToString(date.month + 1,"de"));
     },[monthName, date.month])
 
     function decreaseMonth(){

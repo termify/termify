@@ -6,7 +6,8 @@ module.exports = {
     "./misc/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
-    extend: {},
+    extend: {
+    },
   },
   plugins: [],
 }
