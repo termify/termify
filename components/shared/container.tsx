@@ -11,18 +11,3 @@ export default function Container({children}:Container){
         </main>
     )
 }
-
-interface TestComponent{
-    name: string;
-    rasse: Rasse;
-}
-
-type Rasse = "mensch" | "vogel" | "hund";
-
-export function TestComponent({name,rasse}:TestComponent){
-    return(
-        <div className="p-3" >
-            {name}
-        </div>
-    )
-}
