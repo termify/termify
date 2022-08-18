@@ -6,7 +6,7 @@ interface Container{
 
 export default function Container({children}:Container){
     return(
-        <main className="p-4 flex-grow flex flex-col" >
+        <main className="p-4 flex flex-col flex-grow h-full" >
             {children}
         </main>
     )

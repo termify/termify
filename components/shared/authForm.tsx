@@ -89,16 +89,16 @@ export default function AuthForm({authType, setDone}:AuthForm){
     }
 
     return(
-        <div className="h-full w-full bg-blue-300" >
+        <div className="flex-grow flex flex-col justify-evenly items-center my-auto xl:gap-8" >
             <h1 
-                className="text-center text-3xl my-4 text-slate-900" >
+                className="text-center text-3xl my-4 bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent p-2 xl:text-5xl xl:my-8" >
                     {
                     authType === "register" ? 
                     "Erstellen Sie sich noch heute einen Account" : 
                     "Login"
                     }
             </h1>
-            <form onSubmit={handleOnClick} className="flex flex-col gap-4 items-center bg-rose-300"  >
+            <form onSubmit={handleOnClick} className="flex flex-col gap-4 items-center  justify-start xl:flex-grow xl:justify-center  xl:w-1/3"  >
                 <Textinput value={formData.email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{setFormData({...formData,email:e.target.value})}} placeholder="Email" type={"email"} required />
                 <Textinput value={formData.password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setFormData({...formData,password: e.target.value})} placeholder="Password" type={"password"} required />
                 <ContextSwitcher register={authType === "register"} />
@@ -118,7 +118,7 @@ export default function AuthForm({authType, setDone}:AuthForm){
 function ContextSwitcher({register}:{register:boolean}){
 
     return(
-        <div className="text-xs">
+        <div className="text-xs bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent">
             {
                 register ? 
                     <Link href={"/login"} >

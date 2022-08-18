@@ -1,10 +1,11 @@
 import { AiFillSchedule } from "react-icons/ai";
 import { useState } from "react";
-import { Sidebar } from "../sidebar";
+import { LoginLink, RegisterLink, Sidebar } from "../sidebar";
 import useDocument from "../hooks/useDocument";
 import Link from "next/link";
 
 export default function Header(){
+
     return(
         <header className="bg-slate-900 p-3 shadow-md flex justify-between items-center">
             <>
@@ -15,8 +16,26 @@ export default function Header(){
                     </h1>
                 </Link>
             </>
+            <LinkGroup />
             <Hamburger />
         </header>
+    )
+}
+
+function LinkGroup(){
+
+    const [loggedIn, setLoggedIn] = useState<boolean>(false);
+
+    return(
+        <div className="hidden gap-4 flex-grow xl:flex xl:justify-end" >
+            {
+                !loggedIn  && 
+                <>
+                    <RegisterLink />
+                    <LoginLink />
+                </>
+            }
+        </div>
     )
 }
 

@@ -1,18 +1,18 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import ScheduleClass from "../../lib/schedule";
 import { RiArrowDropRightLine, RiArrowDropLeftLine } from "react-icons/ri";
+import { DatePickerContext } from "../../pages/user/[id]/schedule";
 
 interface Schedule{
     date: ScheduleDate;
 }
 
-const DatePickerContext = createContext<[ScheduleDate,React.Dispatch<React.SetStateAction<ScheduleDate>>] | null>(null);
 
 export default function Schedule({date}:Schedule){
 
     const [gap, setGap] = useState<number>(1);
     const [daysInMonth, setDaysInMonth] = useState<number>(0);
-    const [pickedDay, setPickedDay] = useState<ScheduleDate>({day:1,month:1,year:1900});
+    
 
     useEffect(()=>{
         setGap(new Date(date.year,date.month,1).getDay()-1);
@@ -24,25 +24,23 @@ export default function Schedule({date}:Schedule){
     },[daysInMonth,date.month, date.year,date])
 
     return (
-        <DatePickerContext.Provider value={[pickedDay, setPickedDay]} >
-            <div>
-                <div className="flex w-full my-2" >   
-                    {
-                        ["Mo.","Di.","Mi.","Do.","Fr.","Sa.","So."].map((e,i) => <DateDay key={e} dateName={e} isSunday={i === 6} />)
-                    }
-                </div>
-                <div className="bg-slate-300/25 flex flex-wrap " >
-                    {
-                        Array.from({length:gap})
-                        .map((e,i) => <PlaceholderDay key={i} />)
-                    }
-                    {
-                        Array.from({length:daysInMonth})
-                        .map((e,i) => <ScheduleDay key={i} dayNumber={i+1} date={date} />)
-                    }
-                </div>
+        <div>
+            <div className="flex w-full my-2" >   
+                {
+                    ["Mo.","Di.","Mi.","Do.","Fr.","Sa.","So."].map((e,i) => <DateDay key={e} dateName={e} isSunday={i === 6} />)
+                }
             </div>
-        </DatePickerContext.Provider>
+            <div className="bg-slate-300/25 flex flex-wrap " >
+                {
+                    Array.from({length:gap})
+                    .map((e,i) => <PlaceholderDay key={i} />)
+                }
+                {
+                    Array.from({length:daysInMonth})
+                    .map((e,i) => <ScheduleDay key={i} dayNumber={i+1} date={date} />)
+                }
+            </div>
+        </div>
     )
 }
 
@@ -93,7 +91,7 @@ function ScheduleDay({dayNumber, date}:ScheduleDay){
         <div 
             onClick={onClickHandler}
             className={
-                `${setColor}  w-[14.2857%] h-14 border border-slate-500 flex justify-center items-center text-xl font-bold select-none transition-all xl:hover:scale-110 xl:hover:shadow-xl xl:h-24`} >
+                `${setColor}  w-[14.2857%] h-14 border border-slate-500 flex justify-center items-center text-xl font-bold select-none transition-all xl:hover:scale-110 xl:hover:shadow-xl xl:h-24 xl:hover:cursor-pointer`} >
             {dayNumber}
         </div>
     )
