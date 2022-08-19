@@ -3,6 +3,10 @@ import { useState } from "react";
 import { LoginLink, RegisterLink, Sidebar } from "../sidebar";
 import useDocument from "../hooks/useDocument";
 import Link from "next/link";
+import { useGetCookie } from "../hooks/useCookies";
+
+
+
 
 export default function Header(){
 
@@ -18,7 +22,7 @@ export default function Header(){
                     </Link>
                 </div>
             </>
-            <LinkGroup />
+            <LinkGroup  />
             <Hamburger />
         </header>
     )
@@ -26,12 +30,12 @@ export default function Header(){
 
 function LinkGroup(){
 
-    const [loggedIn, setLoggedIn] = useState<boolean>(false);
+    const auth = useGetCookie("auth-id");
 
     return(
         <div className="hidden gap-4 flex-grow xl:flex xl:justify-end" >
             {
-                !loggedIn  && 
+                !auth  && 
                 <>
                     <RegisterLink />
                     <LoginLink />

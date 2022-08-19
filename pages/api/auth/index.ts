@@ -1,3 +1,4 @@
+import { User } from "@supabase/supabase-js";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../lib/database";
 
@@ -9,6 +10,7 @@ interface RequestBody{
 interface AuthResponse{
     msg: string;
     error:boolean;
+    id?:string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<AuthResponse>){
@@ -32,9 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         });
 
     }else{
-        const loginFailed = await loginAccount(req.body);
+        const {user, error} = await loginAccount(req.body);
 
-        if (loginFailed){
+        if (error){
             res.send({
                 error: true,
                 msg:"Login ist leider fehlgeschlagen"
@@ -44,7 +46,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
         res.send({
             error: false,
-            msg: "Login war erfolgreich"
+            msg: "Login war erfolgreich",
+            id: user?.id
         });
     }
 
@@ -60,11 +63,22 @@ async function registerAccount(authData:RequestBody): Promise<boolean>{
     return error ? true : false;
 }
 
-async function loginAccount(authData:RequestBody): Promise<boolean>{
-    const {error, user} = await db.auth.signIn({
+async function loginAccount(authData:RequestBody): Promise<{error: boolean, user: User | null}>{
+    const {error, user, session} = await db.auth.signIn({
         email: authData.email,
         password: authData.password
     });
 
-    return error ? true : false;
+    if (error){
+        return {
+            error: true,
+            user: null
+        }
+    }else{
+        return{
+            error: false,
+            user
+        }
+    }
+
 }

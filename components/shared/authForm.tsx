@@ -5,6 +5,9 @@ import GradientButton from "./utility/gradientButton";
 import Textinput from "./utility/textinput";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
+import { useSetCookie } from "../hooks/useCookies";
+import { setCookie } from "../../lib/cookie";
+import { useRouter } from "next/router";
 
 interface AuthForm{
     authType: "register" | "login";
@@ -19,6 +22,7 @@ interface AuthData{
 interface AuthResponse{
     msg: string;
     error: boolean;
+    id?: string;
 }
 
 export default function AuthForm({authType, setDone}:AuthForm){
@@ -27,8 +31,8 @@ export default function AuthForm({authType, setDone}:AuthForm){
         email:"",
         password:""
     });
-
     const [showModal, setShowModal] = useState<boolean>(false);
+    const router = useRouter();
 
     async function handleOnClick(e: React.FormEvent<HTMLFormElement>){
         e.preventDefault();
@@ -70,7 +74,7 @@ export default function AuthForm({authType, setDone}:AuthForm){
 
         setShowModal(true);
 
-        const {msg,error}:AuthResponse = await (await fetch("/api/auth",{
+        const {msg,error,id}:AuthResponse = await (await fetch("/api/auth",{
             method:"POST",
             headers:{
                 "Content-Type":"application/json",
@@ -85,7 +89,9 @@ export default function AuthForm({authType, setDone}:AuthForm){
         }
 
         toast.success(msg);
-        setDone(true);
+
+        setCookie("auth-id",id as string);
+        router.push(`/user/${id}/schedule`);
     }
 
     return(

@@ -25,8 +25,7 @@ export const useGetCookie = (cookieName: string = "") => {
 }
 
 export const useSetCookie = (name: string, value: string, utcExpire?: string, path?:string) => {
-    const newCookie =  `${name}=${value}; ${utcExpire ? `${utcExpire};` : "" } ${path ? `${path};` : "" } `
-    setCookie(newCookie);
+        setCookie(name, value,utcExpire, path);
 }
 
 

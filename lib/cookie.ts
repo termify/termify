@@ -3,8 +3,8 @@ export interface Cookie{
     [key: string] : string;
 }
 
-export const setCookie = (cookie: string) => {
-    document.cookie = cookie;
+export const setCookie = (name: string, value: string, utcExpire?: string, path?:string) => {
+    document.cookie = `${name}=${value}; ${utcExpire ? `${utcExpire};` : "" } ${path ? `${path};` : "" } `;
 }
 
 export const getAllCookies = ():Cookie => {

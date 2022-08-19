@@ -12,7 +12,6 @@ const Login:NextPage = () => {
     return(
         <Container>
             <div 
-            // className="container mx-auto flex h-full flex-grow justify-center items-center" 
             className="container mx-auto flex flex-grow justify-center" 
             >
                 <AuthForm authType={"login"} setDone={setDone} />
