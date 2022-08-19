@@ -1,26 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
+import { Cookie, getAllCookies, getCookie, setCookie } from "../../lib/cookie";
+import useDocument from "./useDocument";
 
 
-type CookieType = "get" | "set" | "delete";
+export const useGetCookie = (cookieName: string = "") => {
 
-interface UseCookie{
-    type: CookieType;
-    name: string;
-    value?: string | number;
-}
-
-type CookieResponse = [any,boolean];
-
-// TODO: Use Cookies fertig stellen
-export default function useCookies({type, name, value}:UseCookie ): CookieResponse{
-
-    const [cookie, setCookie] = useState();
-
+    const {loaded} = useDocument();
+    const [value, setValue] = useState<Cookie | undefined>();
+    
     useEffect(()=>{
+        if (!loaded) return;
 
-    },[])
+        if (cookieName){
+            setValue(getCookie(cookieName));
+        }else{
+            setValue(getAllCookies());
+        }
 
-    return [cookie, true]
+        // getAllCookies(cookieName);
 
+    },[loaded, cookieName])
 
+    return value;
 }
+
+export const useSetCookie = (name: string, value: string, utcExpire?: string, path?:string) => {
+    const newCookie =  `${name}=${value}; ${utcExpire ? `${utcExpire};` : "" } ${path ? `${path};` : "" } `
+    setCookie(newCookie);
+}
+
+
+

@@ -116,10 +116,10 @@
     "hey-listen" "^1.0.8"
     "tslib" "^2.3.1"
 
-"@next/env@12.2.4":
-  "integrity" "sha512-/gApFXWk5CCLFQJL5IYJXxPQuG5tz5nPX4l27A9Zm/+wJxiwFrRSP54AopDxIv4JRp/rGwcgk/lZS/0Clw8jYA=="
-  "resolved" "https://registry.npmjs.org/@next/env/-/env-12.2.4.tgz"
-  "version" "12.2.4"
+"@next/env@12.2.6-canary.1":
+  "integrity" "sha512-mqlH6d4oM7+ig4QharBFAjDa5fSziPV3ypJFuCHKa414JIKCt5S89WX+QGIpNfrDeDIudG3MqlKEqq8wI13oSg=="
+  "resolved" "https://registry.npmjs.org/@next/env/-/env-12.2.6-canary.1.tgz"
+  "version" "12.2.6-canary.1"
 
 "@next/eslint-plugin-next@12.2.4":
   "integrity" "sha512-ChDkUIkJeYWKRx+FdF+EhUgvKtK1wF+Xew4Os7ef3iAjMch5GGBiezw2zGXTa/C0E6potz4j11EpX89mngffug=="
@@ -128,15 +128,15 @@
   dependencies:
     "glob" "7.1.7"
 
-"@next/swc-linux-x64-gnu@12.2.4":
-  "integrity" "sha512-PhXX6NSuIuhHInxPY2VkG2Bl7VllsD3Cjx+pQcS1wTym7Zt7UoLvn05PkRrkiyIkvR+UXnqPUM3TYiSbnemXEw=="
-  "resolved" "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-12.2.4.tgz"
-  "version" "12.2.4"
+"@next/swc-linux-x64-gnu@12.2.6-canary.1":
+  "integrity" "sha512-FMVfbz/GTgTW9nlCpZ5lyGwYb1N4esB8rX77cZKlQcKJgimqgo7jlzu+lAcxn1i8zV9edbtwN2LmjZgD3+RvUQ=="
+  "resolved" "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-12.2.6-canary.1.tgz"
+  "version" "12.2.6-canary.1"
 
-"@next/swc-linux-x64-musl@12.2.4":
-  "integrity" "sha512-GmC/QROiUZpFirHRfPQqMyCXZ+5+ndbBZrMvL74HtQB/CKXB8K1VM+rvy9Gp/5OaU8Rxp48IcX79NOfI2LiXlA=="
-  "resolved" "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-12.2.4.tgz"
-  "version" "12.2.4"
+"@next/swc-linux-x64-musl@12.2.6-canary.1":
+  "integrity" "sha512-MbXBtuECE2gAa93h62wIW0QWVx0+h/Qe1QLqDTZ2NqTheQkTE4v4zPqmxiyiiEmyMY1tJgHdLVxaRcnINmZomQ=="
+  "resolved" "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-12.2.6-canary.1.tgz"
+  "version" "12.2.6-canary.1"
 
 "@nodelib/fs.scandir@2.1.5":
   "integrity" "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="
@@ -1549,31 +1549,31 @@
   "resolved" "https://registry.npmjs.org/next-tick/-/next-tick-1.1.0.tgz"
   "version" "1.1.0"
 
-"next@12.2.4":
-  "integrity" "sha512-b1xlxEozmAWokAXzXsi5vlmU/IfJcFNIJA8dpU5UdkFbyDPio8wwb8mAQ/Y7rGtfTgG/t/u49BiyEA+xAgFvow=="
-  "resolved" "https://registry.npmjs.org/next/-/next-12.2.4.tgz"
-  "version" "12.2.4"
+"next@^12.2.6-canary.1":
+  "integrity" "sha512-QgXsKwAtZkjSpuVB5yMD4fVn5+0zxjvs/TB5L1DEZJjUtdBs/3tEHluDxdW0bI4jPINh024Ht7GksGLM1OQIAA=="
+  "resolved" "https://registry.npmjs.org/next/-/next-12.2.6-canary.1.tgz"
+  "version" "12.2.6-canary.1"
   dependencies:
-    "@next/env" "12.2.4"
+    "@next/env" "12.2.6-canary.1"
     "@swc/helpers" "0.4.3"
     "caniuse-lite" "^1.0.30001332"
     "postcss" "8.4.14"
-    "styled-jsx" "5.0.2"
+    "styled-jsx" "5.0.4"
     "use-sync-external-store" "1.2.0"
   optionalDependencies:
-    "@next/swc-android-arm-eabi" "12.2.4"
-    "@next/swc-android-arm64" "12.2.4"
-    "@next/swc-darwin-arm64" "12.2.4"
-    "@next/swc-darwin-x64" "12.2.4"
-    "@next/swc-freebsd-x64" "12.2.4"
-    "@next/swc-linux-arm-gnueabihf" "12.2.4"
-    "@next/swc-linux-arm64-gnu" "12.2.4"
-    "@next/swc-linux-arm64-musl" "12.2.4"
-    "@next/swc-linux-x64-gnu" "12.2.4"
-    "@next/swc-linux-x64-musl" "12.2.4"
-    "@next/swc-win32-arm64-msvc" "12.2.4"
-    "@next/swc-win32-ia32-msvc" "12.2.4"
-    "@next/swc-win32-x64-msvc" "12.2.4"
+    "@next/swc-android-arm-eabi" "12.2.6-canary.1"
+    "@next/swc-android-arm64" "12.2.6-canary.1"
+    "@next/swc-darwin-arm64" "12.2.6-canary.1"
+    "@next/swc-darwin-x64" "12.2.6-canary.1"
+    "@next/swc-freebsd-x64" "12.2.6-canary.1"
+    "@next/swc-linux-arm-gnueabihf" "12.2.6-canary.1"
+    "@next/swc-linux-arm64-gnu" "12.2.6-canary.1"
+    "@next/swc-linux-arm64-musl" "12.2.6-canary.1"
+    "@next/swc-linux-x64-gnu" "12.2.6-canary.1"
+    "@next/swc-linux-x64-musl" "12.2.6-canary.1"
+    "@next/swc-win32-arm64-msvc" "12.2.6-canary.1"
+    "@next/swc-win32-ia32-msvc" "12.2.6-canary.1"
+    "@next/swc-win32-x64-msvc" "12.2.6-canary.1"
 
 "node-fetch@2.6.7":
   "integrity" "sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ=="
@@ -2086,10 +2086,10 @@
     "hey-listen" "^1.0.8"
     "tslib" "^2.3.1"
 
-"styled-jsx@5.0.2":
-  "integrity" "sha512-LqPQrbBh3egD57NBcHET4qcgshPks+yblyhPlH2GY8oaDgKs8SK4C3dBh3oSJjgzJ3G5t1SYEZGHkP+QEpX9EQ=="
-  "resolved" "https://registry.npmjs.org/styled-jsx/-/styled-jsx-5.0.2.tgz"
-  "version" "5.0.2"
+"styled-jsx@5.0.4":
+  "integrity" "sha512-sDFWLbg4zR+UkNzfk5lPilyIgtpddfxXEULxhujorr5jtePTUqiPDc5BC0v1NRqTr/WaFBGQQUoYToGlF4B2KQ=="
+  "resolved" "https://registry.npmjs.org/styled-jsx/-/styled-jsx-5.0.4.tgz"
+  "version" "5.0.4"
 
 "supports-color@^7.1.0":
   "integrity" "sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw=="

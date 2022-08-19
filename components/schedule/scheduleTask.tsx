@@ -42,28 +42,23 @@ function Task({taskName, timeStamp}:Task){
 
     const returnColor = useCallback(()=>{
         const dotColor:{[key: string] : string} = {
-            0: "bg-slate-500",
-            1: "bg-gray-500",
-            2: "bg-zinc-500",
-            3: "bg-neutral-500",
-            4: "bg-stone-500",
-            5: "bg-red-500",
-            6: "bg-orange-500",
-            7: "bg-amber-500",
-            8: "bg-yellow-500",
-            9: "bg-lime-500",
-            10: "bg-green-500",
-            11: "bg-emerald-500",
-            12: "bg-teal-500",
-            13: "bg-cyan-500",
-            14: "bg-sky-500",
-            15: "bg-blue-500",
-            16: "bg-indigo-500",
-            17: "bg-violet-500",
-            18: "bg-purple-500",
-            19: "bg-fuchsia-500",
-            20: "bg-pink-500",
-            21: "bg-rose-500"
+            1: "bg-red-500",
+            2: "bg-orange-500",
+            3: "bg-amber-500",
+            4: "bg-yellow-500",
+            5: "bg-lime-500",
+            6: "bg-green-500",
+            7: "bg-emerald-500",
+            8: "bg-teal-500",
+            9: "bg-cyan-500",
+            10: "bg-sky-500",
+            11: "bg-blue-500",
+            12: "bg-indigo-500",
+            13: "bg-violet-500",
+            14: "bg-purple-500",
+            15: "bg-fuchsia-500",
+            16: "bg-pink-500",
+            17: "bg-rose-500"
         }   
 
         const randomValue = Math.ceil(Math.random() * Object.keys(dotColor).length);
@@ -77,7 +72,7 @@ function Task({taskName, timeStamp}:Task){
 
 
     return(
-        <div className="hover:bg-slate-200 p-2">
+        <div className="p-2 xl:hover:bg-slate-200 xl:hover:rounded xl:hover:cursor-pointer ">
             <h3 className="font-bold" >{taskName}</h3>
             <div className="flex items-center gap-2" >
                 <div className={`${bgColor} w-2 h-2 rounded-full`} />

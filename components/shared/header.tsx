@@ -9,12 +9,14 @@ export default function Header(){
     return(
         <header className="bg-slate-900 p-3 shadow-md flex justify-between items-center">
             <>
-                <Link href={"/"} >
-                    <h1 className="text-2xl font-bold flex items-center gap-2 " >
-                        <p className="bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" >{process.env.APP_NAME}</p>
-                        <AiFillSchedule className="bg-gradient-to-r from-sky-400 to-emerald-500 xl:h-12 xl:w-12" />
-                    </h1>
-                </Link>
+                <div className="xl:hover:cursor-pointer" >
+                    <Link href={"/"} >
+                        <h1 className="text-2xl font-bold flex items-center gap-2 " >
+                            <p className="bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" >{process.env.APP_NAME}</p>
+                            <AiFillSchedule className="bg-gradient-to-r from-sky-400 to-emerald-500 xl:h-12 xl:w-12" />
+                        </h1>
+                    </Link>
+                </div>
             </>
             <LinkGroup />
             <Hamburger />
