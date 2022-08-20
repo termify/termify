@@ -1,12 +1,12 @@
 import { Modal } from "./shared/modal";
 import { motion } from "framer-motion";
-import { FaWindowClose } from "react-icons/fa";
-import Link from "next/link";
+import { FaCalendarAlt, FaWindowClose } from "react-icons/fa";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { AuthSession } from "../types/storage";
-import toast from "react-hot-toast";
-
+import { LoginLink, LogoutLink, NavigationLink, RegisterLink } from "./shared/header";
+import { FaHome } from "react-icons/fa";
+import { RiDashboardFill } from "react-icons/ri";
 
 export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<React.SetStateAction<boolean>>}){
     
@@ -39,18 +39,18 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
                         <h2 className="flex-grow text-center font-bold text-2xl bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" >Navigation</h2>
                         <FaWindowClose onClick={()=>setOpen(false)}  className="bg-gradient-to-r from-sky-400 to-emerald-500 h-6 w-6 p-0.5" />
                     </div>                    
-                    <div className="flex-grow py-8 flex flex-col gap-3 bg-slate-800 shadow-xl" >
+                    <div className="flex-grow py-8 flex flex-col items-center gap-3 bg-slate-800 shadow-xl" >
                     {   
                         session 
                         ?
                         <>
-                            <SidebarLink name={"Dashboard"} to={`/user/${session.id}/dashboard`} onClick={()=>setOpen(false)} />
-                            <SidebarLink name={"Kalendar"} to={`/user/${session.id}/schedule`} onClick={()=>setOpen(false)} />
+                            <NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} setOpen={()=>setOpen(false)} />
+                            <NavigationLink icon={<FaCalendarAlt />} name={"Kalendar"} to={`/user/${session.id}/schedule`} setOpen={()=>setOpen(false)} />
                             <LogoutLink onClick={()=>setOpen(false)} />
                         </>                 
                         :
                         <>
-                            <SidebarLink name={"Startseite"} to={"/"} onClick={()=>setOpen(false)} />
+                            <NavigationLink icon={<FaHome />} name={"Startseite"} to={"/"} setOpen={()=>setOpen(false)} />
                             <RegisterLink onClick={()=>setOpen(false)} />
                             <LoginLink onClick={()=>setOpen(false)} />
                         </> 
@@ -60,69 +60,5 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
                 <div className="flex-grow" onClick={()=>setOpen(false)} />
             </motion.div>
         </Modal>
-    )
-}
-
-export function LogoutLink({onClick}:{onClick?: () => void}){
-
-    async function onClickHandler(){
-
-        toast.success("Erfolgreich ausgeloggt");
-        sessionStorage.removeItem("auth");
-        if (onClick)
-            onClick();
-    }
-
-
-    return(
-        <Link href={"/"}  >
-            <div onClick={onClickHandler} className="text-center w-1/2 mx-auto rounded p-2 bg-gradient-to-r from-rose-400 to-amber-500 transition-all xl:m-0 xl:w-32 xl:hover:cursor-pointer xl:hover:scale-110" >
-                <a className=" rounded text-slate-50 select-none"  >Logout</a>
-            </div>
-        </Link>
-    )
-}
-
-export function RegisterLink({onClick}:{onClick?: () => void}){
-    return(
-            <Link href={"/register"}  >
-                <div onClick={onClick} className="text-center w-1/2 mx-auto rounded p-0.5 bg-gradient-to-r from-sky-400 to-emerald-500 transition-all xl:m-0 xl:w-32 xl:hover:cursor-pointer xl:hover:scale-110 " >
-                    <div className="bg-slate-800 p-1.5 xl:hover:bg-transparent" >
-                        <a className="p-2 bg-gradient-to-r w-full from-sky-400 to-emerald-500 bg-clip-text text-transparent select-none hover:text-slate-50"  >Registrieren</a>
-                    </div>
-                </div>
-            </Link>
-
-    )
-}
-
-export function LoginLink({onClick}:{onClick?: () => void}){
-    return(
-            <Link href={"/login"}  >
-                <div onClick={onClick} className="text-center w-1/2 mx-auto rounded p-2 bg-gradient-to-r from-sky-400 to-emerald-500 transition-all xl:m-0 xl:w-32 xl:hover:cursor-pointer xl:hover:scale-110" >
-                    <a className=" rounded text-slate-50 select-none"  >Login</a>
-                </div>
-            </Link>
-    )
-}
-
-
-interface SidebarLink{
-    name: string;
-    to: string;
-    onClick: () => void
-}
-
-function SidebarLink({name, to, onClick}:SidebarLink){
-
-    const router = useRouter();
-
-    return(
-            <Link href={to}  >
-                <div className="text-center text-slate-100" >
-                    {/* <a onClick={onClick} className={`${router.asPath === to ? "bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" : ""}`} >{name}</a> */}
-                    <a onClick={onClick} className={`${router.asPath === to ? "" : ""}`} >{name}</a>
-                </div>
-            </Link>
     )
 }

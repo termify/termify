@@ -1,10 +1,14 @@
 import { AiFillSchedule } from "react-icons/ai";
-import { useEffect, useState } from "react";
-import { LoginLink, LogoutLink, RegisterLink, Sidebar } from "../sidebar";
+import React, { ReactElement, useEffect, useState } from "react";
+import { Sidebar } from "../sidebar";
 import useDocument from "../hooks/useDocument";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { AuthSession } from "../../types/storage";
+import toast from "react-hot-toast";
+import { AiFillHome } from "react-icons/ai";
+import { FaSignOutAlt, FaCalendarAlt } from "react-icons/fa";
+import { RiDashboardFill } from "react-icons/ri";
 
 export default function Header(){
 
@@ -42,12 +46,13 @@ function DesktopNavigation(){
             {
                 session  ?
                 <>
-                    <HeaderLink name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
-                    <HeaderLink name={"Kalendar"} to={`/user/${session.id}/schedule`} />
+                    <NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
+                    <NavigationLink icon={<FaCalendarAlt />} name={"Kalendar"} to={`/user/${session.id}/schedule`} />
                     <LogoutLink />
                 </>
                 : 
                 <>
+                    <NavigationLink icon={<AiFillHome className="w-5 h-5" />} name={"Startseite"} to={"/"} />
                     <RegisterLink />
                     <LoginLink />
                 </>
@@ -56,18 +61,89 @@ function DesktopNavigation(){
     )
 }
 
-interface HeaderLink{
+interface NavigationLink{
     name: string;
     to: string;
+    icon?:ReactElement | ReactElement[];
+    setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+interface SpecialLink{
+    name?: string;
+    to?: string;
+    onClick?: ()=>void;
 }
 
-function HeaderLink({name, to}:HeaderLink){
+export function NavigationLink({name, to,setOpen, icon}:NavigationLink){
 
     const router = useRouter();
 
+    function onClickHandler(){
+        if (setOpen)
+        setOpen(false);
+    }
+
     return(
             <Link href={to}  >
-                <a className={`${router.asPath === to ? "" : ""} text-center text-slate-100`} >{name}</a>
+                <div onClick={onClickHandler} 
+                className={
+                    `text-center justify-center select-none
+                    cursor-pointer p-2 text-slate-100 
+                    min-w-[150px]
+                    rounded
+                    flex items-center 
+                    gap-2 transition-all 
+                    xl:hover:bg-slate-800 xl:hover:scale-110 
+                    `}
+                >
+                    {/* <FaHome className="w-5 h-5" /> */}
+                        {icon}
+                    <a>{name}</a>
+                </div>
+            </Link>
+    )
+}
+
+export function LogoutLink({name, to,onClick}:SpecialLink){
+
+    async function onClickHandler(){
+
+        toast.success("Erfolgreich ausgeloggt");
+        sessionStorage.removeItem("auth");
+        if (onClick)
+            onClick();
+    }
+
+
+    return(
+        <Link href={"/"}  >
+            <div onClick={onClickHandler} 
+            className="text-center w-1/2 mx-auto rounded flex items-center justify-center gap-2 p-2 bg-gradient-to-r from-rose-400 to-amber-500 transition-all xl:m-0 xl:w-32 xl:hover:cursor-pointer xl:hover:scale-110" >
+                <a className=" rounded text-slate-50 select-none"  >Logout</a>
+                <FaSignOutAlt className="text-slate-50" />
+            </div>
+        </Link>
+    )
+}
+
+export function RegisterLink({name, to,onClick}:SpecialLink){
+    return(
+            <Link href={"/register"}  >
+                <div onClick={onClick} className="text-center w-1/2 mx-auto rounded p-0.5 bg-gradient-to-r from-sky-400 to-emerald-500 transition-all xl:m-0 xl:w-32 xl:hover:cursor-pointer xl:hover:scale-110 " >
+                    <div className="bg-slate-800 p-1.5 xl:hover:bg-transparent" >
+                        <a className="p-2 bg-gradient-to-r w-full from-sky-400 to-emerald-500 bg-clip-text text-transparent select-none hover:text-slate-50"  >Registrieren</a>
+                    </div>
+                </div>
+            </Link>
+
+    )
+}
+
+export function LoginLink({name, to,onClick}:SpecialLink){
+    return(
+            <Link href={"/login"}  >
+                <div onClick={onClick} className="text-center w-1/2 mx-auto rounded p-2 bg-gradient-to-r from-sky-400 to-emerald-500 transition-all xl:m-0 xl:w-32 xl:hover:cursor-pointer xl:hover:scale-110" >
+                    <a className=" rounded text-slate-50 select-none"  >Login</a>
+                </div>
             </Link>
     )
 }

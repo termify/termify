@@ -62,6 +62,7 @@ export default function AuthForm({authType, setDone}:AuthForm){
         })).json();
 
         if (error){
+            setShowModal(false);
             toast.error(msg);
             return;
         }
@@ -85,6 +86,7 @@ export default function AuthForm({authType, setDone}:AuthForm){
         })).json();
 
         if (error){
+            setShowModal(false);
             toast.error(msg);
             return;
         }
