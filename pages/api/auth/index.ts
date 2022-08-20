@@ -83,16 +83,27 @@ async function registerAccount(authData:RequestBody): Promise<boolean>{
         password: authData.password
     });
 
-    if (!error && user){
-        await db.user.create({
-            data:{
-                uuid: user.id,
-                email: user.email as string,
-            }
-        })
+    if (error){
+        return true;
     }
 
-    return error ? true : false;
+    if (user){
+        try{
+            await db.user.create({
+                data:{
+                    uuid: user.id,
+                    email: user.email as string,
+                }
+            })
+            return false;
+        }catch(err){
+            console.error(err)
+            return true;
+        }
+    }
+
+    return true;
+
 }
 
 async function loginAccount(authData:RequestBody): Promise<{error: boolean, user: User | null, session: Session | null}>{
