@@ -1,12 +1,8 @@
 import { AiFillSchedule } from "react-icons/ai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoginLink, RegisterLink, Sidebar } from "../sidebar";
 import useDocument from "../hooks/useDocument";
 import Link from "next/link";
-import { useGetCookie } from "../hooks/useCookies";
-
-
-
 
 export default function Header(){
 
@@ -22,20 +18,19 @@ export default function Header(){
                     </Link>
                 </div>
             </>
-            <LinkGroup  />
-            <Hamburger />
+            <DesktopNavigation  />
+            <MobileNavigation />
         </header>
     )
 }
 
-function LinkGroup(){
+function DesktopNavigation(){
 
-    const auth = useGetCookie("auth-id");
 
     return(
         <div className="hidden gap-4 flex-grow xl:flex xl:justify-end" >
             {
-                !auth  && 
+                true  && 
                 <>
                     <RegisterLink />
                     <LoginLink />
@@ -45,11 +40,10 @@ function LinkGroup(){
     )
 }
 
-function Hamburger(){
+function MobileNavigation(){
 
     const [open, setOpen] = useState<boolean>(false);
     const { loaded } = useDocument();
-
     
     return(
         <div>

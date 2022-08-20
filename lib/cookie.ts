@@ -3,7 +3,7 @@ export interface Cookie{
     [key: string] : string;
 }
 
-export const setCookie = (name: string, value: string, utcExpire?: string, path?:string) => {
+export const setCookie = (name: string, value: string, utcExpire: string = "", path:string = "/") => {
     document.cookie = `${name}=${value}; ${utcExpire ? `${utcExpire};` : "" } ${path ? `${path};` : "" } `;
 }
 
@@ -17,6 +17,23 @@ export const getAllCookies = ():Cookie => {
     })
 
     return returnValue;
+}
+
+export const hasCookie = (name:string):boolean => {
+    const allCookies = document.cookie.split("; ");
+    const findCookie = allCookies.find(e => e.includes(name))
+    
+    if (!findCookie){
+        return false;
+    }else{
+        const splittValue = findCookie?.split("=");
+
+        if (!splittValue[1])
+            return false;
+        else 
+            return true;
+    }
+
 }
 
 export const getCookie = (cookie:string): Cookie | undefined => {
@@ -33,4 +50,8 @@ export const getCookie = (cookie:string): Cookie | undefined => {
     }
 
     return undefined;
+}
+
+export const deleteCookie = (name: string) => {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }

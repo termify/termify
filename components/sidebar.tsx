@@ -4,13 +4,14 @@ import { FaWindowClose } from "react-icons/fa";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { useGetCookie } from "./hooks/useCookies";
+
 
 export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<React.SetStateAction<boolean>>}){
     
     const [yOffset, setYOffsset] = useState<number>(500);
     const divRef = useRef<HTMLDivElement>(null);
-    const auth = useGetCookie("auth-id")
+
+
     useEffect(()=>{
         setYOffsset(divRef.current!.offsetHeight);
     },[])
@@ -31,16 +32,16 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
                     </div>                    
                     <div className="flex-grow py-8 flex flex-col gap-3 bg-slate-800 shadow-xl" >
                     {   
-                        !auth ?
-                        <>
+                        true && <>
                             <SidebarLink name={"Startseite"} to={"/"} onClick={()=>setOpen(false)} />
                             <RegisterLink onClick={()=>setOpen(false)} />
                             <LoginLink onClick={()=>setOpen(false)} />
-                        </> :
-                        <>
-                            <SidebarLink name={"Dashboard"} to={`/user/${auth["auth-id"]}/dashboard`} onClick={()=>setOpen(false)} />
-                            <SidebarLink name={"Kalendar"} to={`/user/${auth["auth-id"]}/schedule`} onClick={()=>setOpen(false)} />
-                        </>                 
+                        </> 
+                        // :
+                        // <>
+                        //     <SidebarLink name={"Dashboard"} to={`/user/${auth["auth-id"]}/dashboard`} onClick={()=>setOpen(false)} />
+                        //     <SidebarLink name={"Kalendar"} to={`/user/${auth["auth-id"]}/schedule`} onClick={()=>setOpen(false)} />
+                        // </>                 
                     }
                     </div>
                 </div>

@@ -5,8 +5,6 @@ import GradientButton from "./utility/gradientButton";
 import Textinput from "./utility/textinput";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
-import { useSetCookie } from "../hooks/useCookies";
-import { setCookie } from "../../lib/cookie";
 import { useRouter } from "next/router";
 
 interface AuthForm{
@@ -89,8 +87,6 @@ export default function AuthForm({authType, setDone}:AuthForm){
         }
 
         toast.success(msg);
-
-        setCookie("auth-id",id as string);
         router.push(`/user/${id}/schedule`);
     }
 
