@@ -61,6 +61,8 @@ export default function AuthForm({authType, setDone}:AuthForm){
             body:JSON.stringify(formData)
         })).json();
 
+        
+
         if (error){
             setShowModal(false);
             toast.error(msg);
