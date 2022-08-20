@@ -1,8 +1,10 @@
 import { AiFillSchedule } from "react-icons/ai";
 import { useEffect, useState } from "react";
-import { LoginLink, RegisterLink, Sidebar } from "../sidebar";
+import { LoginLink, LogoutLink, RegisterLink, Sidebar } from "../sidebar";
 import useDocument from "../hooks/useDocument";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { AuthSession } from "../../types/storage";
 
 export default function Header(){
 
@@ -26,17 +28,47 @@ export default function Header(){
 
 function DesktopNavigation(){
 
+    const [session, setSession] = useState<AuthSession>();
+    const router = useRouter();
+
+
+    useEffect(()=>{
+        const authSession = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
+        setSession(authSession);
+    },[router.asPath])
 
     return(
-        <div className="hidden gap-4 flex-grow xl:flex xl:justify-end" >
+        <div className="hidden gap-4 flex-grow xl:flex xl:items-center xl:justify-end" >
             {
-                true  && 
+                session  ?
+                <>
+                    <HeaderLink name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
+                    <HeaderLink name={"Kalendar"} to={`/user/${session.id}/schedule`} />
+                    <LogoutLink />
+                </>
+                : 
                 <>
                     <RegisterLink />
                     <LoginLink />
                 </>
             }
         </div>
+    )
+}
+
+interface HeaderLink{
+    name: string;
+    to: string;
+}
+
+function HeaderLink({name, to}:HeaderLink){
+
+    const router = useRouter();
+
+    return(
+            <Link href={to}  >
+                <a className={`${router.asPath === to ? "" : ""} text-center text-slate-100`} >{name}</a>
+            </Link>
     )
 }
 

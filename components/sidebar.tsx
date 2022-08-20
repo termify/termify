@@ -4,17 +4,25 @@ import { FaWindowClose } from "react-icons/fa";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { AuthSession } from "../types/storage";
 
 
 export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<React.SetStateAction<boolean>>}){
     
     const [yOffset, setYOffsset] = useState<number>(500);
     const divRef = useRef<HTMLDivElement>(null);
-
+    const [session, setSession] = useState<AuthSession>();
+    const router = useRouter();
 
     useEffect(()=>{
         setYOffsset(divRef.current!.offsetHeight);
     },[])
+
+    useEffect(()=>{
+        const authSession = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
+        setSession(authSession);
+    },[router.asPath])
+
 
     return(
         <Modal>
@@ -32,16 +40,19 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
                     </div>                    
                     <div className="flex-grow py-8 flex flex-col gap-3 bg-slate-800 shadow-xl" >
                     {   
-                        true && <>
+                        session 
+                        ?
+                        <>
+                            <SidebarLink name={"Dashboard"} to={`/user/${session.id}/dashboard`} onClick={()=>setOpen(false)} />
+                            <SidebarLink name={"Kalendar"} to={`/user/${session.id}/schedule`} onClick={()=>setOpen(false)} />
+                            <LogoutLink onClick={()=>setOpen(false)} />
+                        </>                 
+                        :
+                        <>
                             <SidebarLink name={"Startseite"} to={"/"} onClick={()=>setOpen(false)} />
                             <RegisterLink onClick={()=>setOpen(false)} />
                             <LoginLink onClick={()=>setOpen(false)} />
                         </> 
-                        // :
-                        // <>
-                        //     <SidebarLink name={"Dashboard"} to={`/user/${auth["auth-id"]}/dashboard`} onClick={()=>setOpen(false)} />
-                        //     <SidebarLink name={"Kalendar"} to={`/user/${auth["auth-id"]}/schedule`} onClick={()=>setOpen(false)} />
-                        // </>                 
                     }
                     </div>
                 </div>
@@ -51,7 +62,28 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
     )
 }
 
+export function LogoutLink({onClick}:{onClick?: () => void}){
 
+    const router = useRouter();
+
+    function onClickHandler(){
+
+        sessionStorage.removeItem("auth");
+        // router.push("/");
+
+        if (onClick)
+            onClick();
+    }
+
+
+    return(
+        <Link href={"/"}  >
+            <div onClick={onClickHandler} className="text-center w-1/2 mx-auto rounded p-2 bg-gradient-to-r from-rose-400 to-amber-500 transition-all xl:m-0 xl:w-32 xl:hover:cursor-pointer xl:hover:scale-110" >
+                <a className=" rounded text-slate-50 select-none"  >Logout</a>
+            </div>
+        </Link>
+    )
+}
 
 export function RegisterLink({onClick}:{onClick?: () => void}){
     return(
@@ -88,11 +120,11 @@ function SidebarLink({name, to, onClick}:SidebarLink){
     const router = useRouter();
 
     return(
-        <div className="text-center text-slate-100" >
             <Link href={to}  >
-                {/* <a onClick={onClick} className={`${router.asPath === to ? "bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" : ""}`} >{name}</a> */}
-                <a onClick={onClick} className={`${router.asPath === to ? "" : ""}`} >{name}</a>
+                <div className="text-center text-slate-100" >
+                    {/* <a onClick={onClick} className={`${router.asPath === to ? "bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent" : ""}`} >{name}</a> */}
+                    <a onClick={onClick} className={`${router.asPath === to ? "" : ""}`} >{name}</a>
+                </div>
             </Link>
-        </div>
     )
 }

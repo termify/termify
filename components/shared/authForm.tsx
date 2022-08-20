@@ -86,8 +86,9 @@ export default function AuthForm({authType, setDone}:AuthForm){
             return;
         }
 
+        sessionStorage.setItem("auth",JSON.stringify({id}));
         toast.success(msg);
-        router.push(`/user/${id}/schedule`);
+        router.push(`/user/${id}/dashboard`);
     }
 
     return(
