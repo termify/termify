@@ -1,5 +1,8 @@
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaRegCalendarPlus } from "react-icons/fa";
+import { TaskPostRequestBody } from "../../pages/api/task/[pid]";
 
 
 export default function ScheduleTask(){
@@ -21,8 +24,28 @@ function AllTask(){
 }
 
 function NewTask(){
+
+    const router = useRouter();
+    const { id } = router.query;
+
+    async function createNewTask(){
+        const {error, msg} = await (await fetch(`/api/task/${id}/`,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({duration:100,startTime:new Date(),taskName:"Neuer Task"} as TaskPostRequestBody)
+        })).json() as {error: boolean, msg: string}
+
+        if (error)
+            toast.error(msg);
+        else
+            toast.success(msg);
+
+    }
+
     return(
-        <div className="flex justify-end w-full" >
+        <div className="flex justify-end w-full" onClick={createNewTask} >
             <button className="flex items-center" >
                 <p>Neuen Eintrag erstellen</p>
                 <FaRegCalendarPlus className="h-12 w-12 p-2" />

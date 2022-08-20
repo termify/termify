@@ -1,6 +1,6 @@
 import { Session, User } from "@supabase/supabase-js";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../lib/database";
+import { db, supabase } from "../../../lib/database";
 
 interface RequestBody{
     email: string;
@@ -56,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             break;
         case "logout":
 
-            const logoutResponse = await db.auth.api.signOut(req.body.token as string);
+            const logoutResponse = await supabase.auth.api.signOut(req.body.token as string);
 
             if (logoutResponse.error){
                 res.send({
@@ -78,16 +78,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 
 async function registerAccount(authData:RequestBody): Promise<boolean>{
-    const {error, user, session} = await db.auth.signUp({
+    const {error, user, session} = await supabase.auth.signUp({
         email: authData.email,
         password: authData.password
     });
+
+    if (!error && user){
+        await db.user.create({
+            data:{
+                uuid: user.id,
+                email: user.email as string,
+            }
+        })
+    }
 
     return error ? true : false;
 }
 
 async function loginAccount(authData:RequestBody): Promise<{error: boolean, user: User | null, session: Session | null}>{
-    const {error, user, session} = await db.auth.signIn({
+    const {error, user, session} = await supabase.auth.signIn({
         email: authData.email,
         password: authData.password
     });
