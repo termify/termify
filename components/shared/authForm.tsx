@@ -6,6 +6,8 @@ import Textinput from "./utility/textinput";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Session } from "@supabase/supabase-js";
+
 
 interface AuthForm{
     authType: "register" | "login";
@@ -21,6 +23,7 @@ interface AuthResponse{
     msg: string;
     error: boolean;
     id?: string;
+    session?: Session;
 }
 
 export default function AuthForm({authType, setDone}:AuthForm){
@@ -72,7 +75,7 @@ export default function AuthForm({authType, setDone}:AuthForm){
 
         setShowModal(true);
 
-        const {msg,error,id}:AuthResponse = await (await fetch("/api/auth",{
+        const {msg,error,id, session}:AuthResponse = await (await fetch("/api/auth",{
             method:"POST",
             headers:{
                 "Content-Type":"application/json",
@@ -86,7 +89,7 @@ export default function AuthForm({authType, setDone}:AuthForm){
             return;
         }
 
-        sessionStorage.setItem("auth",JSON.stringify({id}));
+        sessionStorage.setItem("auth",JSON.stringify({id,token:session?.access_token}));
         toast.success(msg);
         router.push(`/user/${id}/dashboard`);
     }

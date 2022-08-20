@@ -5,6 +5,7 @@ import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { AuthSession } from "../types/storage";
+import toast from "react-hot-toast";
 
 
 export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<React.SetStateAction<boolean>>}){
@@ -64,13 +65,10 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
 
 export function LogoutLink({onClick}:{onClick?: () => void}){
 
-    const router = useRouter();
+    async function onClickHandler(){
 
-    function onClickHandler(){
-
+        toast.success("Erfolgreich ausgeloggt");
         sessionStorage.removeItem("auth");
-        // router.push("/");
-
         if (onClick)
             onClick();
     }

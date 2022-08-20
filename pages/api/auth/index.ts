@@ -1,4 +1,4 @@
-import { User } from "@supabase/supabase-js";
+import { Session, User } from "@supabase/supabase-js";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../lib/database";
 
@@ -11,45 +11,68 @@ interface AuthResponse{
     msg: string;
     error:boolean;
     id?:string;
+    session?:Session;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<AuthResponse>){
 
     if (req.method !== "POST") res.send({error: true, msg:"Oups, da ist was schief gelaufen, wir arbeiten daran... 🚧"})
 
-    if (req.headers["type"] === "register"){
-        const registerFailed = await registerAccount(req.body);
 
-        if (registerFailed){
+    switch(req.headers["type"]){
+        case "register":
+            const registerFailed = await registerAccount(req.body);
+
+            if (registerFailed){
+                res.send({
+                    error: true,
+                    msg:"Registrierung ist leider fehlgeschlagen"
+                });
+                return;
+            }
+    
             res.send({
-                error: true,
-                msg:"Registrierung ist leider fehlgeschlagen"
+                error: false,
+                msg: "Registrierung war erfolgreich"
             });
-            return;
-        }
+            break;
+        case "login":
+            const {user,session, error} = await loginAccount(req.body);
 
-        res.send({
-            error: false,
-            msg: "Registrierung war erfolgreich"
-        });
-
-    }else{
-        const {user, error} = await loginAccount(req.body);
-
-        if (error){
+            if (error){
+                res.send({
+                    error: true,
+                    msg:"Login ist leider fehlgeschlagen"
+                });
+                return;
+            }
+    
             res.send({
-                error: true,
-                msg:"Login ist leider fehlgeschlagen"
+                error: false,
+                msg: "Login war erfolgreich",
+                id: user?.id,
+                session: session!
             });
-            return;
-        }
+            break;
+        case "logout":
 
-        res.send({
-            error: false,
-            msg: "Login war erfolgreich",
-            id: user?.id
-        });
+            const logoutResponse = await db.auth.api.signOut(req.body.token as string);
+
+            if (logoutResponse.error){
+                res.send({
+                    error: true,
+                    msg: "Fehler beim ausloggen"
+                });
+            }
+
+            res.send({
+                error: false,
+                msg: "Erfolgreich ausgeloggt"
+            })
+
+            break;
     }
+
 
 }
 
@@ -63,7 +86,7 @@ async function registerAccount(authData:RequestBody): Promise<boolean>{
     return error ? true : false;
 }
 
-async function loginAccount(authData:RequestBody): Promise<{error: boolean, user: User | null}>{
+async function loginAccount(authData:RequestBody): Promise<{error: boolean, user: User | null, session: Session | null}>{
     const {error, user, session} = await db.auth.signIn({
         email: authData.email,
         password: authData.password
@@ -72,12 +95,14 @@ async function loginAccount(authData:RequestBody): Promise<{error: boolean, user
     if (error){
         return {
             error: true,
-            user: null
+            user: null,
+            session: null
         }
     }else{
         return{
             error: false,
-            user
+            user,
+            session
         }
     }
 
