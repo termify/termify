@@ -19,10 +19,10 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
         setYOffsset(divRef.current!.offsetHeight);
     },[])
 
-    useEffect(()=>{
-        const authSession = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
-        setSession(authSession);
-    },[router.asPath])
+    // useEffect(()=>{
+    //     const authSession = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
+    //     setSession(authSession);
+    // },[router.asPath])
 
 
     return(

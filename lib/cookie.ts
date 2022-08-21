@@ -36,7 +36,7 @@ export const hasCookie = (name:string):boolean => {
 
 }
 
-export const getCookie = (cookie:string): Cookie | undefined => {
+export const getCookie = (cookie:string): unknown => {
     const returnObject:Cookie = {}
 
     const allCookies = document.cookie.split("; ");

@@ -7,6 +7,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Session } from "@supabase/supabase-js";
+import { setCookie } from "../../lib/cookie";
 
 
 interface AuthForm{
@@ -43,7 +44,7 @@ export default function AuthForm({authType, setDone}:AuthForm){
                 await register();
                 break;
             case "login":
-                await login();
+                login();
                 break;
         }
 
@@ -93,7 +94,8 @@ export default function AuthForm({authType, setDone}:AuthForm){
             return;
         }
 
-        sessionStorage.setItem("auth",JSON.stringify({id,token:session?.access_token}));
+        // sessionStorage.setItem("auth",JSON.stringify({id,token:session?.access_token}));
+        setCookie("auth",JSON.stringify({id,token:session?.access_token}));
         toast.success(msg);
         router.push(`/user/${id}/dashboard`);
     }

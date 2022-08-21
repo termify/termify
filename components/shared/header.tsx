@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { AiFillHome } from "react-icons/ai";
 import { FaSignOutAlt, FaCalendarAlt } from "react-icons/fa";
 import { RiDashboardFill } from "react-icons/ri";
+import { deleteCookie, getCookie } from "../../lib/cookie";
 
 export default function Header(){
 
@@ -35,10 +36,10 @@ function DesktopNavigation(){
     const [session, setSession] = useState<AuthSession>();
     const router = useRouter();
 
-
     useEffect(()=>{
-        const authSession = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
-        setSession(authSession);
+        // const authCookie = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
+        const authCookie = getCookie("auth") as AuthSession;
+        setSession(authCookie);
     },[router.asPath])
 
     return(
@@ -108,7 +109,8 @@ export function LogoutLink({name, to,onClick}:SpecialLink){
     async function onClickHandler(){
 
         toast.success("Erfolgreich ausgeloggt");
-        sessionStorage.removeItem("auth");
+        // sessionStorage.removeItem("auth");
+        deleteCookie("auth");
         if (onClick)
             onClick();
     }

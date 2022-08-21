@@ -4,13 +4,8 @@ import Header from '../components/shared/header'
 import Footer from '../components/shared/footer'
 import Container from '../components/shared/container'
 import { Toaster } from 'react-hot-toast'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 
 function MyApp({ Component, pageProps }: AppProps) {
-
-  const router = useRouter();
-
   return (
     <div className='min-h-screen flex flex-col' >
       <Header />

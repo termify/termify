@@ -3,29 +3,32 @@ import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest){
 
-    if (
-        req.nextUrl.pathname  === '/user'
-        ) {
-        // const cookie = req.cookies.get("auth") ;
-
-        // if (cookie){
-        //     const cookieValue = JSON.parse(cookie) as {id: string; token: string;};
-        //     console.log("CookieValue 2",cookieValue.id);
-        //     return NextResponse.redirect(new URL(`/user/${cookieValue.id}/dashboard`, req.url))
-        // }
-
-        console.log("User")
-
-    }
-
     if (req.nextUrl.pathname.startsWith('/user')) {
         const cookie = req.cookies.get("auth");
 
-        console.log("Starts With 2",cookie)
-
         if (!cookie){
+            console.log("Normal müsste das gehen");
             return NextResponse.rewrite(new URL('/register', req.url))
         }
     }
+
+    if (
+        req.nextUrl.pathname === "/" ||
+        req.nextUrl.pathname === "/register" ||
+        req.nextUrl.pathname === "/login" 
+        ){
+        const cookie = req.cookies.get("auth");
+        
+        if (cookie){
+            const cookieValues = JSON.parse(cookie) as {id:string; token:string;};
+            const uuid = cookieValues.id;
+    
+            return NextResponse.redirect(new URL(`/user/${cookieValues.id}/dashboard`, req.url))
+    
+        }
+    }
+
+
+    
     
 }
