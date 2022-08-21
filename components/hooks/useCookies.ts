@@ -12,7 +12,7 @@ export const useGetCookie = (cookieName: string = "") => {
         if (!loaded) return;
 
         if (cookieName){
-            setValue(getCookie(cookieName));
+            setValue(getCookie(cookieName) as Cookie);
         }else{
             setValue(getAllCookies());
         }
