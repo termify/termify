@@ -94,8 +94,15 @@ export default function AuthForm({authType, setDone}:AuthForm){
             return;
         }
 
+        const today = new Date();
+        today.setFullYear(today.getFullYear()+1);
+
         // sessionStorage.setItem("auth",JSON.stringify({id,token:session?.access_token}));
-        setCookie("auth",JSON.stringify({id,token:session?.access_token}));
+        setCookie(
+            "auth",
+            JSON.stringify({id,token:session?.access_token}),
+            today.toUTCString()
+            );
         toast.success(msg);
         router.push(`/user/${id}/dashboard`);
     }

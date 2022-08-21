@@ -4,7 +4,7 @@ export interface Cookie{
 }
 
 export const setCookie = (name: string, value: string, utcExpire: string = "", path:string = "/") => {
-    document.cookie = `${name}=${value}; ${utcExpire ? `${utcExpire};` : "" } ${path ? `${path};` : "" } `;
+    document.cookie = `${name}=${value}; ${utcExpire ? `expires=${utcExpire};` : "" } ${path ? `path=${path};` : "" } `;
 }
 
 export const getAllCookies = ():Cookie => {

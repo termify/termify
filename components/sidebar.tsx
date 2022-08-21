@@ -7,6 +7,7 @@ import { AuthSession } from "../types/storage";
 import { LoginLink, LogoutLink, NavigationLink, RegisterLink } from "./shared/header";
 import { FaHome } from "react-icons/fa";
 import { RiDashboardFill } from "react-icons/ri";
+import { getCookie } from "../lib/cookie";
 
 export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<React.SetStateAction<boolean>>}){
     
@@ -19,10 +20,11 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
         setYOffsset(divRef.current!.offsetHeight);
     },[])
 
-    // useEffect(()=>{
-    //     const authSession = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
-    //     setSession(authSession);
-    // },[router.asPath])
+    useEffect(()=>{
+        // const authSession = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
+        const authSession = getCookie("auth") as AuthSession;
+        setSession(authSession);
+    },[router.asPath])
 
 
     return(
