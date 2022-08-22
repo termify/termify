@@ -37,9 +37,8 @@ function DesktopNavigation(){
     const router = useRouter();
 
     useEffect(()=>{
-        // const authCookie = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
-        const authCookie = getCookie("auth") as AuthSession;
-        setSession(authCookie);
+        const authCookie = getCookie("auth") as {auth:{id:string; token:string;}};
+        setSession(authCookie.auth);
     },[router.asPath])
 
     return(

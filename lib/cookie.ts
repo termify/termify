@@ -44,8 +44,15 @@ export const getCookie = (cookie:string): unknown => {
     
     if (findCookie){
         const splittValue = findCookie?.split("=");
-        returnObject[splittValue[0]] = splittValue[1];
-    
+
+        try{
+            returnObject[splittValue[0]] = JSON.parse(splittValue[1]);
+        }catch(error){
+            returnObject[splittValue[0]] = splittValue[1];
+        }
+
+
+
         return returnObject;
     }
 
