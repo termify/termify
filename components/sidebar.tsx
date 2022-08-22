@@ -21,9 +21,14 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
     },[])
 
     useEffect(()=>{
-        // const authSession = JSON.parse(sessionStorage.getItem("auth") as string) as AuthSession;
         const authSession = getCookie("auth") as AuthSession;
-        setSession(authSession);
+
+        if (authSession){
+            setSession(authSession);
+        }else{
+            setSession(undefined)
+        }
+
     },[router.asPath])
 
 
