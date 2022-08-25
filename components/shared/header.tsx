@@ -115,7 +115,7 @@ export function LogoutLink({name, to,onClick}:SpecialLink){
 
         toast.success("Erfolgreich ausgeloggt");
         // sessionStorage.removeItem("auth");
-        deleteCookie("auth");
+        await deleteCookie("auth","/");
         if (onClick)
             onClick();
     }

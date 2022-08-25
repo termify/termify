@@ -59,6 +59,6 @@ export const getCookie = (cookie:string): unknown => {
     return undefined;
 }
 
-export const deleteCookie = (name: string) => {
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+export const deleteCookie = (name: string, path: string) => {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:01 GMT; ${path ? `path=${path}` : ``}`;
 }
