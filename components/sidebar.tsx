@@ -21,10 +21,10 @@ export function Sidebar({open, setOpen}:{open:boolean; setOpen:React.Dispatch<Re
     },[])
 
     useEffect(()=>{
-        const authSession = getCookie("auth") as AuthSession;
+        const authSession = getCookie("auth") as { auth: AuthSession};
 
         if (authSession){
-            setSession(authSession);
+            setSession(authSession.auth);
         }else{
             setSession(undefined)
         }
