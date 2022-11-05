@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest){
 
-    //TODO: Reactivate after explaining other team members
+    //TODO: Reactivate after explaining other team member
     if (req.nextUrl.pathname.startsWith('/user')) {
         const cookie = req.cookies.get("auth");
 
