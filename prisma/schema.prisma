@@ -8,23 +8,3 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
-
-model User {
-  id        Int      @id @default(autoincrement())
-  uuid      String   @unique
-  tasks     Task[]
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime?
-}
-
-model Task {
-  id        Int      @id @default(autoincrement())
-  taskName  String
-  startTime DateTime
-  duration  Int      @default(30)
-  createdAt DateTime @default(now())
-  updatedAt DateTime?
-  User      User?    @relation(fields: [userId], references: [uuid])
-  userId    String?
-}
