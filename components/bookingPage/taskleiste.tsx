@@ -1,15 +1,15 @@
 import {useBookingStore} from "../../store/store";
 import {ArrowIcon} from "../icons";
 
+const sections: string[] = ["Auswahl", "Termin", "Eintragung", "Abschluss"]
 
 export default function Taskleiste (){
 
     return(
-        <div className={" p-2 border-slate-700 border-4 flex flex-wrap justify-between gap-0.5 xl:p-6 xl:justify-around xl:gap-0 "} >
-            <TaskleisteSection  sectionName={"Auswahl"} index={1}/>
-            <TaskleisteSection  sectionName={"Termin"} index={2}/>
-            <TaskleisteSection  sectionName={"Eintragung"} index={3}/>
-            <TaskleisteSection  sectionName={"Abschluss"} index={4} last={true}/>
+        <div className={" p-2 border-slate-700 border-4 flex flex-wrap justify-between xl:p-0 xl:flex-nowrap xl:justify-around "} >
+            {
+                sections.map((e,i) => <TaskleisteSection key={e+i} sectionName={e} index={i+1} last={i === sections.length-1} />)
+            }
         </div>
     )
 }
