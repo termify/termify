@@ -18,7 +18,7 @@ interface AuswahlAmtProps {
 function AuswahlAmt({col,row}:AuswahlAmtProps){
     return (
 
-            <div className={`grid grid-cols-${col} grid-rows-${row} gap-3`}>
+            <div className={`grid grid-cols-2 grid-rows-${row} gap-3 xl:grid-cols-${col}`}>
             {
                 testArray.map((value, index) => <BookingButton key={value + index}  >{value}</BookingButton>)
             }
@@ -34,7 +34,7 @@ interface BookinButtonProps{
 
 function BookingButton({children}:BookinButtonProps){
     return(
-        <button className={"bg-emerald-500 m-5 xl:min-h-[13rem]"}  >
+        <button className={"bg-emerald-500 m-5 min-h-[8rem] xl:min-h-[13rem]"}  >
             {children}
         </button>
     )
