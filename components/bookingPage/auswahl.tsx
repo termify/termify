@@ -1,5 +1,14 @@
+import {ReactNode} from "react";
 
 const testArray = ["Arbeitsamt","Finanzamt", "Bürgeramt", "Gewerbeamt", "Gesundheitsamt", "Bauamt", "Noch ein Amt","Arbeitsamt","Finanzamt", "Bürgeramt", "Gewerbeamt", "Gesundheitsamt", "Bauamt", "Noch ein Amt"];
+
+export default function AuswahlPage(){
+    return <AuswahlAmt col={4} row={3} />
+}
+
+
+
+
 
 interface AuswahlAmtProps {
     col : number;
@@ -9,30 +18,25 @@ interface AuswahlAmtProps {
 function AuswahlAmt({col,row}:AuswahlAmtProps){
     return (
 
-            <div className={`flex flex-col flex-wrap md:flex-row flex-${row}`}>
+            <div className={`grid grid-cols-${col} grid-rows-${row} gap-3`}>
             {
-                testArray.map((value, index) => <button className={"bg-emerald-500 p-2 m-2 basis-1/6 "} key={value + index} >{value}</button>)
+                testArray.map((value, index) => <BookingButton key={value + index}  >{value}</BookingButton>)
             }
             </div>
 
     )
 }
 
-export default function AuswahlPage({onClick}:any){
-    return(
-        <>
-            {/* <div>
-                <button className="bg-red-300" onClick={onClick} >Auswahl</button>
-                Termin
-                Eintragung
-                Abschluss
-            </div> */}
 
-            <div >
-                {
-                    <AuswahlAmt col={5} row={5} />
-                }
-            </div>
-        </>
+interface BookinButtonProps{
+    children: ReactNode;
+}
+
+function BookingButton({children}:BookinButtonProps){
+    return(
+        <button className={"bg-emerald-500 m-5 xl:min-h-[13rem]"}  >
+            {children}
+        </button>
     )
 }
+
