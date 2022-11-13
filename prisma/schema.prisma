@@ -26,3 +26,12 @@ model User {
   updatedAt DateTime?
   Task      Task[]
 }
+
+model Office {
+  id Int @id @default(autoincrement())
+}
+
+model Template {
+  id           Int    @id @default(autoincrement())
+  templateName String @unique
+}
