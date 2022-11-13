@@ -16,7 +16,8 @@ interface AuswahlAmtProps {
     col : number;
     row : number;
 }
-
+//TODO Kevin Bläser: AuswahlAmt Style
+//TODO Kevin Bläser: DB Connect; prisma db befüllen
 function AuswahlAmt({col,row}:AuswahlAmtProps){
 
     const [pos, setPos] = useState<number>(1);
