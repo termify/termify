@@ -16,3 +16,4 @@ export default async function handler(req: NextApiRequest,res: NextApiResponse<D
 
     res.status(200).json(allData)
 }
+//TODO Kevin Bläser: Abfrage zur Auswahl; Landkreis -> Partner => Office

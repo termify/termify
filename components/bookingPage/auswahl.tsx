@@ -1,13 +1,10 @@
-import {ReactNode, Suspense, useEffect, useRef, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {BsFillArrowUpCircleFill, BsFillArrowDownCircleFill} from "react-icons/bs";
+import { useBookingStore } from "../../store/store";
 
 export default function AuswahlPage(){
     return <AuswahlAmt col={4} row={3} />
 }
-
-
-
-
 
 interface AuswahlAmtProps {
     col : number;
@@ -73,8 +70,22 @@ interface BookinButtonProps{
 }
 
 function BookingButton({children, index}:BookinButtonProps){
+
+    const setBookingData = useBookingStore(state => state.setBookingData);
+    const setBookingPage = useBookingStore(state => state.setPageNumber);
+
+    function onClickHandler(e: React.PointerEvent<HTMLButtonElement>){
+
+        setBookingData({
+            officeId: index,
+            officeName: children as string
+        })
+
+        setBookingPage(2)
+    }
+
     return(
-        <button id={`s-${index}`} className={"bg-emerald-500 m-5 min-h-[8rem] xl:min-h-[13rem]"}  >
+        <button onClick={onClickHandler} id={`s-${index}`} className={"bg-emerald-500 m-5 min-h-[8rem] xl:min-h-[13rem]"}  >
             {children}
         </button>
     )
