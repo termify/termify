@@ -27,11 +27,30 @@ model User {
   Task      Task[]
 }
 
+model District {
+  id            Int @id @default(autoincrement())
+  districtName  String  @unique
+  Partner Partner[]
+}
+
 model Office {
-  id Int @id @default(autoincrement())
+  id                Int @id @default(autoincrement())
+  officeName        String  @unique
+  officeDescription String?
+  Partner Partner[]
 }
 
 model Template {
   id           Int    @id @default(autoincrement())
   templateName String @unique
+}
+
+model Partner {
+  id                  Int @id @default(autoincrement())
+  partnerName         String?
+  partnerDescription  String?
+  officeId            Int
+  Office  Office?     @relation(fields: [officeId], references: [id])
+  districtId          Int
+  District  District? @relation(fields: [districtId], references: [id])
 }

@@ -1,9 +1,6 @@
 import {ReactNode, Suspense, useEffect, useRef, useState} from "react";
 import {BsFillArrowUpCircleFill, BsFillArrowDownCircleFill} from "react-icons/bs";
 
-// const testArray = ["Arbeitsamt","Finanzamt", "Bürgeramt", "Gewerbeamt", "Gesundheitsamt", "Bauamt", "Noch ein Amt","Arbeitsamt","Finanzamt", "Bürgeramt", "Gewerbeamt", "Gesundheitsamt", "Bauamt", "Noch ein Amt",
-//     "Arbeitsamt","Finanzamt", "Bürgeramt", "Gewerbeamt", "Gesundheitsamt", "Bauamt", "Noch ein Amt","Arbeitsamt","Finanzamt", "Bürgeramt", "Gewerbeamt", "Gesundheitsamt", "Bauamt", "Noch ein Amt"];
-
 export default function AuswahlPage(){
     return <AuswahlAmt col={4} row={3} />
 }
@@ -16,22 +13,25 @@ interface AuswahlAmtProps {
     col : number;
     row : number;
 }
-
+//TODO Kevin Bläser: AuswahlAmt Style
+//TODO Kevin Bläser: DB Connect; prisma db befüllen
 interface DataResponse{
-    amtArray: string[];
+    id: number;
+    officeName: string;
+    officeDescription?: string;
 }
 
 function AuswahlAmt({col,row}:AuswahlAmtProps){
 
     const [pos, setPos] = useState<number>(1);
-    const [data,setData] = useState<string[]>([])
+    const [data,setData] = useState<DataResponse[]>([]);
 
 
     useEffect(()=>{
 
         async function fetchData(){
-            const response = await (await fetch("/api/hello")).json() as DataResponse;
-            setData(response.amtArray)
+            const response = await (await fetch("/api/dbquery/selectauswahl")).json() as DataResponse[];
+            setData(response)
         }
 
         fetchData();
@@ -54,7 +54,7 @@ function AuswahlAmt({col,row}:AuswahlAmtProps){
                     </div>
                 <div className={`grid grid-cols-2 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden h-[32rem] scroll-smooth`}>
                     {
-                        data.map((value, index) => <BookingButton key={value + index} index={index} >{value}</BookingButton>)
+                        data.map((value, index) => <BookingButton key={value.id} index={index} >{value.officeName}</BookingButton>)
                     }
                 </div>
                 {

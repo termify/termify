@@ -11,10 +11,6 @@ const BookingPage = () => {
     return(
         <div>
             <Taskleiste />
-            <div className={"flex justify-around gap-3 p-4"} >
-                <button className={" bg-rose-500 p-4"} onClick={()=>setPageNumber(bookingPageNumber - 1)}  > Zurück</button>
-                <button className={" bg-rose-500 p-4"} onClick={()=>setPageNumber(bookingPageNumber + 1)}  > Nächste</button>
-            </div>
             {
                 bookingPageNumber === 1 ? <AuswahlPage /> : null
             }
