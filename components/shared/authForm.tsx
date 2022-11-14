@@ -50,8 +50,20 @@ export default function AuthForm({authType, setDone}:AuthForm){
 
     } 
 
+    function validateForm():boolean{
+        return formData.email.includes(".");
+    }
+
     async function register(){
         setShowModal(true);
+
+        if (!validateForm()) {
+
+            toast.error("Bitte tragen Sie eine valide Email-Adresse ein");
+            setShowModal(false);
+            return;
+        }
+        
 
         const {msg,error}:AuthResponse = await (await fetch("/api/auth",{
             method:"POST",
@@ -75,8 +87,9 @@ export default function AuthForm({authType, setDone}:AuthForm){
 
     }
 
-    async function login(){
 
+
+    async function login(){
         setShowModal(true);
 
         const {msg,error,id, session}:AuthResponse = await (await fetch("/api/auth",{
@@ -98,11 +111,7 @@ export default function AuthForm({authType, setDone}:AuthForm){
         today.setFullYear(today.getFullYear()+1);
 
         // sessionStorage.setItem("auth",JSON.stringify({id,token:session?.access_token}));
-        setCookie(
-            "auth",
-            JSON.stringify({id,token:session?.access_token}),
-            today.toUTCString()
-            );
+        setCookie("auth",JSON.stringify({id,token:session?.access_token}),today.toUTCString());
         toast.success(msg);
         router.push(`/user/${id}/dashboard`);
     }
@@ -110,16 +119,17 @@ export default function AuthForm({authType, setDone}:AuthForm){
     return(
         <div className="flex-grow flex flex-col justify-evenly items-center my-auto xl:gap-8" >
             <h1 
-                className="text-center text-3xl my-4 bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent p-2 xl:text-5xl xl:my-8" >
+                className="text-center text-3xl my-4 bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent p-2 xl:text-5xl xl:my-8" 
+                >
                     {
-                    authType === "register" ? 
-                    "Erstellen Sie sich noch heute einen Account" : 
-                    "Login"
+                        authType === "register" ? 
+                        "Erstellen Sie sich noch heute einen Account" : 
+                        "Login"
                     }
             </h1>
-            <form onSubmit={handleOnClick} className="flex flex-col gap-4 items-center  justify-start xl:flex-grow xl:justify-center  xl:w-1/3"  >
-                <Textinput value={formData.email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{setFormData({...formData,email:e.target.value})}} placeholder="Email" type={"email"} required />
-                <Textinput value={formData.password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setFormData({...formData,password: e.target.value})} placeholder="Password" type={"password"} required />
+            <form onSubmit={handleOnClick} className="flex flex-col gap-4 items-center justify-start xl:flex-grow xl:justify-center xl:w-1/3" >
+                <Textinput value={formData.email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({...formData,email:e.target.value})} placeholder="Email" type={"email"} />
+                <Textinput value={formData.password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setFormData({...formData,password: e.target.value})} placeholder="Password" type={"password"} />
                 <ContextSwitcher register={authType === "register"} />
                 <GradientButton buttontext={authType  === "register" ? "Registrieren" : "Einloggen"} design={"filled"} type={"submit"} />
             </form>
