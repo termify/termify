@@ -1,11 +1,9 @@
+import Schedular from "../schedule/schedular";
 
-export default function Termin({onClick}:any){
-    return(
-            <div>
-            Auswahl
-            <button className="bg-red-300" onClick={onClick} >Termin</button>
-            Eintragung
-            Abschluss
-        </div>
-    )
+export default function Termin() {
+    return (
+        <>
+            <Schedular />
+        </>
+    );
 }
