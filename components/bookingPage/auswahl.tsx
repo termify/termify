@@ -1,9 +1,10 @@
 import {ReactNode, useEffect, useState} from "react";
 import {BsFillArrowUpCircleFill, BsFillArrowDownCircleFill} from "react-icons/bs";
+import { RiRestaurant2Fill } from "react-icons/ri";
 import { useBookingStore } from "../../store/store";
 
 export default function AuswahlPage(){
-    return <AuswahlAmt col={4} row={3} />
+    return <ChooseOffice col={4} row={3} />
 }
 
 interface AuswahlAmtProps {
@@ -18,7 +19,7 @@ interface DataResponse{
     officeDescription?: string;
 }
 
-function AuswahlAmt({col,row}:AuswahlAmtProps){
+function ChooseOffice({col,row}:AuswahlAmtProps){
 
     const [pos, setPos] = useState<number>(1);
     const [data,setData] = useState<DataResponse[]>([]);
@@ -27,7 +28,13 @@ function AuswahlAmt({col,row}:AuswahlAmtProps){
     useEffect(()=>{
 
         async function fetchData(){
-            const response = await (await fetch("/api/dbquery/selectauswahl")).json() as DataResponse[];
+            const response = await (await fetch("/api/dbquery/selectauswahl",{
+                headers:
+                    {
+                        "DBTYPE":"auswahl"
+                    }
+                
+            })).json() as DataResponse[];
             setData(response)
         }
 
@@ -91,3 +98,8 @@ function BookingButton({children, index}:BookinButtonProps){
     )
 }
 
+function ChooseDistrict(){
+    return(
+        <div></div>
+    )
+}
