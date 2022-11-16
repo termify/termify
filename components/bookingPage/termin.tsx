@@ -1,9 +1,9 @@
-import Schedular from "../schedule/schedular";
+import Scheduler from '../schedule/scheduler';
 
 export default function Termin() {
     return (
         <>
-            <Schedular />
+            <Scheduler />
         </>
     );
 }
