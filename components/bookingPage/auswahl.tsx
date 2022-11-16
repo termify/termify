@@ -25,12 +25,9 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
     useEffect(() => {
         async function fetchData() {
             const response = (await (
-                await fetch("/api/dbquery/selectauswahl", {
-                    headers: {
-                        DBTYPE: "auswahl",
-                    },
-                })
+                await fetch("/api/dbquery/selectauswahl/auswahl")
             ).json()) as DataResponse[];
+
             setData(response);
         }
 
@@ -65,7 +62,11 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
                 ))}
             </div>
             {pos + 9 < data.length && (
-                <button onClick={() => setHref(pos + 8)} className={"mx-auto flex justify-center"}>
+                <button
+                    title="Button"
+                    onClick={() => setHref(pos + 8)}
+                    className={"mx-auto flex justify-center"}
+                >
                     <BsFillArrowDownCircleFill className={"h-12 w-12"} />
                 </button>
             )}
