@@ -12,10 +12,6 @@ export default function Schedule({ date }: Schedule) {
     const [daysInMonth, setDaysInMonth] = useState<number>(0);
 
     useEffect(() => {
-        setGap(new Date(date.year, date.month, 1).getDay() - 1);
-    }, [date.month, date.year, gap]);
-
-    useEffect(() => {
         setDaysInMonth(ScheduleClass.daysInMonth(date));
     }, [daysInMonth, date.month, date.year, date]);
 

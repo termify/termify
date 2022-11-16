@@ -46,7 +46,7 @@ function TaskleisteSection({ sectionName, index, last = false }: TaskleisteSecti
                         : "text-slate-200"
                 } ${
                     bookingPageNumber === index ? "scale-110" : "scale-100"
-                }  font-bold text-xs xl:text-5xl cursor-pointer`}
+                }  font-bold text-xs md:text-2xl xl:text-5xl cursor-pointer`}
                 onClick={() => checkPageIndex()}
             >
                 {sectionName}
@@ -58,7 +58,7 @@ function TaskleisteSection({ sectionName, index, last = false }: TaskleisteSecti
                             ? "#0f172a"
                             : "#e2e8f0"
                     }`}
-                    className={`w-5 h-5 transition-all md:h-24 md:w-24`}
+                    className={`w-5 h-5 transition-all md:h-16 md:w-16 xl:h-24 xl:w-24`}
                 />
             )}
         </div>
