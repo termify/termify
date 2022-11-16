@@ -2,14 +2,12 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import ScheduleClass from "../../lib/schedule";
 import { RiArrowDropRightLine, RiArrowDropLeftLine } from "react-icons/ri";
 import { DatePickerContext } from "./schedular";
+import { useScheduleStore } from "../../store/stores";
 
-interface Schedule {
-  date: ScheduleDate;
-}
-
-export default function Schedule({ date }: Schedule) {
+export default function Schedule() {
   const [gap, setGap] = useState<number>(1);
   const [daysInMonth, setDaysInMonth] = useState<number>(0);
+  const date = useScheduleStore((state) => state.date);
 
   useEffect(() => {
     setDaysInMonth(ScheduleClass.daysInMonth(date));
@@ -138,14 +136,11 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
   );
 }
 
-export function ChangeMonth({
-  date,
-  setDate,
-}: {
-  date: ScheduleDate;
-  setDate: React.Dispatch<React.SetStateAction<ScheduleDate>>;
-}) {
+export function ChangeMonth() {
   const [monthName, setMonthName] = useState<string>("");
+
+  const date = useScheduleStore((state) => state.date);
+  const setDate = useScheduleStore((state) => state.setDate);
 
   useEffect(() => {
     setMonthName(ScheduleClass.parseMonthNumberToString(date.month + 1, "de"));

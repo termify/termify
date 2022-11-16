@@ -26,18 +26,36 @@ export const useBookingStore = create<BookingStoreProps>((set) => ({
     set((prevState) => ({ ...prevState, bookingData: newValue })),
 }));
 
-interface ScheduleStore {
-  date: Date;
-  setDate: (newDate: Date) => void;
+interface ScheduleStoreProps {
+  date: ScheduleDateProps;
+  setDate: (newDate: ScheduleDateProps) => void;
+  pickedDay: DateProps;
+  setPickedDay: (pickedDay: DateProps) => void;
 }
 
-type Date = {
+type DateProps = {
   day: number;
   month: number;
   year: number;
 };
 
-export const useScheduleStore = create<ScheduleStore>((set) => ({
-  date: { day: 1, month: 1, year: 1900 },
+type ScheduleDateProps = DateProps & {
+  dayInWeek: number;
+};
+
+export const useScheduleStore = create<ScheduleStoreProps>((set) => ({
+  date: {
+    day: new Date().getDate(),
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+    dayInWeek: new Date().getDay(),
+  },
   setDate: (newDate) => set((prevState) => ({ ...prevState, date: newDate })),
+  pickedDay: {
+    day: 1,
+    month: 1,
+    year: 1900,
+  },
+  setPickedDay: (pickedDay) =>
+    set((prevState) => ({ ...prevState, pickedDay: pickedDay })),
 }));
