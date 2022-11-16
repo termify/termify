@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+#Webstorm
+.idea
+
 # next.js
 /.next/
 /out/
