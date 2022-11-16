@@ -26,9 +26,9 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
         async function fetchData() {
             const response = (await (
                 await fetch("/api/dbquery/selectauswahl", {
-                    method: "GET",
-                    mode: "cors",
-                    headers: [["DB", "Value"]],
+                    headers: {
+                        DBTYPE: "auswahl",
+                    },
                 })
             ).json()) as DataResponse[];
             setData(response);
@@ -100,4 +100,8 @@ function BookingButton({ children, index }: BookinButtonProps) {
             {children}
         </button>
     );
+}
+
+function ChooseDistrict() {
+    return <div></div>;
 }
