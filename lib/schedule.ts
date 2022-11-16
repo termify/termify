@@ -1,4 +1,5 @@
 import { ScheduleDate } from '../components/schedule/schedule';
+import { useScheduleStore } from '../store/stores';
 
 export type Language = 'de';
 
@@ -7,6 +8,8 @@ interface Months {
 }
 
 export default class ScheduleClass {
+    static defaultDay: string = new Date(1, 1, 1900).toDateString();
+
     static months: Months = {
         de: {
             1: 'Januar',

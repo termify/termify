@@ -18,18 +18,21 @@ export default function Schedule() {
 
     return (
         <div>
-            <div className="grid grid-cols-7  my-2">
-                {['Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.', 'So.'].map((e, i) => (
-                    <DateDay key={e} dateName={e} isSunday={i === 6} />
-                ))}
-            </div>
-            <div className="grid grid-cols-7">
-                {Array.from({ length: gap }).map((e, i) => (
-                    <div key={i} />
-                ))}
-                {Array.from({ length: daysInMonth }).map((e, i) => (
-                    <ScheduleDay key={i} dayNumber={i + 1} date={date} />
-                ))}
+            <ChangeMonth />
+            <div>
+                <div className="grid grid-cols-7  my-2">
+                    {['Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.', 'So.'].map((e, i) => (
+                        <DateDay key={e} dateName={e} isSunday={i === 6} />
+                    ))}
+                </div>
+                <div className="grid grid-cols-7">
+                    {Array.from({ length: gap }).map((e, i) => (
+                        <div key={i} />
+                    ))}
+                    {Array.from({ length: daysInMonth }).map((e, i) => (
+                        <ScheduleDay key={i} dayNumber={i + 1} date={date} />
+                    ))}
+                </div>
             </div>
         </div>
     );
@@ -49,8 +52,6 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
     const setPickedDate = useScheduleStore((state) => state.setPickedDay);
 
     const [picked, setPicked] = useState<boolean>(false);
-
-    console.log('IS picked', picked);
 
     useMemo(() => {
         const isPicked =
@@ -82,14 +83,17 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
             <button
                 onClick={onClickHandler}
                 className={`${setColor} m-auto flex justify-center items-center rounded-full transition-colors transition-opacity transition-transform w-10 h-10 md:h-16 md:w-16 xl:text-2xl xl:h-20 xl:w-20 ${
-                    picked ? 'xl:hover:from-sky-400 xl:hover:to-emerald-500' : 'xl:hover:from-sky-400/[50%] xl:hover:to-emerald-500/[50%]'
+                    picked
+                        ? 'xl:hover:from-sky-400 xl:hover:to-emerald-500'
+                        : 'xl:hover:from-sky-400/[50%] xl:hover:to-emerald-500/[50%]'
                 }
         ${todayIsNewerThenYesterday ? ' xl:hover:scale-110' : ''} 
         xl:hover:cursor-pointer`}
             >
                 {dayNumber}
             </button>
-            {new Date(date?.year as number, date?.month as number, dayNumber).toDateString() === new Date().toDateString() ? (
+            {new Date(date?.year as number, date?.month as number, dayNumber).toDateString() ===
+            new Date().toDateString() ? (
                 <TodayDot />
             ) : null}
         </div>
