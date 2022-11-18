@@ -7,6 +7,17 @@ interface Months {
     [lang: string]: Record<string, string>;
 }
 
+export const useShowPickedValue = () => {
+    const pickedValue = useScheduleStore((state) => state.pickedDay);
+    const pickedDate = new Date(pickedValue.year, pickedValue.month, pickedValue.day);
+
+    return pickedDate.toLocaleDateString('de-DE', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+    });
+};
+
 export default class ScheduleClass {
     static defaultDay: string = new Date(1, 1, 1900).toDateString();
 

@@ -79,36 +79,36 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
     const setColor = picked
         ? 'bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-900 font-bold '
         : todayIsNewerThenYesterday
-        ? 'bg-gradient-to-r from-sky-400/[5%] to-emerald-500/[5%] text-sky-900'
+        ? 'bg-gradient-to-r from-sky-400/[5%] to-emerald-500/[5%] text-sky-60'
         : 'bg-slate-100/10';
 
     return (
         <div className={'p-1'}>
             <button
                 onClick={onClickHandler}
-                className={`${setColor} m-auto flex justify-center items-center rounded-full transition-colors transition-opacity transition-transform w-10 h-10 md:h-16 md:w-16 xl:text-2xl xl:h-20 xl:w-20 ${
+                className={`${setColor} m-auto flex justify-center items-center rounded-full transition-colors transition-opacity transition-transform w-10 h-10 md:h-16 md:w-16 xl:text-2xl xl:h-18 xl:w-18 ${
                     picked
-                        ? 'xl:hover:from-sky-400 xl:hover:to-emerald-500'
+                        ? 'xl:hover:from-sky-400 xl:hover:to-emerald-500 text-sky-50'
                         : 'xl:hover:from-sky-400/[50%] xl:hover:to-emerald-500/[50%]'
                 }
         ${todayIsNewerThenYesterday ? ' xl:hover:scale-110' : ''} 
         xl:hover:cursor-pointer`}
             >
                 {dayNumber}
+                {new Date(date?.year as number, date?.month as number, dayNumber).toDateString() ===
+                new Date().toDateString() ? (
+                    <TodayDot />
+                ) : null}
             </button>
-            {new Date(date?.year as number, date?.month as number, dayNumber).toDateString() ===
-            new Date().toDateString() ? (
-                <TodayDot />
-            ) : null}
         </div>
     );
 }
 
 function TodayDot() {
     return (
-        <div className="flex justify-center relative origin-center bottom-1 md:bottom-3 xl:bottom-4">
-            <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-sky-400 to-emerald-500 opacity-75 md:w-2 md:h-2 xl:w-3 xl:h-3"></span>
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gradient-to-r from-sky-400 to-emerald-500 md:w-2 md:h-2 xl:w-3 xl:h-3"></span>
+        <div className="relative flex justify-center relative origin-center bottom-1 bottom-3 left-1">
+            <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-sky-400 to-emerald-500 opacity-75  "></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gradient-to-r from-sky-400 to-emerald-500 "></span>
         </div>
     );
 }

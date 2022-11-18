@@ -15,9 +15,8 @@ const Scheduler = () => {
     }, [pickedDay]);
 
     return (
-        <div className={`flex-grow container mx-auto p-4 ${dateWasPicked ? 'xl:w-2/3' : 'xl:w-1/2'}`}>
-            <h2 className="text-3xl text-center my-4">Kalendar</h2>
-            <div className={`flex flex-col items-center ${dateWasPicked ? '' : 'xl:flex-row xl:justify-center'}`}>
+        <div className={`container mx-auto my-auto p-4 `}>
+            <div className={`grid ${dateWasPicked ? 'xl:grid-cols-2' : 'xl:grid-cols-1'} xl:shadow xl:h-[60vh] `}>
                 <Schedule />
                 {dateWasPicked ? <TimeSlots /> : null}
             </div>

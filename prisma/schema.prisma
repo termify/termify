@@ -28,16 +28,18 @@ model User {
 }
 
 model District {
-  id            Int @id @default(autoincrement())
-  districtName  String  @unique
-  Partner Partner[]
+  id           Int       @id @default(autoincrement())
+  districtName String    @unique
+  stateId      Int
+  State        State     @relation(fields: [stateId], references: [id])
+  Partner      Partner[]
 }
 
 model Office {
-  id                Int @id @default(autoincrement())
-  officeName        String  @unique
+  id                Int       @id @default(autoincrement())
+  officeName        String    @unique
   officeDescription String?
-  Partner Partner[]
+  Partner           Partner[]
 }
 
 model Template {
@@ -46,11 +48,17 @@ model Template {
 }
 
 model Partner {
-  id                  Int @id @default(autoincrement())
-  partnerName         String?
-  partnerDescription  String?
-  officeId            Int
-  Office  Office?     @relation(fields: [officeId], references: [id])
-  districtId          Int
-  District  District? @relation(fields: [districtId], references: [id])
+  id                 Int      @id @default(autoincrement())
+  partnerName        String?
+  partnerDescription String?
+  officeId           Int
+  districtId         Int
+  District           District @relation(fields: [districtId], references: [id])
+  Office             Office   @relation(fields: [officeId], references: [id])
+}
+
+model State {
+  id        Int        @id @default(autoincrement())
+  stateName String     @unique
+  District  District[]
 }
