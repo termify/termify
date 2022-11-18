@@ -9,11 +9,15 @@ export default function Schedule() {
     const [gap, setGap] = useState<number>(new Date(date.year, date.month, 1).getDay() - 1);
 
     useEffect(() => {
-        setGap(new Date(date.year, date.month, 1).getDay() - 1);
+        if (new Date(date.year, date.month, 1).getDay() - 1 === -1) {
+            setGap(6);
+        } else {
+            setGap(new Date(date.year, date.month, 1).getDay() - 1);
+        }
     }, [date.month, date.year, gap]);
 
     useEffect(() => {
-        setDaysInMonth(ScheduleClass.daysInMonth(date));
+        setDaysInMonth(ScheduleClass.daysInMonth({ ...date, month: date.month + 1 }));
     }, [daysInMonth, date.month, date.year, date]);
 
     return (
@@ -120,8 +124,8 @@ export function ChangeMonth() {
     }, [monthName, date.month]);
 
     function decreaseMonth() {
-        if (date.month - 1 === 0) {
-            setDate({ ...date, month: 12, year: date.year - 1 });
+        if (date.month - 1 === -1) {
+            setDate({ ...date, month: 11, year: date.year - 1 });
             return;
         }
 
@@ -129,8 +133,8 @@ export function ChangeMonth() {
     }
 
     function increaseMonth() {
-        if (date.month + 1 === 13) {
-            setDate({ ...date, month: 1, year: date.year + 1 });
+        if (date.month + 1 === 12) {
+            setDate({ ...date, month: 0, year: date.year + 1 });
             return;
         }
 
