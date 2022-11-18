@@ -12,7 +12,7 @@ interface BookingStoreProps {
 }
 
 export const useBookingStore = create<BookingStoreProps>((set) => ({
-    pageIndex: 2,
+    pageIndex: 1,
     setPageNumber: (newValue) =>
         set((prevState) => ({
             ...prevState,

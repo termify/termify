@@ -30,7 +30,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
             setData(response);
         }
 
-        // fetchData();
+        fetchData();
     }, []);
 
     function setHref(dest: number) {
