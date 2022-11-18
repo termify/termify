@@ -1,6 +1,5 @@
 import { ComponentProps } from "react";
 
-// TODO: @Kevin Bläser fürs erste würde ich sagen machen wir angepasste UI Components
 type ButtonColorVariants = "primary" | "secondary"
 
 interface CustomButtonProps extends ComponentProps<"button">{

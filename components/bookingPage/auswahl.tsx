@@ -10,25 +10,52 @@ interface AuswahlAmtProps {
     col: number;
     row: number;
 }
+//TODO Kevin Bläser: Auswahl des Landkreises
 //TODO Kevin Bläser: AuswahlAmt Style
-//TODO Kevin Bläser: DB Connect; prisma db befüllen
-interface DataResponse {
+interface DataOffice {
     id: number;
     officeName: string;
     officeDescription?: string;
 }
 
+interface DataPartner {
+    id: number;
+}
+
+interface AllDataState {
+    id: number;
+    stateName: string;
+    district: {
+        id: number;
+        districtName: string
+    }
+}
+
+
 function AuswahlAmt({ col, row }: AuswahlAmtProps) {
     const [pos, setPos] = useState<number>(1);
-    const [data, setData] = useState<DataResponse[]>([]);
+    const [officeData, setOfficeData] = useState<DataOffice[]>([]);
+    const [stateData, setStateData] = useState<AllDataState[]>([]);
 
     useEffect(() => {
         async function fetchData() {
-            const response = (await (
+            const response = await (
                 await fetch("/api/dbquery/selectauswahl/auswahl")
-            ).json()) as DataResponse[];
+            ).json() as DataOffice[];
 
-            setData(response);
+            setOfficeData(response);
+        }
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            const response = await (
+                await fetch("/api/dbquery/selectauswahl/state")
+            ).json() as AllDataState[];
+
+            setStateData(response);
         }
 
         fetchData();
@@ -41,6 +68,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 
     return (
         <>
+        {console.log(stateData)}
             <div className={"min-h-[3rem]"}>
                 {pos !== 1 && (
                     <button
@@ -55,13 +83,13 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
             <div
                 className={`grid grid-cols-2 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden h-[32rem] scroll-smooth`}
             >
-                {data.map((value, index) => (
+                {officeData.map((value, index) => (
                     <BookingButton key={value.id} index={index}>
                         {value.officeName}
                     </BookingButton>
                 ))}
             </div>
-            {pos + 9 < data.length && (
+            {pos + 9 < officeData.length && (
                 <button
                     title="Button"
                     onClick={() => setHref(pos + 8)}
