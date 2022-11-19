@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { BsFillArrowUpCircleFill, BsFillArrowDownCircleFill } from 'react-icons/bs';
 import { useBookingStore } from '../../store/stores';
+import { suspend } from 'suspend-react';
 
 export default function AuswahlPage() {
     return <AuswahlAmt col={4} row={3} />;
@@ -21,16 +22,23 @@ interface DataResponse {
 
 function AuswahlAmt({ col, row }: AuswahlAmtProps) {
     const [pos, setPos] = useState<number>(1);
-    const [data, setData] = useState<DataResponse[]>([]);
+    // const [data, setData] = useState<DataResponse[]>([]);
 
-    useEffect(() => {
-        async function fetchData() {
-            const response = (await (await fetch('/api/dbquery/selectauswahl/auswahl')).json()) as DataResponse[];
+    // useEffect(() => {
+    //     async function fetchData() {
+    //         const response = (await (await fetch('/api/dbquery/selectauswahl/auswahl')).json()) as DataResponse[];
+    //
+    //         setData(response);
+    //     }
+    //
+    //     fetchData();
+    // }, []);
 
-            setData(response);
-        }
-
-        fetchData();
+    const data = suspend(async () => {
+        const response = (await (
+            await fetch('http://localhost:3000/api/dbquery/selectauswahl/auswahl')
+        ).json()) as DataResponse[];
+        return response;
     }, []);
 
     function setHref(dest: number) {

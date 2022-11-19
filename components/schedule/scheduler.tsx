@@ -16,7 +16,7 @@ const Scheduler = () => {
 
     return (
         <div className={`container mx-auto my-auto p-4 `}>
-            <div className={`grid ${dateWasPicked ? 'xl:grid-cols-2' : 'xl:grid-cols-1'} xl:shadow xl:h-[60vh] `}>
+            <div className={`grid ${dateWasPicked ? 'xl:grid-cols-2' : 'xl:grid-cols-1'} xl:shadow xl:h-[70vh] `}>
                 <Schedule />
                 {dateWasPicked ? <TimeSlots /> : null}
             </div>
