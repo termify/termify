@@ -1,11 +1,25 @@
+export default function Eintragung({ onClick }: any) {
+    return (
+        <form>
+            <PersonalData />
+        </form>
+    );
+}
 
-export default function Eintragung({onClick}:any){
-    return(
+function PersonalData() {
+    return (
         <div>
-            Auswahl
-            Termin
-            <button className="bg-red-300" onClick={onClick} >Eintragung</button>
-            Abschluss
+            <h3>Persönliche Daten</h3>
+            <InputField />
         </div>
-    )
+    );
+}
+
+function InputField() {
+    return (
+        <div>
+            <label>Vorname</label>
+            <input placeholder="holder" />
+        </div>
+    );
 }

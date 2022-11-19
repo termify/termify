@@ -62,3 +62,10 @@ model State {
   stateName String     @unique
   District  District[]
 }
+
+//PartnerÖffnungszeiten
+//PartnerTerminslots
+
+//Terminslots Boolean (Blackliste | Whiteliste --> Default), Datum, von (default 00:00), bis (default 23:59) , (Wiederholung)
+//TerminslotSettings  Intervall [default 30]
+//Öffnugnszeiten Array:; Wochentag [Mo, Di, Mi, Do, Fr, Sa, So]; Zeitfenster
