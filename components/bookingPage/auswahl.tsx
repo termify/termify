@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BsFillArrowUpCircleFill } from 'react-icons/bs';
 import { useBookingStore } from '../../store/stores';
 import { suspend } from 'suspend-react';
-import { useBaseUrl } from '../../lib/baseUrl';
+import { baseUrl } from '../../lib/baseUrl';
 
 export default function AuswahlPage() {
     return <AuswahlAmt col={4} row={3} />;
@@ -43,12 +43,11 @@ interface BookingDataProps {
 function AuswahlAmt({ col, row }: AuswahlAmtProps) {
     const [pos, setPos] = useState<number>(1);
     const [partner, setPartner] = useState<DataPartner[]>([]);
-    const baseUrl = useBaseUrl();
 
     const data = suspend(async () => {
-        const officeResponse = (await (await fetch(`${baseUrl}/api/dbquery/booking/office`)).json()) as DataOffice[];
+        const officeResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/office`)).json()) as DataOffice[];
 
-        const stateResponse = (await (await fetch(`${baseUrl}/api/dbquery/booking/state`)).json()) as AllDataState[];
+        const stateResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/state`)).json()) as AllDataState[];
 
         return {
             officeData: officeResponse,
@@ -71,7 +70,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
         });
 
         const response = await (
-            await fetch(`${baseUrl}/api/dbquery/booking/partner`, {
+            await fetch(`${baseUrl()}/api/dbquery/booking/partner`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
