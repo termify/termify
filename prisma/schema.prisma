@@ -66,6 +66,7 @@ model State {
   District  District[]
 }
 
+//TODO Kevin Bläser: Zeitslots befüllen
 model PartnerAppointment {
   id               Int                @id @default(autoincrement())
   partnerId        Int
@@ -85,11 +86,9 @@ model AppointmentSettings {
   partnerId Int
   Partner   Partner @relation(fields: [partnerId], references: [id])
   intervall Int     @default(30)
-  //Partner
 }
 
 model AppointmentSlots {
-  //Partner
   id                 Int                @id @default(autoincrement())
   paId               Int
   PartnerAppointment PartnerAppointment @relation(fields: [paId], references: [id])

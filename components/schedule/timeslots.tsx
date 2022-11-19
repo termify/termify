@@ -3,6 +3,7 @@ import { useShowPickedValue } from '../../lib/schedule';
 import { useBookingStore, useScheduleStore } from '../../store/stores';
 import { BsFillArrowLeftCircleFill } from 'react-icons/bs';
 
+//TODO Kevin Bläser: Ersetze Obj durch DB Query
 const times: string[] = [
     '09:00',
     '09:30',
