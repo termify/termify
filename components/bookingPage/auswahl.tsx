@@ -1,5 +1,5 @@
-import React, { ReactNode, useEffect, useState } from 'react';
-import { BsFillArrowUpCircleFill, BsFillArrowDownCircleFill } from 'react-icons/bs';
+import React, { useState } from 'react';
+import { BsFillArrowUpCircleFill } from 'react-icons/bs';
 import { useBookingStore } from '../../store/stores';
 import { suspend } from 'suspend-react';
 import { useBaseUrl } from '../../lib/baseUrl';
@@ -102,9 +102,9 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
                 </div>
             ) : (
                 <div className={'mt-24'}>
-                    <h3 className={'text-center p-8 text-5xl'}>Bitte wählen Sie Ihren Bezirk aus</h3>
-                    <div className="p-1 w-1/2 container mx-auto  bg-gradient-to-r from-sky-400 to-emerald-500 rounded shadow-xl relative">
-                        <select className="w-full p-6 text-2xl rounded bg-white" onChange={fetchPartner}>
+                    <h3 className={'text-center p-8 text-xl xl:text-5xl'}>Bitte wählen Sie Ihren Bezirk aus</h3>
+                    <div className="p-1 w-1/2 container mx-auto bg-gradient-to-r from-sky-400 to-emerald-500 rounded shadow-xl relative">
+                        <select className="w-full  rounded bg-white p-2 xl:p-6 xl:text-2xl " onChange={fetchPartner}>
                             <option>--- Bezirk wählen ---</option>
                             {data.stateData.map((e, i) => (
                                 <optgroup key={e.stateName + i} label={e.stateName}>
@@ -156,12 +156,12 @@ function BookingButton({ partnerData, index }: BookinButtonProps) {
                 onClick={onClickHandler}
                 id={`s-${index}`}
                 className={
-                    'bg-white w-full font-bold min-h-[8rem] xl:min-h-[13rem] group-hover:bg-gradient-to-r transition-all group-hover:from-sky-400 group-hover:to-emerald-500'
+                    'bg-white w-full font-bold min-h-[5rem] group-hover:bg-gradient-to-r transition-all group-hover:from-sky-400 group-hover:to-emerald-500 xl:min-h-[13rem]'
                 }
             >
                 <p
                     className={
-                        ' text-5xl bg-gradient-to-r from-sky-400 to-emerald-500 p-2 bg-clip-text text-transparent transition-all group-hover:text-white'
+                        'bg-gradient-to-r from-sky-400 to-emerald-500 p-2 bg-clip-text text-base break-words text-transparent transition-all xl:text-5xl group-hover:text-white'
                     }
                 >
                     {(partnerData.Office as OfficeProps).officeName}
