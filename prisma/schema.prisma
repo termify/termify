@@ -66,7 +66,6 @@ model State {
   District  District[]
 }
 
-//TODO Kevin Bläser: Zeitslots befüllen
 model PartnerAppointment {
   id               Int                @id @default(autoincrement())
   partnerId        Int
@@ -84,26 +83,26 @@ model PartnerOpening {
 model AppointmentSettings {
   id        Int     @id @default(autoincrement())
   partnerId Int
-  Partner   Partner @relation(fields: [partnerId], references: [id])
   intervall Int     @default(30)
+  Partner   Partner @relation(fields: [partnerId], references: [id])
 }
 
 model AppointmentSlots {
   id                 Int                @id @default(autoincrement())
   paId               Int
-  PartnerAppointment PartnerAppointment @relation(fields: [paId], references: [id])
   isBlackList        Boolean            @default(true)
-  dateFrom           DateTime           @db.Timestamptz()
-  dateTo             DateTime           @db.Timestamptz()
+  dateFrom           DateTime           @db.Timestamptz(6)
+  dateTo             DateTime           @db.Timestamptz(6)
+  PartnerAppointment PartnerAppointment @relation(fields: [paId], references: [id])
 }
 
 model Opening {
   id             Int            @id @default(autoincrement())
   poId           Int
-  PartnerOpening PartnerOpening @relation(fields: [poId], references: [id])
   weekday        Weekday
-  timeslotFrom   DateTime       @db.Timetz()
-  timeslotTo     DateTime       @db.Timetz()
+  timeslotFrom   DateTime       @db.Timetz(6)
+  timeslotTo     DateTime       @db.Timetz(6)
+  PartnerOpening PartnerOpening @relation(fields: [poId], references: [id])
 }
 
 enum Weekday {
@@ -115,7 +114,3 @@ enum Weekday {
   Samstag
   Sonntag
 }
-
-//Terminslots Boolean (Blackliste | Whiteliste --> Default), Datum, von (default 00:00), bis (default 23:59) , (Wiederholung)
-//TerminslotSettings  Intervall [default 30]
-//Öffnugnszeiten Array:; Wochentag [Mo, Di, Mi, Do, Fr, Sa, So]; Zeitfenster
