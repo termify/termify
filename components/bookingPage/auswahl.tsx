@@ -28,39 +28,27 @@ interface AllDataState {
     stateName: string;
     district: {
         id: number;
-        districtName: string
-    }
+        districtName: string;
+    };
 }
-
 
 function AuswahlAmt({ col, row }: AuswahlAmtProps) {
     const [pos, setPos] = useState<number>(1);
-    const [officeData, setOfficeData] = useState<DataOffice[]>([]);
-    const [stateData, setStateData] = useState<AllDataState[]>([]);
-
-    useEffect(() => {
-        async function fetchData() {
-            const response = await (
-                await fetch("/api/dbquery/selectauswahl/auswahl")
-            ).json() as DataOffice[];
-
-            setOfficeData(response);
-        }
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        async function fetchData() {
-            const response = await (
-                await fetch("/api/dbquery/selectauswahl/state")
-            ).json() as AllDataState[];
+    //const [stateData, setStateData] = useState<AllDataState[]>([]);
 
     const data = suspend(async () => {
-        const response = (await (
+        const officeResponse = (await (
             await fetch('http://localhost:3000/api/dbquery/selectauswahl/auswahl')
-        ).json()) as DataResponse[];
-        return response;
+        ).json()) as DataOffice[];
+
+        const stateResponse = (await (
+            await fetch('http://localhost:3000/api/dbquery/selectauswahl/state')
+        ).json()) as AllDataState[];
+
+        return {
+            officeData: officeResponse,
+            stateData: stateResponse,
+        };
     }, []);
 
     function setHref(dest: number) {
@@ -70,8 +58,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 
     return (
         <>
-        {console.log(stateData)}
-            <div className={"min-h-[3rem]"}>
+            <div className={'min-h-[3rem]'}>
                 {pos !== 1 && (
                     <button title="Button" onClick={() => setHref(pos - 8)} className={'mx-auto flex justify-center'}>
                         <BsFillArrowUpCircleFill className={'h-12 w-12'} />
@@ -81,19 +68,15 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
             <div
                 className={`grid grid-cols-2 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden h-[32rem] scroll-smooth`}
             >
-                {officeData.map((value, index) => (
+                {data.officeData.map((value, index) => (
                     <BookingButton key={value.id} index={index}>
-                        {value.officeName}
+                        {/* {value.officeName} */}
                     </BookingButton>
                 ))}
             </div>
-            {pos + 9 < officeData.length && (
-                <button
-                    title="Button"
-                    onClick={() => setHref(pos + 8)}
-                    className={"mx-auto flex justify-center"}
-                >
-                    <BsFillArrowDownCircleFill className={"h-12 w-12"} />
+            {pos + 9 < data.officeData.length && (
+                <button title="Button" onClick={() => setHref(pos + 8)} className={'mx-auto flex justify-center'}>
+                    <BsFillArrowDownCircleFill className={'h-12 w-12'} />
                 </button>
             )}
         </>
