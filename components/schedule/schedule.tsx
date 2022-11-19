@@ -86,7 +86,7 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
         <div className={'p-1'}>
             <button
                 onClick={onClickHandler}
-                className={`${setColor} m-auto flex justify-center items-center rounded-full transition-colors transition-opacity transition-transform w-10 h-10 md:h-16 md:w-16 xl:text-2xl xl:h-18 xl:w-18 ${
+                className={`${setColor} m-auto flex justify-center items-center rounded-full transition-all w-10 h-10 md:h-16 md:w-16 xl:text-2xl xl:h-18 xl:w-18 ${
                     picked
                         ? 'xl:hover:from-sky-400 xl:hover:to-emerald-500 text-sky-50'
                         : 'xl:hover:from-sky-400/[50%] xl:hover:to-emerald-500/[50%]'
@@ -106,7 +106,7 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 
 function TodayDot() {
     return (
-        <div className="relative flex justify-center relative origin-center bottom-1 bottom-3 left-1">
+        <div className="relative flex justify-center origin-center bottom-3 left-1">
             <span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-sky-400 to-emerald-500 opacity-75  "></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gradient-to-r from-sky-400 to-emerald-500 "></span>
         </div>

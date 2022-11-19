@@ -3,6 +3,8 @@ import create from 'zustand';
 type BookingDataProps = {
     officeId: number;
     officeName: string;
+    date: DateProps;
+    time: string;
 };
 interface BookingStoreProps {
     pageIndex: number;
@@ -21,6 +23,12 @@ export const useBookingStore = create<BookingStoreProps>((set) => ({
     bookingData: {
         officeId: 0,
         officeName: '',
+        date: {
+            day: -1,
+            month: -1,
+            year: -1,
+        },
+        time: '',
     },
     setBookingData: (newValue) => set((prevState) => ({ ...prevState, bookingData: newValue })),
 }));

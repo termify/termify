@@ -1,7 +1,8 @@
-import { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { BsFillArrowUpCircleFill, BsFillArrowDownCircleFill } from 'react-icons/bs';
 import { useBookingStore } from '../../store/stores';
 import { suspend } from 'suspend-react';
+import { useBaseUrl } from '../../lib/baseUrl';
 
 export default function AuswahlPage() {
     return <AuswahlAmt col={4} row={3} />;
@@ -21,29 +22,33 @@ interface DataOffice {
 
 interface DataPartner {
     id: number;
+    partnerName: string;
+    partnerDescription: string;
+    districtId: number;
+    Office: OfficeProps[] | OfficeProps;
 }
 
 interface AllDataState {
     id: number;
     stateName: string;
-    district: {
-        id: number;
-        districtName: string;
-    };
+    District: DistrictProps[];
+}
+
+interface BookingDataProps {
+    state: string;
+    stateId: number;
+    office: string;
 }
 
 function AuswahlAmt({ col, row }: AuswahlAmtProps) {
     const [pos, setPos] = useState<number>(1);
-    //const [stateData, setStateData] = useState<AllDataState[]>([]);
+    const [partner, setPartner] = useState<DataPartner[]>([]);
+    const baseUrl = useBaseUrl();
 
     const data = suspend(async () => {
-        const officeResponse = (await (
-            await fetch('http://localhost:3000/api/dbquery/selectauswahl/auswahl')
-        ).json()) as DataOffice[];
+        const officeResponse = (await (await fetch(`${baseUrl}/api/dbquery/booking/office`)).json()) as DataOffice[];
 
-        const stateResponse = (await (
-            await fetch('http://localhost:3000/api/dbquery/selectauswahl/state')
-        ).json()) as AllDataState[];
+        const stateResponse = (await (await fetch(`${baseUrl}/api/dbquery/booking/state`)).json()) as AllDataState[];
 
         return {
             officeData: officeResponse,
@@ -56,6 +61,28 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
         document.location.href = `#s-${dest}`;
     }
 
+    async function fetchPartner(event: React.ChangeEvent<HTMLSelectElement>) {
+        let id: number;
+
+        data.stateData.forEach((e, i) => {
+            e.District.map((entrie, index) => {
+                if (entrie.districtName === event.target.value) id = entrie.id;
+            });
+        });
+
+        const response = await (
+            await fetch(`${baseUrl}/api/dbquery/booking/partner`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ districtId: id! || 0 }),
+            })
+        ).json();
+
+        setPartner(response);
+    }
+
     return (
         <>
             <div className={'min-h-[3rem]'}>
@@ -65,50 +92,82 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
                     </button>
                 )}
             </div>
-            <div
-                className={`grid grid-cols-2 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden h-[32rem] scroll-smooth`}
-            >
-                {data.officeData.map((value, index) => (
-                    <BookingButton key={value.id} index={index}>
-                        {/* {value.officeName} */}
-                    </BookingButton>
-                ))}
-            </div>
-            {pos + 9 < data.officeData.length && (
-                <button title="Button" onClick={() => setHref(pos + 8)} className={'mx-auto flex justify-center'}>
-                    <BsFillArrowDownCircleFill className={'h-12 w-12'} />
-                </button>
+            {partner && partner.length > 0 ? (
+                <div
+                    className={`grid grid-cols-2 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden scroll-smooth`}
+                >
+                    {partner.map((e, i) => (
+                        <BookingButton key={e.partnerName + i} index={i} partnerData={e} />
+                    ))}
+                </div>
+            ) : (
+                <div className={'mt-24'}>
+                    <h3 className={'text-center p-8 text-5xl'}>Bitte wählen Sie Ihren Bezirk aus</h3>
+                    <div className="p-1 w-1/2 container mx-auto  bg-gradient-to-r from-sky-400 to-emerald-500 rounded shadow-xl relative">
+                        <select className="w-full p-6 text-2xl rounded bg-white" onChange={fetchPartner}>
+                            <option>--- Bezirk wählen ---</option>
+                            {data.stateData.map((e, i) => (
+                                <optgroup key={e.stateName + i} label={e.stateName}>
+                                    {e.District.map((f, j) => (
+                                        <option key={f.districtName + j}>{f.districtName}</option>
+                                    ))}
+                                </optgroup>
+                            ))}
+                        </select>
+                    </div>
+                </div>
             )}
         </>
     );
 }
 
+interface DistrictProps {
+    id: number;
+    districtName: string;
+}
+interface OfficeProps {
+    id: number;
+    officeName: string;
+    officeDescription: string;
+}
+
 interface BookinButtonProps {
-    children: ReactNode;
+    partnerData: DataPartner;
     index: number;
 }
 
-function BookingButton({ children, index }: BookinButtonProps) {
+function BookingButton({ partnerData, index }: BookinButtonProps) {
+    const bookingData = useBookingStore((state) => state.bookingData);
     const setBookingData = useBookingStore((state) => state.setBookingData);
     const setBookingPage = useBookingStore((state) => state.setPageNumber);
 
     function onClickHandler(e: React.PointerEvent<HTMLButtonElement>) {
         setBookingData({
+            ...bookingData,
             officeId: index,
-            officeName: children as string,
+            officeName: (partnerData.Office as OfficeProps).officeName,
         });
-
         setBookingPage(2);
     }
 
     return (
-        <button
-            onClick={onClickHandler}
-            id={`s-${index}`}
-            className={'bg-emerald-500 m-5 min-h-[8rem] xl:min-h-[13rem]'}
-        >
-            {children}
-        </button>
+        <div className={'p-1 m-5 group bg-gradient-to-r from-sky-400 to-emerald-500 transition-all  hover:scale-105'}>
+            <button
+                onClick={onClickHandler}
+                id={`s-${index}`}
+                className={
+                    'bg-white w-full font-bold min-h-[8rem] xl:min-h-[13rem] group-hover:bg-gradient-to-r transition-all group-hover:from-sky-400 group-hover:to-emerald-500'
+                }
+            >
+                <p
+                    className={
+                        ' text-5xl bg-gradient-to-r from-sky-400 to-emerald-500 p-2 bg-clip-text text-transparent transition-all group-hover:text-white'
+                    }
+                >
+                    {(partnerData.Office as OfficeProps).officeName}
+                </p>
+            </button>
+        </div>
     );
 }
 

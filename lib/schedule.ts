@@ -7,15 +7,38 @@ interface Months {
     [lang: string]: Record<string, string>;
 }
 
+export const useDateIsValid = () => {
+    const pickedValue = useScheduleStore((state) => state.pickedDay);
+
+    return (
+        JSON.stringify(pickedValue) !==
+        JSON.stringify({
+            day: 1,
+            month: 1,
+            year: 1900,
+        })
+    );
+};
+
 export const useShowPickedValue = () => {
     const pickedValue = useScheduleStore((state) => state.pickedDay);
     const pickedDate = new Date(pickedValue.year, pickedValue.month, pickedValue.day);
 
-    return pickedDate.toLocaleDateString('de-DE', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-    });
+    const isValidDate =
+        JSON.stringify(pickedValue) !==
+        JSON.stringify({
+            day: 1,
+            month: 1,
+            year: 1900,
+        });
+
+    return isValidDate
+        ? pickedDate.toLocaleDateString('de-DE', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+          })
+        : 'Bitte wählen Sie einen Tag';
 };
 
 export default class ScheduleClass {

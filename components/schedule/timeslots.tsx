@@ -1,4 +1,6 @@
+import { toast } from 'react-hot-toast';
 import ScheduleClass, { useShowPickedValue } from '../../lib/schedule';
+import { useBookingStore, useScheduleStore } from '../../store/stores';
 
 const times: string[] = [
     '09:00',
@@ -22,8 +24,7 @@ export default function TimeSlots() {
         <div className={'ml-8 overflow-auto transition-all'}>
             <div
                 className={
-                    'p-4 bg-gradient-to-r from-sky-400 to-emerald-500 shadow-md text-code .' +
-                    '-50 font-bold xl:text-2xl'
+                    'p-4 bg-gradient-to-r from-sky-400 to-emerald-500 shadow-md text-sky-50 font-bold xl:text-2xl'
                 }
             >
                 {today}
@@ -42,8 +43,36 @@ interface TimeSlotEntrieProps {
 }
 
 function TimeSlotEntrie({ time }: TimeSlotEntrieProps) {
+    const pickedDate = useScheduleStore((state) => state.pickedDay);
+    const bookingData = useBookingStore((state) => state.bookingData);
+    const setBookingData = useBookingStore((state) => state.setBookingData);
+    const setBookingPage = useBookingStore((state) => state.setPageNumber);
+
+    function onClickHandler(e: React.PointerEvent<HTMLButtonElement>) {
+        const isValid =
+            JSON.stringify(pickedDate) !==
+            JSON.stringify({
+                day: 1,
+                month: 1,
+                year: 1900,
+            });
+
+        if (!isValid) {
+            toast.error('Bitte wählen Sie ein passendes Datum');
+            return;
+        }
+
+        setBookingData({
+            ...bookingData,
+            time,
+            date: pickedDate,
+        });
+        setBookingPage(3);
+    }
+
     return (
         <button
+            onClick={onClickHandler}
             className={
                 'bg-red-300 p-1 shadow rounded bg-gradient-to-r from-sky-400 to-emerald-500 w-2/3 mx-auto transition-all xl:hover:scale-110'
             }
