@@ -1,25 +1,18 @@
-import AuswahlPage from "../../components/bookingPage/auswahl";
-import Taskleiste from "../../components/bookingPage/taskleiste";
-import {useBookingStore} from "../../store/store";
-
+import AuswahlPage from '../../components/bookingPage/auswahl';
+import Taskleiste from '../../components/bookingPage/taskleiste';
+import Termin from '../../components/bookingPage/termin';
+import { useBookingStore } from '../../store/stores';
 
 const BookingPage = () => {
+    const bookingPageNumber = useBookingStore((state) => state.pageIndex);
+    const setPageNumber = useBookingStore((state) => state.setPageNumber);
 
-    const bookingPageNumber = useBookingStore((state) => state.pageIndex );
-    const setPageNumber = useBookingStore((state) => state.setPageNumber)
-
-    return(
+    return (
         <div>
             <Taskleiste />
-            {
-                bookingPageNumber === 1 ? <AuswahlPage /> : null
-            }
-
+            {bookingPageNumber === 1 ? <AuswahlPage /> : bookingPageNumber === 2 ? <Termin /> : null}
         </div>
-    )
-}
+    );
+};
 
-
-
-
-export default BookingPage
+export default BookingPage;

@@ -1,6 +1,6 @@
-import { ReactNode, useEffect, useState } from "react";
-import { BsFillArrowUpCircleFill, BsFillArrowDownCircleFill } from "react-icons/bs";
-import { useBookingStore } from "../../store/store";
+import { ReactNode, useEffect, useState } from 'react';
+import { BsFillArrowUpCircleFill, BsFillArrowDownCircleFill } from 'react-icons/bs';
+import { useBookingStore } from '../../store/stores';
 
 export default function AuswahlPage() {
     return <AuswahlAmt col={4} row={3} />;
@@ -71,12 +71,8 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
         {console.log(stateData)}
             <div className={"min-h-[3rem]"}>
                 {pos !== 1 && (
-                    <button
-                        title="Button"
-                        onClick={() => setHref(pos - 8)}
-                        className={"mx-auto flex justify-center"}
-                    >
-                        <BsFillArrowUpCircleFill className={"h-12 w-12"} />
+                    <button title="Button" onClick={() => setHref(pos - 8)} className={'mx-auto flex justify-center'}>
+                        <BsFillArrowUpCircleFill className={'h-12 w-12'} />
                     </button>
                 )}
             </div>
@@ -124,7 +120,7 @@ function BookingButton({ children, index }: BookinButtonProps) {
         <button
             onClick={onClickHandler}
             id={`s-${index}`}
-            className={"bg-emerald-500 m-5 min-h-[8rem] xl:min-h-[13rem]"}
+            className={'bg-emerald-500 m-5 min-h-[8rem] xl:min-h-[13rem]'}
         >
             {children}
         </button>
