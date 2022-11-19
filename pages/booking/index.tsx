@@ -4,6 +4,7 @@ import Termin from '../../components/bookingPage/termin';
 import { useBookingStore } from '../../store/stores';
 import { Suspense } from 'react';
 import Eintragung from '../../components/bookingPage/eintragung';
+import Abschluss from '../../components/bookingPage/abschluss';
 
 const BookingPage = () => {
     const bookingPageNumber = useBookingStore((state) => state.pageIndex);
@@ -19,6 +20,8 @@ const BookingPage = () => {
                     <Termin />
                 ) : bookingPageNumber === 3 ? (
                     <Eintragung />
+                ) : bookingPageNumber === 4 ? (
+                    <Abschluss />
                 ) : null}
             </Suspense>
         </>

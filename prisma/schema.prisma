@@ -48,13 +48,16 @@ model Template {
 }
 
 model Partner {
-  id                 Int      @id @default(autoincrement())
-  partnerName        String?
-  partnerDescription String?
-  officeId           Int
-  districtId         Int
-  District           District @relation(fields: [districtId], references: [id])
-  Office             Office   @relation(fields: [officeId], references: [id])
+  id                  Int                   @id @default(autoincrement())
+  partnerName         String?
+  partnerDescription  String?
+  officeId            Int
+  districtId          Int
+  District            District              @relation(fields: [districtId], references: [id])
+  Office              Office                @relation(fields: [officeId], references: [id])
+  AppointmentSettings AppointmentSettings[]
+  PartnerAppointment  PartnerAppointment[]
+  PartnerOpening      PartnerOpening[]
 }
 
 model State {
@@ -63,8 +66,56 @@ model State {
   District  District[]
 }
 
-//PartnerÖffnungszeiten
-//PartnerTerminslots
+model PartnerAppointment {
+  id               Int                @id @default(autoincrement())
+  partnerId        Int
+  Partner          Partner            @relation(fields: [partnerId], references: [id])
+  AppointmentSlots AppointmentSlots[]
+}
+
+model PartnerOpening {
+  id        Int       @id @default(autoincrement())
+  partnerId Int
+  Partner   Partner   @relation(fields: [partnerId], references: [id])
+  Opening   Opening[]
+}
+
+model AppointmentSettings {
+  id        Int     @id @default(autoincrement())
+  partnerId Int
+  Partner   Partner @relation(fields: [partnerId], references: [id])
+  intervall Int     @default(30)
+  //Partner
+}
+
+model AppointmentSlots {
+  //Partner
+  id                 Int                @id @default(autoincrement())
+  paId               Int
+  PartnerAppointment PartnerAppointment @relation(fields: [paId], references: [id])
+  isBlackList        Boolean            @default(true)
+  dateFrom           DateTime           @db.Timestamptz()
+  dateTo             DateTime           @db.Timestamptz()
+}
+
+model Opening {
+  id             Int            @id @default(autoincrement())
+  poId           Int
+  PartnerOpening PartnerOpening @relation(fields: [poId], references: [id])
+  weekday        Weekday
+  timeslotFrom   DateTime       @db.Timetz()
+  timeslotTo     DateTime       @db.Timetz()
+}
+
+enum Weekday {
+  Montag
+  Dienstag
+  Mittwoch
+  Donnertag
+  Freitag
+  Samstag
+  Sonntag
+}
 
 //Terminslots Boolean (Blackliste | Whiteliste --> Default), Datum, von (default 00:00), bis (default 23:59) , (Wiederholung)
 //TerminslotSettings  Intervall [default 30]
