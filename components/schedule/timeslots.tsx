@@ -22,12 +22,13 @@ export default function TimeSlots() {
         <div className={'ml-8 overflow-auto transition-all'}>
             <div
                 className={
-                    'p-4 bg-gradient-to-r from-sky-400 to-emerald-500 shadow-md text-sky-50 font-bold xl:text-2xl'
+                    'p-4 bg-gradient-to-r from-sky-400 to-emerald-500 shadow-md text-code .' +
+                    '-50 font-bold xl:text-2xl'
                 }
             >
                 {today}
             </div>
-            <div className={'p-2 h-full flex flex-col gap-4'}>
+            <div className={'p-4 h-full flex flex-col gap-4'}>
                 {times.map((e, i) => (
                     <TimeSlotEntrie key={i} time={e} />
                 ))}
