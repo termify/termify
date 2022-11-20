@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { hasCookie } from '../lib/cookie';
+import { OpeningData } from '../pages/api/dbquery/booking/partnercalendar';
 
 type BookingDataProps = {
     officeId: number;
@@ -34,13 +34,6 @@ export const useBookingStore = create<BookingStoreProps>((set) => ({
     setBookingData: (newValue) => set((prevState) => ({ ...prevState, bookingData: newValue })),
 }));
 
-interface ScheduleStoreProps {
-    date: ScheduleDateProps;
-    setDate: (newDate: ScheduleDateProps) => void;
-    pickedDay: DateProps;
-    setPickedDay: (pickedDay: DateProps) => void;
-}
-
 export type DateProps = {
     day: number;
     month: number;
@@ -50,6 +43,15 @@ export type DateProps = {
 type ScheduleDateProps = DateProps & {
     dayInWeek: number;
 };
+
+interface ScheduleStoreProps {
+    date: ScheduleDateProps;
+    setDate: (newDate: ScheduleDateProps) => void;
+    pickedDay: DateProps;
+    setPickedDay: (pickedDay: DateProps) => void;
+    allowedDates: OpeningData[];
+    setAllowedDates: (allDates: OpeningData[]) => void;
+}
 
 export const useScheduleStore = create<ScheduleStoreProps>((set) => ({
     date: {
@@ -65,6 +67,15 @@ export const useScheduleStore = create<ScheduleStoreProps>((set) => ({
         year: 1900,
     },
     setPickedDay: (pickedDay) => set((prevState) => ({ ...prevState, pickedDay: pickedDay })),
+    allowedDates: [
+        {
+            id: -1,
+            weekday: '',
+            timeslotFrom: null,
+            timeslotTo: null,
+        },
+    ],
+    setAllowedDates: (allDates) => set((prevState) => ({ ...prevState, allowedDates: allDates })),
 }));
 
 interface AuthStoreProps {

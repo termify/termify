@@ -43,6 +43,7 @@ interface BookingDataProps {
 function AuswahlAmt({ col, row }: AuswahlAmtProps) {
     const [pos, setPos] = useState<number>(1);
     const [partner, setPartner] = useState<DataPartner[]>([]);
+    const bookingData = useBookingStore((state) => state.bookingData);
 
     const data = suspend(async () => {
         const officeResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/office`)).json()) as DataOffice[];
@@ -52,7 +53,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
             officeData: officeResponse,
             stateData: stateResponse,
         };
-    }, []);
+    }, [`auswahl-${JSON.stringify(bookingData)}`]);
 
     function setHref(dest: number) {
         setPos(dest);

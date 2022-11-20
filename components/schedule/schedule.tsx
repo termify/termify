@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import ScheduleClass from '../../lib/schedule';
+import ScheduleClass, { parseDayStringToDayNumber, parseDayStringToDayNumberArray } from '../../lib/schedule';
 import { RiArrowDropRightLine, RiArrowDropLeftLine } from 'react-icons/ri';
 import { useScheduleStore } from '../../store/stores';
 
@@ -54,8 +54,12 @@ interface ScheduleDay {
 function ScheduleDay({ dayNumber, date }: ScheduleDay) {
     const pickedDate = useScheduleStore((state) => state.pickedDay);
     const setPickedDate = useScheduleStore((state) => state.setPickedDay);
+    const allowedDates = useScheduleStore((state) => state.allowedDates);
 
+    const [canPickDay, setCanPickDay] = useState<number[]>(parseDayStringToDayNumberArray(allowedDates));
     const [picked, setPicked] = useState<boolean>(false);
+
+    const today = new Date(date?.year as number, date?.month as number, dayNumber);
 
     useMemo(() => {
         const isPicked =
@@ -74,7 +78,7 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
             });
     }
 
-    const todayIsNewerThenYesterday = new Date() <= new Date(date?.year as number, date?.month as number, dayNumber);
+    const todayIsNewerThenYesterday = new Date() <= today && canPickDay.includes(today.getDay());
 
     const setColor = picked
         ? 'bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-50 font-bold '

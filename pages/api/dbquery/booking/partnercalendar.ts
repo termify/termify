@@ -2,22 +2,25 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '../../../../lib/database';
 
 //TODO Kevin Bläser: Zeitslot Abfragen erstellen
-type AllOpeningData = {
+
+export type OpeningData = {
     id: number;
-    Opening: {
-        id: number;
-        weekday: string;
-        timeslotFrom: Date;
-        timeslotTo: Date;
-    };
+    weekday: string;
+    timeslotFrom: Date | null;
+    timeslotTo: Date | null;
 };
 
-type AllASettingsData = {
+export type AllOpeningData = {
+    id: number;
+    Opening: OpeningData[];
+};
+
+export type AllASettingsData = {
     id: number;
     intervall: number;
 };
 
-type AllASlotsData = {
+export type AllASlotsData = {
     id: number;
     AppointmentSlots: {
         id: number;
@@ -27,7 +30,7 @@ type AllASlotsData = {
     };
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Getreponse>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<GetResponse>) {
     switch (req.method) {
         case 'GET':
             await getController(req, res);
@@ -35,13 +38,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 }
 
-interface Getreponse {
+export interface GetResponse {
     openingData: AllOpeningData[];
     appointmentData: AllASlotsData[];
     settingData: AllASettingsData[];
 }
 
-const getController = async (req: NextApiRequest, res: NextApiResponse<Getreponse>) => {
+const getController = async (req: NextApiRequest, res: NextApiResponse<GetResponse>) => {
     const openingData = (await db.partnerOpening.findMany({
         where: {
             Opening: {

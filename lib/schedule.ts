@@ -1,11 +1,32 @@
 import { ScheduleDate } from '../components/schedule/schedule';
 import { useScheduleStore } from '../store/stores';
+import { OpeningData } from '../pages/api/dbquery/booking/partnercalendar';
 
 export type Language = 'de';
 
 interface Months {
     [lang: string]: Record<string, string>;
 }
+
+export const parseDayStringToDayNumber: Record<string, number> = {
+    Sonntag: 0,
+    Montag: 1,
+    Dienstag: 2,
+    Mittwoch: 3,
+    Donnerstag: 4,
+    Freitag: 5,
+    Samstag: 6,
+};
+
+export const parseDayStringToDayNumberArray = (allowedDates: OpeningData[]): number[] => {
+    const returnArray: number[] = [];
+
+    allowedDates.forEach((e) => {
+        returnArray.push(parseDayStringToDayNumber[e.weekday]);
+    });
+
+    return returnArray;
+};
 
 export const useDateIsValid = () => {
     const pickedValue = useScheduleStore((state) => state.pickedDay);
