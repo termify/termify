@@ -10,6 +10,7 @@ import { AiFillHome } from 'react-icons/ai';
 import { FaSignOutAlt, FaCalendarAlt } from 'react-icons/fa';
 import { RiDashboardFill } from 'react-icons/ri';
 import { deleteCookie, getCookie } from '../../lib/cookie';
+import { useAuthStore } from '../../store/stores';
 
 export default function Header() {
     return (
@@ -34,7 +35,7 @@ export default function Header() {
 
 function DesktopNavigation() {
     const [session, setSession] = useState<AuthSession>();
-    const router = useRouter();
+    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
     useEffect(() => {
         const authCookie = getCookie('auth') as { auth: { id: string; token: string } };
@@ -44,7 +45,7 @@ function DesktopNavigation() {
         } else {
             setSession(undefined);
         }
-    }, [router.asPath]);
+    }, [isLoggedIn]);
 
     return (
         <div className="hidden gap-4 flex-grow xl:flex xl:items-center xl:justify-end">
@@ -111,10 +112,13 @@ export function NavigationLink({ name, to, setOpen, icon }: NavigationLink) {
 }
 
 export function LogoutLink({ name, to, onClick }: SpecialLink) {
+    const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+
     async function onClickHandler() {
         toast.success('Erfolgreich ausgeloggt');
-        // sessionStorage.removeItem("auth");
-        await deleteCookie('auth', '/');
+        deleteCookie('auth', '/');
+        setLoggedIn(false);
+
         if (onClick) onClick();
     }
 
