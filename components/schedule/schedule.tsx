@@ -77,9 +77,9 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
     const todayIsNewerThenYesterday = new Date() <= new Date(date?.year as number, date?.month as number, dayNumber);
 
     const setColor = picked
-        ? 'bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-900 font-bold '
+        ? 'bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-50 font-bold '
         : todayIsNewerThenYesterday
-        ? 'bg-gradient-to-r from-sky-400/[5%] to-emerald-500/[5%] text-sky-60'
+        ? 'bg-gradient-to-r from-sky-400/[5%] to-emerald-500/[5%] text-sky-900'
         : 'bg-slate-100/10';
 
     return (
