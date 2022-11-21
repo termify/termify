@@ -56,8 +56,8 @@ model Partner {
   District            District              @relation(fields: [districtId], references: [id])
   Office              Office                @relation(fields: [officeId], references: [id])
   AppointmentSettings AppointmentSettings[]
-  PartnerAppointment  PartnerAppointment[]
-  PartnerOpening      PartnerOpening[]
+  AppointmentSlots    AppointmentSlots[]
+  Opening             Opening[]
 }
 
 model State {
@@ -66,43 +66,30 @@ model State {
   District  District[]
 }
 
-model PartnerAppointment {
-  id               Int                @id @default(autoincrement())
-  partnerId        Int
-  Partner          Partner            @relation(fields: [partnerId], references: [id])
-  AppointmentSlots AppointmentSlots[]
-}
-
-model PartnerOpening {
-  id        Int       @id @default(autoincrement())
-  partnerId Int
-  Partner   Partner   @relation(fields: [partnerId], references: [id])
-  Opening   Opening[]
-}
-
 model AppointmentSettings {
-  id        Int     @id @default(autoincrement())
-  partnerId Int
-  intervall Int     @default(30)
-  Partner   Partner @relation(fields: [partnerId], references: [id])
+  id         Int     @id @default(autoincrement())
+  partnerId  Int
+  intervall  Int     @default(30)
+  holydaysOn Boolean @default(true)
+  Partner    Partner @relation(fields: [partnerId], references: [id])
 }
 
 model AppointmentSlots {
-  id                 Int                @id @default(autoincrement())
-  paId               Int
-  isBlackList        Boolean            @default(true)
-  dateFrom           DateTime           @db.Timestamptz(6)
-  dateTo             DateTime           @db.Timestamptz(6)
-  PartnerAppointment PartnerAppointment @relation(fields: [paId], references: [id])
+  id          Int      @id @default(autoincrement())
+  isBlackList Boolean  @default(true)
+  dateFrom    DateTime @db.Timestamptz(6)
+  dateTo      DateTime @db.Timestamptz(6)
+  partnerId   Int
+  Partner     Partner  @relation(fields: [partnerId], references: [id])
 }
 
 model Opening {
-  id             Int            @id @default(autoincrement())
-  poId           Int
-  weekday        Weekday
-  timeslotFrom   DateTime       @db.Timetz(6)
-  timeslotTo     DateTime       @db.Timetz(6)
-  PartnerOpening PartnerOpening @relation(fields: [poId], references: [id])
+  id           Int      @id @default(autoincrement())
+  weekday      Weekday
+  timeslotFrom DateTime @db.Timetz(6)
+  timeslotTo   DateTime @db.Timetz(6)
+  partnerId    Int
+  Partner      Partner  @relation(fields: [partnerId], references: [id])
 }
 
 enum Weekday {
