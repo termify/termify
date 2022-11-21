@@ -56,8 +56,6 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 	const setPickedDate = useScheduleStore((state) => state.setPickedDay);
 	const allowedDates = useScheduleStore((state) => state.allowedDates);
 
-	console.log("Allowed in Schedule", allowedDates);
-
 	const [canPickDay, setCanPickDay] = useState<number[]>(parseDayStringToDayNumberArray(allowedDates));
 	const [picked, setPicked] = useState<boolean>(false);
 

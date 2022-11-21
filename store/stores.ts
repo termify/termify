@@ -1,17 +1,18 @@
-import create from 'zustand';
-import { OpeningData } from '../pages/api/dbquery/booking/partnercalendar';
+import create from "zustand";
+import { OpeningData } from "../pages/api/dbquery/booking/partnercalendar";
 
 type BookingDataProps = {
-    officeId: number;
-    officeName: string;
-    date: DateProps;
-    time: string;
+	officeId: number;
+	officeName: string;
+	date: DateProps;
+	time: string;
 };
+
 interface BookingStoreProps {
-    pageIndex: number;
-    setPageNumber: (newValue: number) => void;
-    bookingData: BookingDataProps;
-    setBookingData: (newValue: BookingDataProps) => void;
+	pageIndex: number;
+	setPageNumber: (newValue: number) => void;
+	bookingData: BookingDataProps;
+	setBookingData: (newValue: BookingDataProps) => void;
 }
 
 export const useBookingStore = create<BookingStoreProps>((set) => ({
@@ -23,15 +24,15 @@ export const useBookingStore = create<BookingStoreProps>((set) => ({
         })),
     bookingData: {
         officeId: 0,
-        officeName: '',
+        officeName: "",
         date: {
-            day: -1,
+    ''      day: -1,
             month: -1,
             year: -1,
         },
-        time: '',
+        time: "",
     },
-    setBookingData: (newValue) => set((prevState) => ({ ...prevState, bookingData: newValue })),
+    setBookin''ata: (newValue) => set((prevState) => ({ ...prevState, bookingData: newValue })),
 }));
 
 export type DateProps = {
@@ -73,6 +74,7 @@ export const useScheduleStore = create<ScheduleStoreProps>((set) => ({
             weekday: '',
             timeslotFrom: null,
             timeslotTo: null,
+            timeslotSet: [''],
         },
     ],
     setAllowedDates: (allDates) => set((prevState) => ({ ...prevState, allowedDates: allDates })),
