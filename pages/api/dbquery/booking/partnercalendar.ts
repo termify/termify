@@ -8,7 +8,6 @@ export type OpeningData = {
 	weekday: string;
 	timeslotFrom: Date | null;
 	timeslotTo: Date | null;
-	timeslotSet: string[] | string;
 };
 
 export type AllASettingsData = {
@@ -45,7 +44,6 @@ const getController = async (req: NextApiRequest, res: NextApiResponse<GetRespon
 			weekday: true,
 			timeslotFrom: true,
 			timeslotTo: true,
-			timeslotSet: true,
 		},
 	})) as unknown as OpeningData[];
 

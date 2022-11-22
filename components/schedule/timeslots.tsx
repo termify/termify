@@ -43,29 +43,21 @@ function getTodaysTimeslot(allowedDates: OpeningData[], pickedDate: number): Ope
 	return returnValue;
 }
 
-function returnTimeslotDay(
-	allowedDates: OpeningData[],
-	pickedDate: number
-): { from: string; to: string; set: string[] } {
+function returnTimeslotDay(allowedDates: OpeningData[], pickedDate: number): { from: string; to: string } {
 	let returnData: OpeningData = {
 		weekday: "",
 		id: -1,
 		timeslotFrom: new Date(),
 		timeslotTo: new Date(),
-		timeslotSet: "",
 	};
 
 	allowedDates.forEach((e) => {
 		if (e.weekday === parseDayNumberToDayString[pickedDate]) returnData = e;
 	});
 
-	const timeslotString: string = returnData.timeslotSet.slice(1, returnData.timeslotSet.length - 1) as string;
-	const timeslot: string[] = timeslotString.split(",");
-
 	return {
 		from: parsedTime(new Date(returnData.timeslotFrom as Date)),
 		to: parsedTime(new Date(returnData.timeslotTo as Date)),
-		set: timeslot,
 	};
 }
 
@@ -110,9 +102,9 @@ export default function TimeSlots({ onClick }: TimeSlotsProps) {
 	const pickedValue = useScheduleStore((state) => state.pickedDay);
 	const pickedDate: number = new Date(pickedValue.year, pickedValue.month, pickedValue.day).getDay();
 
-	const { from, to, set: times } = returnTimeslotDay(allowedDates, pickedDate);
+	const { from, to } = returnTimeslotDay(allowedDates, pickedDate);
 
-	// const times = parsedTimeToIntervall(from, to);
+	const times = parsedTimeToIntervall(from, to);
 
 	return (
 		<div className={" overflow-auto transition-all xl:ml-8"}>
