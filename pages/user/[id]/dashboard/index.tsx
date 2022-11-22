@@ -1,13 +1,12 @@
 import { NextPage } from "next";
+import Dashboard from "../../../../components/dashboard";
 
-//TODO: Dashboard and other pages only visible when logged in
+const DashboardPage: NextPage = () => {
+	return (
+		<div className={"p-8 container flex-grow flex flex-col"}>
+			<Dashboard />
+		</div>
+	);
+};
 
-const Dashboard:NextPage = () => {
-    return(
-        <div>
-            Dashboard
-        </div>
-    )
-}
-
-export default Dashboard;
+export default DashboardPage;
