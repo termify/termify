@@ -22,10 +22,10 @@ export default function Termin() {
 
 	const data = suspend(async () => {
 		const response = (await (await fetch(`${baseUrl()}/api/dbquery/booking/partnercalendar`)).json()) as GetResponse;
+		setAllowedDates(response.openingData);
 		return response;
 	}, [`termin-${JSON.stringify(bookingData)}`]);
 
-	setAllowedDates(data.openingData);
 
 	return (
 		<div className={`container mx-auto my-auto p-4 `}>
