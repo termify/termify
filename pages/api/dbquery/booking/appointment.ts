@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '../../../../lib/database';
 
-type AllPartnerData = {
+type AppointmentData = {
     id: number;
     district: {
         id: number;
@@ -9,7 +9,7 @@ type AllPartnerData = {
     };
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<AllPartnerData[]>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) {
     switch (req.method) {
         case 'POST':
             await postController(req, res);
@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 }
 
-const postController = async (req: NextApiRequest, res: NextApiResponse<AllPartnerData[]>) => {
+const postController = async (req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) => {
     const { districtId } = req.body as { districtId: number };
 
     const partnerAllData = (await db.partner.findMany({
@@ -28,7 +28,7 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<AllPartn
         where: {
             districtId, //POST Variable setzen
         },
-    })) as unknown as AllPartnerData[];
+    })) as unknown as AppointmentData[];
 
     console.log('Data', partnerAllData);
 
