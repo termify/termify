@@ -115,7 +115,6 @@ export default function AuthForm({ authType, onDone }: AuthForm) {
 		const today = new Date();
 		today.setFullYear(today.getFullYear() + 1);
 
-		// sessionStorage.setItem("auth",JSON.stringify({id,token:session?.access_token}));
 		setCookie("auth", JSON.stringify({ id, token: session?.access_token }), today.toUTCString());
 		setLoggedIn(true);
 		toast.success(msg);
@@ -133,6 +132,7 @@ export default function AuthForm({ authType, onDone }: AuthForm) {
 				className="flex flex-col gap-4 items-center justify-start xl:flex-grow xl:justify-center xl:w-1/3"
 			>
 				<Textinput
+					autoFocus
 					value={formData.email}
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })}
 					placeholder="Email"

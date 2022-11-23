@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import ScheduleClass from "../../lib/schedule";
 import { useBookingStore, useScheduleStore } from "../../store/stores";
 import Schedule from "../schedule/schedule";
-
 import TimeSlots from "../schedule/timeslots";
 import { suspend } from "suspend-react";
 import { baseUrl } from "../../lib/baseUrl";

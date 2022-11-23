@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 export default function Dashboard() {
 	return (
-		<div className={"gap-8 flex-grow xl:grid xl:grid-cols-2"}>
+		<div className={"gap-8 flex-grow grid xl:grid-cols-2"}>
 			<>
 				<UserCredentials />
 				<UserSchedule />
@@ -36,7 +36,7 @@ function UserCredentials() {
 	});
 
 	return (
-		<div className={"p-2 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500 xl:row-span-2"}>
+		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500 xl:row-span-2"}>
 			<div className={"p-4 bg-white h-full rounded-xl"}>
 				<h3
 					className={
@@ -73,7 +73,7 @@ function UserCredentials() {
 					<div className={"flex justify-center mt-8 xl:mt-16"}>
 						<button
 							className={
-								"bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-50 p-2 rounded-md transition-all font-bold shadow-xl xl:hover:scale-110"
+								"bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-50 p-2 rounded-md transition-all font-bold shadow-xl xl:p-4 xl:text-3xl xl:hover:scale-110"
 							}
 						>
 							Daten überschreiben
@@ -87,7 +87,7 @@ function UserCredentials() {
 
 function UserSchedule() {
 	return (
-		<div className={"p-2 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500"}>
+		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500"}>
 			<div className={"p-4 bg-white h-full rounded-xl"}>
 				<h3
 					className={
@@ -96,7 +96,7 @@ function UserSchedule() {
 				>
 					Termine
 				</h3>
-				<div className={"p-4"}>dasdsdsad</div>
+				<div className={"p-4"}>Es sind keine Termindaten hinterlegt</div>
 			</div>
 		</div>
 	);
@@ -104,7 +104,7 @@ function UserSchedule() {
 
 function UserInfo() {
 	return (
-		<div className={"p-2 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500"}>
+		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500"}>
 			<div className={"p-4 bg-white h-full rounded-xl"}>
 				<h3
 					className={
@@ -113,7 +113,7 @@ function UserInfo() {
 				>
 					Informationen
 				</h3>
-				<div className={"p-4"}>dasdsdsad</div>
+				<div className={"p-4"}>Es sind keine Informationen hinterlegt</div>
 			</div>
 		</div>
 	);
