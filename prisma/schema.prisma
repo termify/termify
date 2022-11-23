@@ -44,10 +44,10 @@ model Partner {
   districtId          Int
   District            District              @relation(fields: [districtId], references: [id])
   Office              Office                @relation(fields: [officeId], references: [id])
+  Appointment         Appointment[]
   AppointmentSettings AppointmentSettings[]
   AppointmentSlots    AppointmentSlots[]
   Opening             Opening[]
-  Appointment         Appointment[]
 }
 
 model State {
@@ -82,6 +82,22 @@ model Opening {
   Partner      Partner  @relation(fields: [partnerId], references: [id])
 }
 
+model Appointment {
+  id            Int      @id @default(autoincrement())
+  userId        String
+  partnerId     Int
+  timestamp     DateTime @db.Timestamptz(6)
+  typeOfRequest String?
+  note          String?
+  attachment    String?
+  Partner       Partner  @relation(fields: [partnerId], references: [id])
+  User          User     @relation(fields: [userId], references: [uuid])
+}
+
+model TestTest {
+  id Int @id
+}
+
 enum Weekday {
   Montag
   Dienstag
@@ -90,22 +106,4 @@ enum Weekday {
   Freitag
   Samstag
   Sonntag
-}
-
-model Appointment {
-  id               Int                @id @default(autoincrement())
-  userId           String
-  User             User               @relation(fields: [userId], references: [uuid])
-  partnerId        Int
-  Partner          Partner            @relation(fields: [partnerId], references: [id])
-  timestamp        DateTime           @db.Timestamptz()
-  AppointmentEntry AppointmentEntry[]
-}
-
-model AppointmentEntry {
-  id            Int         @id @default(autoincrement())
-  apId          Int
-  Appointment   Appointment @relation(fields: [apId], references: [id])
-  typeOfRequest String
-  note          String
 }
