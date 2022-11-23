@@ -124,13 +124,15 @@ interface HorizontalTextProps {
 	value: string;
 	readOnly?: boolean;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	autoFocus?: boolean;
 }
 
-function HorizontalText({ type, value, onChange, readOnly = false }: HorizontalTextProps) {
+function HorizontalText({ type, value, onChange, autoFocus = false, readOnly = false }: HorizontalTextProps) {
 	return (
 		<div className={"flex justify-between text-slate-800 my-2 xl:my-3"}>
 			<label className={"font-black xl:text-3xl"}>{type}</label>
 			<input
+				autoFocus={autoFocus}
 				className={
 					"px-2 w-1/2 rounded-md border-2 border-sky-400 read-only:bg-slate-200 read-only:border-slate-600 xl:text-2xl xl:px-4"
 				}
