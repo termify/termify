@@ -188,12 +188,17 @@ interface FileNameList {
 
 function FileNameList({ file, removeFile }: FileNameList) {
 	return (
-		<motion.div initial={{ scale: 0.5 }} animate={{ scale: 1 }} className={"py-1 px-3 flex gap-2 justify-between"}>
+		<motion.div
+			initial={{ scale: 0.5 }}
+			animate={{ scale: 1 }}
+			transition={{ ease: "backOut" }}
+			className={"py-1 px-3 flex gap-2 justify-between"}
+		>
 			<p className={"truncate"}>{file.name}</p>
 			<button
 				onClick={() => removeFile(file)}
 				type={"button"}
-				className={"text-rose-500 bg-rose-200 p-1 rounded-md transition-all xl:hover:bg-rose-300 xl:hover:scale-105 "}
+				className={"text-rose-500 bg-rose-200 p-1 rounded-md transition-all xl:hover:bg-rose-300 xl:hover:scale-125"}
 			>
 				<ImCross />
 			</button>
