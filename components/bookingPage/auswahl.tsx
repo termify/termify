@@ -46,6 +46,8 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
     const bookingData = useBookingStore((state) => state.bookingData);
 
     const data = suspend(async () => {
+        try{
+
         const officeResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/office`)).json()) as DataOffice[];
         const stateResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/state`)).json()) as AllDataState[];
 
@@ -53,6 +55,9 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
             officeData: officeResponse,
             stateData: stateResponse,
         };
+        }catch (e) {
+            console.error("OfficeData und StateData konnten nicht geladen werden",e)
+        }
     }, [`auswahl-${JSON.stringify(bookingData)}`]);
 
     function setHref(dest: number) {
@@ -63,7 +68,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
     async function fetchPartner(event: React.ChangeEvent<HTMLSelectElement>) {
         let id: number;
 
-        data.stateData.forEach((e, i) => {
+        data?.stateData.forEach((e, i) => {
             e.District.map((entrie, index) => {
                 if (entrie.districtName === event.target.value) id = entrie.id;
             });
@@ -105,7 +110,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
                     <div className="p-2 w-1/2 container mx-auto bg-gradient-to-r from-sky-400 to-emerald-500 rounded shadow-xl relative">
                         <select className="w-full rounded bg-white p-2 xl:p-6 xl:text-2xl " onChange={fetchPartner}>
                             <option>--- Bezirk wählen ---</option>
-                            {data.stateData.map((e, i) => (
+                            {data?.stateData.map((e, i) => (
                                 <optgroup key={e.stateName + i} label={e.stateName}>
                                     {e.District.map((f, j) => (
                                         <option key={f.districtName + j}>{f.districtName}</option>
