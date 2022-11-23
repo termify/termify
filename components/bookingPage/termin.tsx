@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import ScheduleClass from "../../lib/schedule";
 import { useBookingStore, useScheduleStore } from "../../store/stores";
 import Schedule from "../schedule/schedule";
@@ -20,15 +20,14 @@ export default function Termin() {
 		);
 	}, [pickedDay]);
 
-	const data = suspend(async () => {
+	suspend(async () => {
 		const response = (await (await fetch(`${baseUrl()}/api/dbquery/booking/partnercalendar`)).json()) as GetResponse;
 		setAllowedDates(response.openingData);
 		return response;
 	}, [`termin-${JSON.stringify(bookingData)}`]);
 
-
 	return (
-		<div className={`container mx-auto my-auto p-4 `}>
+		<div className={`container mx-auto p-4 xl:my-auto`}>
 			<div className={"hidden xl:block"}>
 				<div className={`grid xl:grid-cols-2 xl:shadow xl:h-[70vh] `}>
 					<Schedule />
