@@ -12,6 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <>
             <Head>
                 <title>Termify</title>
+                <link rel={"icon"} type={"image/png"} sizes={"64x6"} href={"/icon.png"} />
                 <meta name="description" content="Nie mehr Anstehen beim Amt" key="desc" />
                 {/*Facebook Meta Tags*/}
                 <meta property="og:type" content="website" />

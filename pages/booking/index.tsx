@@ -18,8 +18,8 @@ const BookingPage = () => {
                 fallback={
                     <div className={'w-full h-52 flex justify-center '}>
                         <div className={'flex gap-4 items-center'}>
-                            <p className={'text-3xl'}>Daten werden geladen ...</p>
-                            <AiOutlineLoading3Quarters className={'h-16 w-16 animate-spin text-sky-500'} />
+                            <p className={'xl:text-3xl'}>Daten werden geladen ...</p>
+                            <AiOutlineLoading3Quarters className={'h-12 w-12 animate-spin text-sky-500 xl:h-16 xl:w-16'} />
                         </div>
                     </div>
                 }
