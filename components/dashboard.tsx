@@ -87,11 +87,11 @@ function UserCredentials() {
 
 function UserSchedule() {
 	return (
-		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500 xl:row-span-2"}>
+		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-rose-400 to-amber-500 xl:row-span-2"}>
 			<div className={"p-4 bg-white h-full rounded-xl"}>
 				<h3
 					className={
-						"bg-gradient-to-r from-sky-400 to-emerald-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl"
+						"bg-gradient-to-r from-rose-400 to-amber-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl"
 					}
 				>
 					Termine
@@ -104,11 +104,11 @@ function UserSchedule() {
 
 function UserInfo() {
 	return (
-		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500"}>
+		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-indigo-400 to-sky-500"}>
 			<div className={"p-4 bg-white h-full rounded-xl"}>
 				<h3
 					className={
-						"bg-gradient-to-r from-sky-400 to-emerald-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl "
+						"bg-gradient-to-r from-indigo-400 to-sky-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl "
 					}
 				>
 					Informationen
