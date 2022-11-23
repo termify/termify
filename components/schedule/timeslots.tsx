@@ -1,47 +1,29 @@
 import { toast } from "react-hot-toast";
-import { parseDayNumberToDayString, parseDayStringToDayNumberArray, useShowPickedValue } from "../../lib/schedule";
+import { parseDayNumberToDayString, useShowPickedValue } from "../../lib/schedule";
 import { useBookingStore, useScheduleStore } from "../../store/stores";
 import { BsFillArrowLeftCircleFill } from "react-icons/bs";
-import { suspend } from "suspend-react";
-import { baseUrl } from "../../lib/baseUrl";
-import { GetResponse, OpeningData } from "../../pages/api/dbquery/booking/partnercalendar";
-import { useState } from "react";
+import { OpeningData } from "../../pages/api/dbquery/booking/partnercalendar";
 
 //TODO Kevin Bläser: Ersetze Obj durch DB Query
-
-// const times: string[] = [
-// 	"09:00",
-// 	"09:30",
-// 	"10:00",
-// 	"10:30",
-// 	"11:00",
-// 	"11:30",
-// 	"12:00",
-// 	"12:30",
-// 	"13:00",
-// 	"13:30",
-// 	"14:00",
-// 	"14:30",
-// ];
 
 interface TimeSlotsProps {
 	onClick?: () => void;
 }
 
-function getTodaysTimeslot(allowedDates: OpeningData[], pickedDate: number): OpeningData {
-	const weekDay: string = parseDayNumberToDayString[pickedDate];
-
-	let returnValue: OpeningData;
-
-	allowedDates.forEach((e) => {
-		if (e.weekday === weekDay) returnValue = e;
-	});
-
-	//timeslotFrom | timeslotTo
-
-	// @ts-ignore
-	return returnValue;
-}
+// function getTodaysTimeslot(allowedDates: OpeningData[], pickedDate: number): OpeningData {
+// 	const weekDay: string = parseDayNumberToDayString[pickedDate];
+//
+// 	let returnValue: OpeningData;
+//
+// 	allowedDates.forEach((e) => {
+// 		if (e.weekday === weekDay) returnValue = e;
+// 	});
+//
+// 	//timeslotFrom | timeslotTo
+//
+// 	// @ts-ignore
+// 	return returnValue;
+// }
 
 function returnTimeslotDay(allowedDates: OpeningData[], pickedDate: number): { from: string; to: string } {
 	let returnData: OpeningData = {
@@ -70,20 +52,21 @@ function parsedTime(time: Date) {
 	return returntime;
 }
 
-function parsedTimeToIntervall(from: string, to: string) {
+function parsedTimeToInterval(from: string, to: string) {
 	const fromTime = from.split(":");
 	const toTime = to.split(":");
 
-	const [fromHour, fromMinutes] = [parseInt(fromTime[0]), parseInt(fromTime[1])];
-	const [toHour, toMinutes] = [parseInt(toTime[0]), parseInt(toTime[1])];
+	const [fromHour, _from] = [parseInt(fromTime[0]), parseInt(fromTime[1])];
+	const [toHour, _to] = [parseInt(toTime[0]), parseInt(toTime[1])];
 
 	const diff = toHour - fromHour;
 
-	let intervall = 30;
-	const divider = 60 / intervall;
+	let interval = 30;
+	const divider = 60 / interval;
 	const val = diff * divider;
 
-	const timeSlots: string[] = Array.from(new Array(val + 1)).map((e, i) => {
+	let timeSlots: string[];
+	timeSlots = Array.from(new Array(val + 1)).map((e, i) => {
 		if (i % 2 === 0) {
 			return `${fromHour + i / divider < 10 ? `0${fromHour + i / divider}` : fromHour + i / divider}:00`;
 		} else {
@@ -104,13 +87,13 @@ export default function TimeSlots({ onClick }: TimeSlotsProps) {
 
 	const { from, to } = returnTimeslotDay(allowedDates, pickedDate);
 
-	const times = parsedTimeToIntervall(from, to);
+	const times = parsedTimeToInterval(from, to);
 
 	return (
 		<div className={" overflow-auto transition-all xl:ml-8"}>
 			<div
 				className={
-					" flex items-center justify-between p-4 bg-gradient-to-r from-sky-400 to-emerald-500 shadow-md text-sky-50 font-bold xl:text-2xl"
+					" flex items-center justify-between p-4 bg-gradient-to-r from-rose-400 to-amber-500 shadow-md text-sky-50 font-bold xl:text-2xl"
 				}
 			>
 				{today}
@@ -139,7 +122,7 @@ function TimeSlotEntrie({ time }: TimeSlotEntrieProps) {
 	const setBookingData = useBookingStore((state) => state.setBookingData);
 	const setBookingPage = useBookingStore((state) => state.setPageNumber);
 
-	function onClickHandler(e: React.PointerEvent<HTMLButtonElement>) {
+	function onClickHandler() {
 		const isValid =
 			JSON.stringify(pickedDate) !==
 			JSON.stringify({
@@ -165,13 +148,13 @@ function TimeSlotEntrie({ time }: TimeSlotEntrieProps) {
 		<button
 			onClick={onClickHandler}
 			className={
-				"bg-red-300 p-1 shadow rounded bg-gradient-to-r from-sky-400 to-emerald-500 w-2/3 mx-auto transition-all xl:hover:scale-110"
+				"bg-red-300 p-1 shadow rounded bg-gradient-to-r from-rose-400 to-amber-500 w-2/3 mx-auto transition-all xl:hover:scale-110"
 			}
 		>
 			<div className={"bg-white p-1 shadow rounded"}>
 				<p
 					className={
-						"text-center font-bold text-2xl bg-gradient-to-r from-sky-400 to-emerald-500 p-1 bg-clip-text text-transparent"
+						"text-center font-bold text-2xl bg-gradient-to-r from-rose-400 to-amber-500 p-1 bg-clip-text text-transparent"
 					}
 				>
 					{time}

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import ScheduleClass, { parseDayStringToDayNumber, parseDayStringToDayNumberArray } from "../../lib/schedule";
+import ScheduleClass, { parseDayStringToDayNumberArray } from "../../lib/schedule";
 import { RiArrowDropRightLine, RiArrowDropLeftLine } from "react-icons/ri";
 import { useScheduleStore } from "../../store/stores";
 
@@ -56,7 +56,8 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 	const setPickedDate = useScheduleStore((state) => state.setPickedDay);
 	const allowedDates = useScheduleStore((state) => state.allowedDates);
 
-	const [canPickDay, setCanPickDay] = useState<number[]>(parseDayStringToDayNumberArray(allowedDates));
+	const [canPickDay, _] = useState<number[]>(parseDayStringToDayNumberArray(allowedDates));
+
 	const [picked, setPicked] = useState<boolean>(false);
 
 	const today = new Date(date?.year as number, date?.month as number, dayNumber);
@@ -81,9 +82,9 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 	const todayIsNewerThenYesterday = new Date() <= today && canPickDay.includes(today.getDay());
 
 	const setColor = picked
-		? "bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-50 font-bold "
+		? "bg-gradient-to-r from-rose-400 to-amber-500 text-sky-50 font-bold "
 		: todayIsNewerThenYesterday
-		? "bg-gradient-to-r from-sky-400/[5%] to-emerald-500/[5%] text-sky-900"
+		? "bg-gradient-to-r from-rose-400/[5%] to-amber-500/[5%] text-sky-900"
 		: "bg-slate-100/10";
 
 	return (
@@ -92,8 +93,8 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 				onClick={onClickHandler}
 				className={`${setColor} m-auto flex justify-center items-center rounded-full transition-all w-10 h-10 md:h-16 md:w-16 xl:text-2xl xl:h-18 xl:w-18 ${
 					picked
-						? "xl:hover:from-sky-400 xl:hover:to-emerald-500 text-sky-50"
-						: "xl:hover:from-sky-400/[50%] xl:hover:to-emerald-500/[50%]"
+						? "xl:hover:from-rose-400 xl:hover:to-amber-500 text-sky-50"
+						: "xl:hover:from-rose-400/[50%] xl:hover:to-amber-500/[50%]"
 				}
         ${todayIsNewerThenYesterday ? " xl:hover:scale-110" : ""} 
         xl:hover:cursor-pointer`}
@@ -111,8 +112,8 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 function TodayDot() {
 	return (
 		<div className="relative flex justify-center origin-center bottom-3 left-1">
-			<span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-sky-400 to-emerald-500 opacity-75  "></span>
-			<span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gradient-to-r from-sky-400 to-emerald-500 "></span>
+			<span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-rose-400 to-amber-500 opacity-75  "></span>
+			<span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gradient-to-r from-rose-400 to-amber-500 "></span>
 		</div>
 	);
 }
