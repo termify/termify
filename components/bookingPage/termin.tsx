@@ -20,7 +20,7 @@ export default function Termin() {
 		);
 	}, [pickedDay]);
 
-	const data = suspend(async () => {
+	suspend(async () => {
 		const response = (await (await fetch(`${baseUrl()}/api/dbquery/booking/partnercalendar`)).json()) as GetResponse;
 		setAllowedDates(response.openingData);
 		return response;

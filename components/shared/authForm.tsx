@@ -152,7 +152,7 @@ export default function AuthForm({ authType, onDone }: AuthForm) {
 				/>
 			</form>
 			<button
-				className={"bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent"}
+				className={"bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent mt-8 xl:mt-0"}
 				onClick={() => setShowModal({ show: true, type: "password" })}
 			>
 				Passwort vergessen?
@@ -180,8 +180,8 @@ function ForgotPassword({ close }: { close: () => void }) {
 	const [inputValue, setInputValue] = useState<string>("");
 
 	return (
-		<div className="bg-slate-900/50 w-screen h-screen flex justify-center items-center">
-			<div className={"bg-slate-50 w-1/3 h-1/2 rounded-xl p-8"}>
+		<div className="bg-slate-900/50 w-screen h-screen flex justify-center items-center p-4 xl:p-0">
+			<div className={"bg-slate-50  rounded-xl p-8  xl:w-1/3 xl:h-1/2"}>
 				<div className={"flex justify-end"}>
 					<button
 						onClick={close}
