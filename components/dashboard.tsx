@@ -4,8 +4,8 @@ export default function Dashboard() {
 	return (
 		<div className={"gap-8 flex-grow grid xl:grid-cols-2"}>
 			<>
-				<UserCredentials />
 				<UserSchedule />
+				<UserCredentials />
 				<UserInfo />
 			</>
 		</div>
@@ -36,7 +36,7 @@ function UserCredentials() {
 	});
 
 	return (
-		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500 xl:row-span-2"}>
+		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500 "}>
 			<div className={"p-4 bg-white h-full rounded-xl"}>
 				<h3
 					className={
@@ -73,7 +73,7 @@ function UserCredentials() {
 					<div className={"flex justify-center mt-8 xl:mt-16"}>
 						<button
 							className={
-								"bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-50 p-2 rounded-md transition-all font-bold shadow-xl xl:p-4 xl:text-3xl xl:hover:scale-110"
+								"bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-50 p-2 rounded-md transition-all font-bold shadow-xl xl:p-4 xl:text-2xl xl:hover:scale-110"
 							}
 						>
 							Daten überschreiben
@@ -87,7 +87,7 @@ function UserCredentials() {
 
 function UserSchedule() {
 	return (
-		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500"}>
+		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500 xl:row-span-2"}>
 			<div className={"p-4 bg-white h-full rounded-xl"}>
 				<h3
 					className={
@@ -128,8 +128,8 @@ interface HorizontalTextProps {
 
 function HorizontalText({ type, value, onChange, readOnly = false }: HorizontalTextProps) {
 	return (
-		<div className={"flex justify-between text-slate-800 my-2 xl:my-4"}>
-			<label className={"font-black xl:text-4xl"}>{type}</label>
+		<div className={"flex justify-between text-slate-800 my-2 xl:my-3"}>
+			<label className={"font-black xl:text-3xl"}>{type}</label>
 			<input
 				className={
 					"px-2 w-1/2 rounded-md border-2 border-sky-400 read-only:bg-slate-200 read-only:border-slate-600 xl:text-2xl xl:px-4"
