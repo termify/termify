@@ -4,6 +4,7 @@ import { useBookingStore } from "../../store/stores";
 import { ArrowIcon } from "../icons";
 
 const sections: string[] = ["Auswahl", "Termin", "Eintragung", "Abschluss"];
+const mobileSections: string[] = ["Amt wählen", "Termin aussuchen", "Was ist Ihr Anliegen?", "Alles erledigt"];
 
 export default function Taskleiste() {
 	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
@@ -11,7 +12,7 @@ export default function Taskleiste() {
 	return (
 		<div
 			className={
-				"p-2 border-slate-800 border-4 flex flex-wrap justify-between shadow-xl xl:p-0 xl:flex-nowrap xl:justify-around "
+				" border-slate-800 border-4 flex flex-wrap justify-between shadow-xl xl:p-0 xl:flex-nowrap xl:justify-around "
 			}
 		>
 			<>
@@ -24,13 +25,13 @@ export default function Taskleiste() {
 				{/* Mobile */}
 				<motion.div
 					initial={{ x: 0 }}
-					animate={{ x: -((bookingPageNumber - 1) * (screen.width - screen.width * 0.04)) }}
+					animate={{ x: -((bookingPageNumber - 1) * screen.width) }}
 					className={"flex items-center xl:hidden"}
 				>
-					<TaskleisteMobileSection index={1}>{sections[0]}</TaskleisteMobileSection>
-					<TaskleisteMobileSection index={2}>{sections[1]}</TaskleisteMobileSection>
-					<TaskleisteMobileSection index={3}>{sections[2]}</TaskleisteMobileSection>
-					<TaskleisteMobileSection index={4}>{sections[3]}</TaskleisteMobileSection>
+					<TaskleisteMobileSection index={1}>{mobileSections[0]}</TaskleisteMobileSection>
+					<TaskleisteMobileSection index={2}>{mobileSections[1]}</TaskleisteMobileSection>
+					<TaskleisteMobileSection index={3}>{mobileSections[2]}</TaskleisteMobileSection>
+					<TaskleisteMobileSection index={4}>{mobileSections[3]}</TaskleisteMobileSection>
 				</motion.div>
 			</>
 		</div>
@@ -57,7 +58,7 @@ function TaskleisteMobileSection({ children, index, isArrow = false, last = fals
 
 	return (
 		<span
-			className={`py-1 transition-all bg-gradient-to-r bg-clip-text text-transparent w-[95vw] text-center font-bold text-4xl  ${
+			className={`py-1 transition-all bg-gradient-to-r bg-clip-text text-transparent w-screen text-center font-bold text-4xl  ${
 				index === 1
 					? "from-sky-400 to-emerald-500"
 					: index === 2
