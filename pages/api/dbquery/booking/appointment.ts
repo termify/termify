@@ -16,7 +16,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 		case "POST":
 			await postController(req, res);
 			break;
-	}
+        case "PUT":
+            await putController(req, res);
+            break;
+}
 }
 
 const postController = async (req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) => {
@@ -28,7 +31,8 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 		note: string;
 		attachment: string;
 	};
-
+    
+  
 	const date = typeof timestamp === "string" ? timestamp.split("-") : timestamp;
 
 	const appointmentData = (await db.appointment.create({
@@ -52,6 +56,7 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 		},
 	})) as unknown as AppointmentData[];
 
+
 	// /*insert into "Appointment" ("userId", "partnerId", "timestamp")
 	// values ('f0e7f64b-210e-435a-afea-de151148e873','1','2022-11-29 10:30:00')*/
 	// insert into "AppointmentEntry" ("apId","typeOfRequest","note","attachment")
@@ -64,3 +69,22 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 
 	res.status(200).json(appointmentData);
 };
+
+
+const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) => {
+    const {pickDate} = req.body as { pickDate : {day:number, month:number, year:number}};
+    const appointmentPickData = (await db.appointment.findMany({
+        where: {
+            timestamp: {
+                gte: new Date(pickDate.year,pickDate.month - 1,pickDate.day,0,0,0).getTime()/1000,
+                lte: new Date(pickDate.year,pickDate.month - 1,pickDate.day,23,59,59).getTime()/1000,
+            }
+        }
+    })) as unknown as AppointmentData[];
+
+
+    res.status(200).json(appointmentPickData);
+
+
+};
+
