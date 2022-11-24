@@ -13,6 +13,7 @@ interface BookingStoreProps {
 	setPageNumber: (newValue: number) => void;
 	bookingData: BookingDataProps;
 	setBookingData: (newValue: BookingDataProps) => void;
+	resetBookingData: () => void;
 }
 
 export const useBookingStore = create<BookingStoreProps>((set) => ({
@@ -33,6 +34,20 @@ export const useBookingStore = create<BookingStoreProps>((set) => ({
 		time: "",
 	},
 	setBookingData: (newValue) => set((prevState) => ({ ...prevState, bookingData: newValue })),
+	resetBookingData: () =>
+		set((prevState) => ({
+			...prevState,
+			bookingData: {
+				officeId: 0,
+				officeName: "",
+				date: {
+					day: -1,
+					month: -1,
+					year: -1,
+				},
+				time: "",
+			},
+		})),
 }));
 
 export type DateProps = {

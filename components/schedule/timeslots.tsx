@@ -10,21 +10,6 @@ interface TimeSlotsProps {
 	onClick?: () => void;
 }
 
-// function getTodaysTimeslot(allowedDates: OpeningData[], pickedDate: number): OpeningData {
-// 	const weekDay: string = parseDayNumberToDayString[pickedDate];
-//
-// 	let returnValue: OpeningData;
-//
-// 	allowedDates.forEach((e) => {
-// 		if (e.weekday === weekDay) returnValue = e;
-// 	});
-//
-// 	//timeslotFrom | timeslotTo
-//
-// 	// @ts-ignore
-// 	return returnValue;
-// }
-
 function returnTimeslotDay(allowedDates: OpeningData[], pickedDate: number): { from: string; to: string } {
 	let returnData: OpeningData = {
 		weekday: "",
@@ -148,14 +133,14 @@ function TimeSlotEntrie({ time }: TimeSlotEntrieProps) {
 		<button
 			onClick={onClickHandler}
 			className={
-				"bg-red-300 p-1 shadow rounded bg-gradient-to-r from-rose-400 to-amber-500 w-2/3 mx-auto transition-all xl:hover:scale-110"
+				"bg-red-300 p-1 shadow rounded bg-gradient-to-r from-rose-400 to-amber-500 w-2/3 mx-auto group transition-all xl:hover:scale-110"
 			}
 		>
 			<div
-				className={`bg-white p-1 shadow rounded xl:hover:bg-gradient-to-r xl:hover:from-rose-400 xl:hover:to-amber-500 xl:hover:shadow-none`}
+				className={`bg-white p-1 shadow rounded xl:group-hover:bg-gradient-to-r xl:group-hover:from-rose-400 xl:group-hover:to-amber-500 xl:group-hover:shadow-none`}
 			>
 				<p
-					className={`text-center font-bold text-2xl bg-gradient-to-r from-rose-400 to-amber-500 p-1 bg-clip-text text-transparent xl:hover:text-rose-100 `}
+					className={`text-center font-bold text-2xl bg-gradient-to-r from-rose-400 to-amber-500 p-1 bg-clip-text text-transparent xl:group-hover:text-rose-100 `}
 				>
 					{time}
 				</p>

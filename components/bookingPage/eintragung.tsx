@@ -5,6 +5,7 @@ import { ImCross } from "react-icons/im";
 import { Modal } from "../shared/modal";
 import AuthForm from "../shared/authForm";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 export default function Eintragung() {
 	return (
@@ -16,11 +17,11 @@ export default function Eintragung() {
 
 function Reason() {
 	const setBookingPage = useBookingStore((state) => state.setPageNumber);
-
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
 	function submitHandler(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
+		toast.success("Ihre Buchung wurde erfolgreich getätigt");
 		setBookingPage(4);
 	}
 

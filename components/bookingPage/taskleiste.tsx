@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { useBookingStore } from "../../store/stores";
 import { ArrowIcon } from "../icons";
+import toast from "react-hot-toast";
 
 const sections: string[] = ["Auswahl", "Termin", "Eintragung", "Abschluss"];
 const mobileSections: string[] = ["Amt wählen", "Termin aussuchen", "Was ist Ihr Anliegen?", "Alles erledigt"];
@@ -46,16 +47,10 @@ interface TaskleisteSectionProps {
 
 interface TaskleisteMobileSectionProps {
 	children: ReactNode;
-	isArrow?: boolean;
-	last?: boolean;
 	index: number;
 }
 
-function TaskleisteMobileSection({ children, index, isArrow = false, last = false }: TaskleisteMobileSectionProps) {
-	// 1 is first => 4 is last
-	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
-	const setPageNumber = useBookingStore((state) => state.setPageNumber);
-
+function TaskleisteMobileSection({ children, index }: TaskleisteMobileSectionProps) {
 	return (
 		<span
 			className={`py-2 transition-all bg-gradient-to-r bg-clip-text text-transparent w-screen text-center font-bold text-3xl  ${
@@ -75,11 +70,20 @@ function TaskleisteMobileSection({ children, index, isArrow = false, last = fals
 
 function TaskleisteSection({ sectionName, index, last = false }: TaskleisteSectionProps) {
 	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
+	const resetBookingData = useBookingStore((state) => state.resetBookingData);
 
 	const setPageNumber = useBookingStore((state) => state.setPageNumber);
 
 	function checkPageIndex() {
-		if (index < bookingPageNumber) setPageNumber(index);
+		if (bookingPageNumber === 4) {
+			if (index !== 1) {
+				toast("Es wurde bereits ein Termin gebucht, Sie werden zur Auswahl Seite weitergeleitet");
+			}
+			resetBookingData();
+			setPageNumber(1);
+		} else {
+			if (index < bookingPageNumber) setPageNumber(index);
+		}
 	}
 
 	return (
