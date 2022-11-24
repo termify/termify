@@ -24,7 +24,7 @@ export default function Taskleiste() {
 				{/* Mobile */}
 				<motion.div
 					initial={{ x: 0 }}
-					animate={{ x: -((bookingPageNumber - 1) * 360) }}
+					animate={{ x: -((bookingPageNumber - 1) * (screen.width - screen.width * 0.04)) }}
 					className={"flex items-center xl:hidden"}
 				>
 					<TaskleisteMobileSection index={1}>{sections[0]}</TaskleisteMobileSection>
