@@ -93,7 +93,7 @@ export default function TimeSlots({ onClick }: TimeSlotsProps) {
 		<div className={" overflow-auto transition-all xl:ml-8"}>
 			<div
 				className={
-					" flex items-center justify-between p-4 bg-gradient-to-r from-rose-400 to-amber-500 shadow-md text-sky-50 font-bold xl:text-2xl"
+					" flex items-center justify-between p-4 bg-gradient-to-r from-rose-400 to-amber-500 shadow-md text-rose-50 font-bold  xl:text-2xl"
 				}
 			>
 				{today}
@@ -151,11 +151,11 @@ function TimeSlotEntrie({ time }: TimeSlotEntrieProps) {
 				"bg-red-300 p-1 shadow rounded bg-gradient-to-r from-rose-400 to-amber-500 w-2/3 mx-auto transition-all xl:hover:scale-110"
 			}
 		>
-			<div className={"bg-white p-1 shadow rounded"}>
+			<div
+				className={`bg-white p-1 shadow rounded xl:hover:${"bg-gradient-to-r from-rose-400 to-amber-500 shadow-none"}`}
+			>
 				<p
-					className={
-						"text-center font-bold text-2xl bg-gradient-to-r from-rose-400 to-amber-500 p-1 bg-clip-text text-transparent"
-					}
+					className={`text-center font-bold text-2xl bg-gradient-to-r from-rose-400 to-amber-500 p-1 bg-clip-text text-transparent xl:hover:text-rose-100 `}
 				>
 					{time}
 				</p>

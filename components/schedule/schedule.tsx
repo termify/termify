@@ -82,7 +82,7 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 	const todayIsNewerThenYesterday = new Date() <= today && canPickDay.includes(today.getDay());
 
 	const setColor = picked
-		? "bg-gradient-to-r from-rose-400 to-amber-500 text-sky-50 font-bold "
+		? "bg-gradient-to-r from-rose-400 to-amber-500 text-rose-100 font-bold "
 		: todayIsNewerThenYesterday
 		? "bg-gradient-to-r from-rose-400/[5%] to-amber-500/[5%] text-sky-900"
 		: "bg-slate-100/10";

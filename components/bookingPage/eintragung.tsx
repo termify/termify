@@ -45,7 +45,7 @@ function Reason() {
 					<div className={"flex w-full justify-center"}>
 						<button
 							className={
-								"bg-gradient-to-r from-indigo-400 to-sky-500 shadow-md w-full max-w-[500px] text-sky-50 p-2 font-bold rounded-md text-2xl mt-8 transition-all hover:scale-110 xl:w-1/3"
+								"bg-gradient-to-r from-indigo-400 to-sky-500 shadow-md w-full max-w-[500px] text-indigo-50 p-2 font-bold rounded-md text-2xl mt-8 transition-all hover:scale-110 xl:w-1/3"
 							}
 							title={"Termin buchen"}
 							type={"submit"}
