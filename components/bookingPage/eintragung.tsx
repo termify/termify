@@ -103,7 +103,7 @@ function CustomTextArea(props: CustomTextAreaProps) {
 		<div className={"flex flex-col items-center w-full xl:w-1/3"}>
 			<label className={"p-2 f ont-bold text-center xl:text-start"}>{props.heading}:</label>
 			<textarea
-				className={"border-2 rounded-lg border-slate-800 shadow-md resize-y p-2 min-h-[50px] w-full max-w-[500px]"}
+				className={"border-2 rounded-lg border-slate-800 shadow-md resize-y p-2 min-h-[150px] w-full max-w-[500px]"}
 				{...props}
 			/>
 		</div>

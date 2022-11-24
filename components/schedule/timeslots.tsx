@@ -3,6 +3,8 @@ import { parseDayNumberToDayString, useShowPickedValue } from "../../lib/schedul
 import { useBookingStore, useScheduleStore } from "../../store/stores";
 import { BsFillArrowLeftCircleFill } from "react-icons/bs";
 import { OpeningData } from "../../pages/api/dbquery/booking/partnercalendar";
+import { suspend } from "suspend-react";
+import { baseUrl } from "../../lib/baseUrl";
 
 //TODO Kevin Bläser: Ersetze Obj durch DB Query
 
@@ -69,6 +71,21 @@ export default function TimeSlots({ onClick }: TimeSlotsProps) {
 	const allowedDates = useScheduleStore((state) => state.allowedDates);
 	const pickedValue = useScheduleStore((state) => state.pickedDay);
 	const pickedDate: number = new Date(pickedValue.year, pickedValue.month, pickedValue.day).getDay();
+
+	const timeSlotData = suspend(async () => {
+		// const response = await (
+		// 	await fetch(`${baseUrl()}/api/dbquery/booking/appointments`, {
+		// 		method: "PUT",
+		// 		headers: {
+		// 			"Content-Type": "application/json",
+		// 		},
+		// 		body: JSON.stringify({
+		// 			pickedDate: pickedValue,
+		// 		}),
+		// 	})
+		// ).json();
+		// console.log("Timeslot Response", response);
+	}, [pickedValue]);
 
 	const { from, to } = returnTimeslotDay(allowedDates, pickedDate);
 
