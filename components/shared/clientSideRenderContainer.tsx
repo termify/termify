@@ -19,5 +19,7 @@ export default function ClientSideRenderContainer({ children }: ClientSideRender
         setClientIsReady(true);
     }, [router.isReady]);
 
-    return <>{clientIsReady ? children : null}</>;
+    return <
+    >{clientIsReady ? children : null}</
+    >;
 }

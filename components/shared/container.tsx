@@ -5,5 +5,5 @@ interface Container {
 }
 
 export default function Container({ children }: Container) {
-	return <main className="flex flex-col flex-grow h-full w-screen">{children}</main>;
+	return <main className="flex flex-col flex-grow overflow-hidden">{children}</main>;
 }
