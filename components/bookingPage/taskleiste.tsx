@@ -58,7 +58,7 @@ function TaskleisteMobileSection({ children, index, isArrow = false, last = fals
 
 	return (
 		<span
-			className={`py-1 transition-all bg-gradient-to-r bg-clip-text text-transparent w-screen text-center font-bold text-4xl  ${
+			className={`py-2 transition-all bg-gradient-to-r bg-clip-text text-transparent w-screen text-center font-bold text-3xl  ${
 				index === 1
 					? "from-sky-400 to-emerald-500"
 					: index === 2
