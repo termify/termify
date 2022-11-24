@@ -1,18 +1,38 @@
+import { motion } from "framer-motion";
+import { ReactNode } from "react";
 import { useBookingStore } from "../../store/stores";
 import { ArrowIcon } from "../icons";
 
 const sections: string[] = ["Auswahl", "Termin", "Eintragung", "Abschluss"];
 
 export default function Taskleiste() {
+	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
+
 	return (
 		<div
 			className={
 				"p-2 border-slate-800 border-4 flex flex-wrap justify-between shadow-xl xl:p-0 xl:flex-nowrap xl:justify-around "
 			}
 		>
-			{sections.map((e, i) => (
-				<TaskleisteSection key={e + i} sectionName={e} index={i + 1} last={i === sections.length - 1} />
-			))}
+			<>
+				{/* Desktop */}
+				<div className={"hidden xl:flex xl:flex-grow"}>
+					{sections.map((e, i) => (
+						<TaskleisteSection key={e + i} sectionName={e} index={i + 1} last={i === sections.length - 1} />
+					))}
+				</div>
+				{/* Mobile */}
+				<motion.div
+					initial={{ x: 0 }}
+					animate={{ x: -((bookingPageNumber - 1) * 360) }}
+					className={"flex items-center xl:hidden"}
+				>
+					<TaskleisteMobileSection index={1}>{sections[0]}</TaskleisteMobileSection>
+					<TaskleisteMobileSection index={2}>{sections[1]}</TaskleisteMobileSection>
+					<TaskleisteMobileSection index={3}>{sections[2]}</TaskleisteMobileSection>
+					<TaskleisteMobileSection index={4}>{sections[3]}</TaskleisteMobileSection>
+				</motion.div>
+			</>
 		</div>
 	);
 }
@@ -21,6 +41,35 @@ interface TaskleisteSectionProps {
 	sectionName: string;
 	last?: boolean;
 	index: number;
+}
+
+interface TaskleisteMobileSectionProps {
+	children: ReactNode;
+	isArrow?: boolean;
+	last?: boolean;
+	index: number;
+}
+
+function TaskleisteMobileSection({ children, index, isArrow = false, last = false }: TaskleisteMobileSectionProps) {
+	// 1 is first => 4 is last
+	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
+	const setPageNumber = useBookingStore((state) => state.setPageNumber);
+
+	return (
+		<span
+			className={`py-1 transition-all bg-gradient-to-r bg-clip-text text-transparent w-[95vw] text-center font-bold text-4xl  ${
+				index === 1
+					? "from-sky-400 to-emerald-500"
+					: index === 2
+					? "from-rose-400 to-amber-500"
+					: index === 3
+					? "from-indigo-400 to-sky-500"
+					: "from-emerald-400 to-sky-500"
+			}`}
+		>
+			{children}
+		</span>
+	);
 }
 
 function TaskleisteSection({ sectionName, index, last = false }: TaskleisteSectionProps) {
