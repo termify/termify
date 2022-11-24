@@ -147,12 +147,14 @@ function BookingButton({ partnerData, index }: BookinButtonProps) {
 	}
 
 	return (
-		<div className={"p-1 m-5 group bg-gradient-to-r from-sky-400 to-emerald-500 transition-all  hover:scale-105"}>
+		<div
+			className={"p-1 m-5 group rounded-md bg-gradient-to-r from-sky-400 to-emerald-500 transition-all hover:scale-105"}
+		>
 			<button
 				onClick={onClickHandler}
 				id={`s-${index}`}
 				className={
-					"bg-white w-full font-bold min-h-[5rem] group-hover:bg-gradient-to-r transition-all group-hover:from-sky-400 group-hover:to-emerald-500 xl:min-h-[13rem]"
+					"bg-white w-full font-bold min-h-[5rem] rounded-md group-hover:bg-gradient-to-r transition-all group-hover:from-sky-400 group-hover:to-emerald-500 xl:min-h-[13rem]"
 				}
 			>
 				<p
