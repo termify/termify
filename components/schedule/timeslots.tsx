@@ -152,7 +152,7 @@ function TimeSlotEntrie({ time }: TimeSlotEntrieProps) {
 			}
 		>
 			<div
-				className={`bg-white p-1 shadow rounded xl:hover:${"bg-gradient-to-r from-rose-400 to-amber-500 shadow-none"}`}
+				className={`bg-white p-1 shadow rounded xl:hover:bg-gradient-to-r xl:hover:from-rose-400 xl:hover:to-amber-500 xl:hover:shadow-none`}
 			>
 				<p
 					className={`text-center font-bold text-2xl bg-gradient-to-r from-rose-400 to-amber-500 p-1 bg-clip-text text-transparent xl:hover:text-rose-100 `}
