@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Dashboard() {
 	return (
@@ -20,16 +21,12 @@ interface PersonalDataProps {
 	zipCode: string;
 	city: string;
 }
-
+// "1991-10-02"
 function UserCredentials() {
 	const [personalData, setPersonalData] = useState<PersonalDataProps>({
 		firstName: "Max",
 		lastName: "Mustergott",
-		birthday: new Date(1991, 10 - 1, 2).toLocaleString("de-DE", {
-			day: "numeric",
-			month: "short",
-			year: "numeric",
-		}),
+		birthday: `${new Date().getFullYear() - 15}-${new Date().getMonth()}-${new Date().getDate()}`,
 		street: "Gute Straße 32",
 		zipCode: "75175",
 		city: "Pforzheim",
@@ -46,9 +43,36 @@ function UserCredentials() {
 					Persönliche Daten
 				</h3>
 				<div className={"p-4"}>
-					<HorizontalText type={"Vorname"} value={personalData.firstName} readOnly />
-					<HorizontalText type={"Nachname"} value={personalData.lastName} readOnly />
-					<HorizontalText type={"Geburtstag"} value={personalData.birthday} readOnly />
+					<HorizontalText
+						type={"Vorname"}
+						value={personalData.firstName}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+							setPersonalData((prev) => ({ ...prev, firstName: e.target.value }));
+						}}
+					/>
+					<HorizontalText
+						type={"Nachname"}
+						value={personalData.lastName}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+							setPersonalData((prev) => ({ ...prev, lastName: e.target.value }));
+						}}
+					/>
+					<HorizontalText
+						type={"Geburtstag"}
+						value={personalData.birthday}
+						inputType={"date"}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+							const checkYear = parseInt(e.target.value.split("-")[0]);
+							const today = new Date().getFullYear();
+
+							if (today - checkYear <= 14) {
+								toast.error("Sie müssen mindestens 14 Jahre sein um Termify zu nutzen");
+								return;
+							}
+
+							setPersonalData((prev) => ({ ...prev, birthday: e.target.value }));
+						}}
+					/>
 					<HorizontalText
 						type={"Straße"}
 						value={personalData.street}
@@ -122,12 +146,20 @@ function UserInfo() {
 interface HorizontalTextProps {
 	type: string;
 	value: string;
+	inputType?: "text" | "date";
 	readOnly?: boolean;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	autoFocus?: boolean;
 }
 
-function HorizontalText({ type, value, onChange, autoFocus = false, readOnly = false }: HorizontalTextProps) {
+function HorizontalText({
+	type,
+	value,
+	onChange,
+	inputType = "text",
+	autoFocus = false,
+	readOnly = false,
+}: HorizontalTextProps) {
 	return (
 		<div className={"flex justify-between text-slate-800 my-2 xl:my-3"}>
 			<label className={"font-black xl:text-3xl"}>{type}</label>
@@ -136,7 +168,7 @@ function HorizontalText({ type, value, onChange, autoFocus = false, readOnly = f
 				className={
 					"px-2 w-1/2 rounded-md border-2 border-sky-400 read-only:bg-slate-200 read-only:border-slate-600 xl:text-2xl xl:px-4"
 				}
-				type={"text"}
+				type={inputType}
 				value={value}
 				readOnly={readOnly}
 				onChange={onChange}
