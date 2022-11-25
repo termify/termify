@@ -46,7 +46,6 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 
     const data = suspend(async () => {
         const officeResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/office`)).json()) as DataOffice[];
-
         const stateResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/state`)).json()) as AllDataState[];
 
         return {

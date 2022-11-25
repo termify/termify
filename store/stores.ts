@@ -1,4 +1,5 @@
 import create from 'zustand';
+import { hasCookie } from '../lib/cookie';
 
 type BookingDataProps = {
     officeId: number;
@@ -64,4 +65,14 @@ export const useScheduleStore = create<ScheduleStoreProps>((set) => ({
         year: 1900,
     },
     setPickedDay: (pickedDay) => set((prevState) => ({ ...prevState, pickedDay: pickedDay })),
+}));
+
+interface AuthStoreProps {
+    isLoggedIn: boolean;
+    setLoggedIn: (loggedIn: boolean) => void;
+}
+
+export const useAuthStore = create<AuthStoreProps>((set) => ({
+    isLoggedIn: false,
+    setLoggedIn: (loggedIn) => set((prevState) => ({ ...prevState, isLoggedIn: loggedIn })),
 }));
