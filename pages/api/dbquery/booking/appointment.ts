@@ -5,7 +5,7 @@ type AppointmentData = {
 	id: number;
 	partnerId: number;
 	userId: string;
-	timestamp: Date;
+	timestamp: number;
 	typeOfRequest: string;
 	note: string;
 	attachment: string;
@@ -26,30 +26,18 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 	const { partnerId, userId, timestamp, typeOfRequest, note, attachment } = req.body as {
 		partnerId: string;
 		userId: string;
-		timestamp: string | Date;
+		timestamp: number;
 		typeOfRequest: string;
 		note: string;
 		attachment: string;
 	};
-    
-  
-	const date = typeof timestamp === "string" ? timestamp.split("-") : timestamp;
 
 	const appointmentData = (await db.appointment.create({
 		data: {
 			userId: userId,
 			partnerId: parseInt(partnerId),
-			timestamp:
-				typeof timestamp === "string"
-					? new Date(
-							parseInt((date as string[])[0]),
-							parseInt((date as string[])[1] as string),
-							parseInt((date as string[])[2] as string),
-							parseInt((date as string[])[3] as string),
-							parseInt((date as string[])[4] as string),
-							parseInt((date as string[])[5] as string)
-					  )
-					: (timestamp as Date),
+			// @ts-ignore
+			timestamp: timestamp,
 			typeOfRequest: typeOfRequest,
 			note: note,
 			attachment: attachment,
@@ -73,10 +61,12 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 
 const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) => {
     const {pickDate} = req.body as { pickDate : {day:number, month:number, year:number}};
-    const appointmentPickData = (await db.appointment.findMany({
+	const appointmentPickData = (await db.appointment.findMany({
         where: {
             timestamp: {
+    // @ts-ignore
                 gte: new Date(pickDate.year,pickDate.month - 1,pickDate.day,0,0,0).getTime()/1000,
+    // @ts-ignore
                 lte: new Date(pickDate.year,pickDate.month - 1,pickDate.day,23,59,59).getTime()/1000,
             }
         }
