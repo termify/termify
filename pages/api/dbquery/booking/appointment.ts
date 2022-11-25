@@ -36,7 +36,6 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 		data: {
 			userId: userId,
 			partnerId: parseInt(partnerId),
-			// @ts-ignore
 			timestamp: timestamp,
 			typeOfRequest: typeOfRequest,
 			note: note,
@@ -64,9 +63,7 @@ const putController = async (req: NextApiRequest, res: NextApiResponse<Appointme
 	const appointmentPickData = (await db.appointment.findMany({
         where: {
             timestamp: {
-    // @ts-ignore
                 gte: new Date(pickDate.year,pickDate.month - 1,pickDate.day,0,0,0).getTime()/1000,
-    // @ts-ignore
                 lte: new Date(pickDate.year,pickDate.month - 1,pickDate.day,23,59,59).getTime()/1000,
             }
         }

@@ -7,13 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          Int           @id @default(autoincrement())
-  uuid        String        @unique
-  email       String        @unique
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime?
-  Appointment Appointment[]
+model Appointment {
+  id            Int      @id @default(autoincrement())
+  userId        String
+  partnerId     Int
+  typeOfRequest String?
+  note          String?
+  attachment    String?
+  timestamp     Decimal? @db.Decimal
+  Partner       Partner  @relation(fields: [partnerId], references: [id])
+  User          User     @relation(fields: [userId], references: [uuid])
+}
+
+model AppointmentSettings {
+  id         Int     @id @default(autoincrement())
+  partnerId  Int
+  intervall  Int     @default(30)
+  holydaysOn Boolean @default(true)
+  Partner    Partner @relation(fields: [partnerId], references: [id])
+}
+
+model AppointmentSlots {
+  id          Int      @id @default(autoincrement())
+  isBlackList Boolean  @default(true)
+  dateFrom    DateTime @db.Timestamptz(6)
+  dateTo      DateTime @db.Timestamptz(6)
+  partnerId   Int
+  Partner     Partner  @relation(fields: [partnerId], references: [id])
 }
 
 model District {
@@ -32,9 +52,21 @@ model Office {
   Partner           Partner[]
 }
 
-model Template {
-  id           Int    @id @default(autoincrement())
-  templateName String @unique
+model OfficeService {
+  id                 Int     @id @default(autoincrement())
+  serviceText        String
+  serviceDescription String?
+  officeId           Int
+  Office             Office  @relation(fields: [officeId], references: [id])
+}
+
+model Opening {
+  id           Int      @id @default(autoincrement())
+  weekday      Weekday
+  timeslotFrom DateTime @db.Timetz(6)
+  timeslotTo   DateTime @db.Timetz(6)
+  partnerId    Int
+  Partner      Partner  @relation(fields: [partnerId], references: [id])
 }
 
 model Partner {
@@ -57,50 +89,18 @@ model State {
   District  District[]
 }
 
-model AppointmentSettings {
-  id         Int     @id @default(autoincrement())
-  partnerId  Int
-  intervall  Int     @default(30)
-  holydaysOn Boolean @default(true)
-  Partner    Partner @relation(fields: [partnerId], references: [id])
+model Template {
+  id           Int    @id @default(autoincrement())
+  templateName String @unique
 }
 
-model AppointmentSlots {
-  id          Int      @id @default(autoincrement())
-  isBlackList Boolean  @default(true)
-  dateFrom    DateTime @db.Timestamptz(6)
-  dateTo      DateTime @db.Timestamptz(6)
-  partnerId   Int
-  Partner     Partner  @relation(fields: [partnerId], references: [id])
-}
-
-model Opening {
-  id           Int      @id @default(autoincrement())
-  weekday      Weekday
-  timeslotFrom DateTime @db.Timetz(6)
-  timeslotTo   DateTime @db.Timetz(6)
-  partnerId    Int
-  Partner      Partner  @relation(fields: [partnerId], references: [id])
-}
-
-model Appointment {
-  id            Int      @id @default(autoincrement())
-  userId        String
-  partnerId     Int
-  typeOfRequest String?
-  note          String?
-  attachment    String?
-  timestamp     Decimal? @db.Decimal
-  Partner       Partner  @relation(fields: [partnerId], references: [id])
-  User          User     @relation(fields: [userId], references: [uuid])
-}
-
-model OfficeService {
-  id                 Int     @id @default(autoincrement())
-  serviceText        String
-  serviceDescription String?
-  officeId           Int
-  Office             Office  @relation(fields: [officeId], references: [id])
+model User {
+  id          Int           @id @default(autoincrement())
+  uuid        String        @unique
+  email       String        @unique
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?
+  Appointment Appointment[]
 }
 
 enum Weekday {
