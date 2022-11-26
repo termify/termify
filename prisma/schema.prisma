@@ -81,6 +81,7 @@ model Partner {
   AppointmentSettings AppointmentSettings[]
   AppointmentSlots    AppointmentSlots[]
   Opening             Opening[]
+  SystemUser          SystemUser[]
 }
 
 model State {
@@ -111,4 +112,11 @@ enum Weekday {
   Freitag
   Samstag
   Sonntag
+}
+
+model SystemUser {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique
+  partnerId Int
+  Partner   Partner @relation(fields: [partnerId], references: [id])
 }
