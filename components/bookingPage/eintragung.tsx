@@ -6,6 +6,14 @@ import { Modal } from "../shared/modal";
 import AuthForm from "../shared/authForm";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { suspend } from "suspend-react";
+import { baseUrl } from "../../lib/baseUrl";
+
+interface DataOfficeService {
+	id: number;
+	serviceText: string;
+	serviceDescription?: string;
+}
 
 export default function Eintragung() {
 	return (
@@ -18,12 +26,21 @@ export default function Eintragung() {
 function Reason() {
 	const setBookingPage = useBookingStore((state) => state.setPageNumber);
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+	const bookingData = useBookingStore((state) => state.bookingData);
 
 	function submitHandler(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		toast.success("Ihre Buchung wurde erfolgreich getätigt");
 		setBookingPage(4);
 	}
+
+	const reasons = suspend(async () => {
+		const response = (await (
+			await fetch(`${baseUrl()}/api/dbquery/booking/officeService/${bookingData.officeId}`)
+		).json()) as DataOfficeService[];
+
+		return response;
+	}, [bookingData]);
 
 	return (
 		<>
@@ -40,6 +57,7 @@ function Reason() {
 				<form className={"flex flex-col items-center gap-4"} onSubmit={submitHandler}>
 					<CustomDropdown heading={"Art des Anliegens"} required>
 						<option>Bitte Anliegen wählen</option>
+						{reasons ? reasons.map((e, i) => <option key={i}>{e.serviceText}</option>) : null}
 					</CustomDropdown>
 					<CustomInput heading={"Dokumenten hochladen"} />
 					<CustomTextArea heading={"Anmerkung"} />
