@@ -57,9 +57,9 @@ function TaskleisteMobileSection({ children, index }: TaskleisteMobileSectionPro
 				index === 1
 					? "from-sky-400 to-emerald-500"
 					: index === 2
-					? "from-rose-400 to-amber-500"
-					: index === 3
 					? "from-indigo-400 to-sky-500"
+					: index === 3
+					? "from-rose-400 to-amber-500"
 					: "from-emerald-400 to-sky-500"
 			}`}
 		>
@@ -95,9 +95,9 @@ function TaskleisteSection({ sectionName, index, last = false }: TaskleisteSecti
 								index === 1
 									? "from-sky-400 to-emerald-500"
 									: index === 2
-									? "from-rose-400 to-amber-500"
-									: index === 3
 									? "from-indigo-400 to-sky-500"
+									: index === 3
+									? "from-rose-400 to-amber-500"
 									: "from-emerald-400 to-sky-500"
 						  } bg-clip-text text-transparent`
 						: "text-slate-200"

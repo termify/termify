@@ -31,7 +31,7 @@ function Reason() {
 				<div className="flex justify-center">
 					<h3
 						className={
-							"text-center font-bold bg-gradient-to-r w-full inline-block from-indigo-400 to-sky-500 text-transparent text-2xl bg-clip-text mx-auto p-4 xl:mb-8 xl:w-1/3 xl:text-4xl "
+							"text-center font-bold bg-gradient-to-r w-full inline-block from-rose-400 to-amber-500 text-transparent text-2xl bg-clip-text mx-auto p-4 xl:mb-8 xl:w-1/3 xl:text-4xl "
 						}
 					>
 						Anliegen
@@ -46,7 +46,7 @@ function Reason() {
 					<div className={"flex w-full justify-center"}>
 						<button
 							className={
-								"bg-gradient-to-r from-indigo-400 to-sky-500 shadow-md w-full max-w-[500px] text-indigo-50 p-2 font-bold rounded-md text-2xl mt-8 transition-all hover:scale-110 xl:w-1/3"
+								"bg-gradient-to-r from-rose-400 to-amber-500 shadow-md w-full max-w-[500px] text-rose-50 p-2 font-bold rounded-md text-2xl mt-8 transition-all hover:scale-110 xl:w-1/3"
 							}
 							title={"Termin buchen"}
 							type={"submit"}
