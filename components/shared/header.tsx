@@ -10,6 +10,7 @@ import { FaSignOutAlt } from "react-icons/fa";
 import { RiDashboardFill } from "react-icons/ri";
 import { deleteCookie, getCookie } from "../../lib/cookie";
 import { useAuthStore, useBookingStore } from "../../store/stores";
+import { TbFileSettings } from "react-icons/tb";
 
 export default function Header() {
 	const setPageNumber = useBookingStore((state) => state.setPageNumber);
@@ -69,6 +70,11 @@ function DesktopNavigation() {
 			{session ? (
 				<>
 					<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
+					<NavigationLink
+						icon={<TbFileSettings color="#ffffff" />}
+						name={"Konfiguration"}
+						to={`/user/${session.id}/config`}
+					/>
 					<LogoutLink />
 				</>
 			) : (

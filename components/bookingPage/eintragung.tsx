@@ -36,8 +36,16 @@ function Reason() {
 
 	const reasons = suspend(async () => {
 		const response = (await (
-			await fetch(`${baseUrl()}/api/dbquery/booking/officeService/${bookingData.officeId}`)
+			await fetch(`${baseUrl()}/api/dbquery/booking/officeService/`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ officeId: bookingData.officeId }),
+			})
 		).json()) as DataOfficeService[];
+
+		console.log("Response", response);
 
 		return response;
 	}, [bookingData]);
@@ -56,8 +64,11 @@ function Reason() {
 				</div>
 				<form className={"flex flex-col items-center gap-4"} onSubmit={submitHandler}>
 					<CustomDropdown heading={"Art des Anliegens"} required>
-						<option>Bitte Anliegen wählen</option>
-						{reasons ? reasons.map((e, i) => <option key={i}>{e.serviceText}</option>) : null}
+						{reasons && reasons.length > 0 ? (
+							reasons.map((e, i) => <option key={i}>{e.serviceText}</option>)
+						) : (
+							<option>Keine Anliegen anwählbar</option>
+						)}
 					</CustomDropdown>
 					<CustomInput heading={"Dokumenten hochladen"} />
 					<CustomTextArea heading={"Anmerkung"} />

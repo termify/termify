@@ -101,7 +101,20 @@ model User {
   email       String        @unique
   createdAt   DateTime      @default(now())
   updatedAt   DateTime?
+  address     String?
+  birthday    DateTime?     @db.Date
+  city        String?
+  firstname   String?
+  surname     String?
+  zipcode     Int?
   Appointment Appointment[]
+}
+
+model SystemUser {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique
+  partnerId Int
+  Partner   Partner @relation(fields: [partnerId], references: [id])
 }
 
 enum Weekday {
@@ -112,11 +125,4 @@ enum Weekday {
   Freitag
   Samstag
   Sonntag
-}
-
-model SystemUser {
-  id        Int     @id @default(autoincrement())
-  uuid      String  @unique
-  partnerId Int
-  Partner   Partner @relation(fields: [partnerId], references: [id])
 }

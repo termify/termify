@@ -45,6 +45,8 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 			const officeResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/office`)).json()) as DataOffice[];
 			const stateResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/state`)).json()) as AllDataState[];
 
+			console.log("Office Data", officeResponse);
+
 			return {
 				officeData: officeResponse,
 				stateData: stateResponse,
@@ -93,14 +95,14 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 			{partner && partner.length > 0 ? (
 				<div className={`grid grid-cols-2 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden scroll-smooth`}>
 					{partner.map((e, i) => (
-						<BookingButton key={e.partnerName + i} index={i} partnerData={e} />
+						<BookingButton key={e.partnerName + i} index={e.id} partnerData={e} />
 					))}
 				</div>
 			) : (
 				<div className={"mt-24"}>
 					<h3 className={"text-center p-8 text-xl xl:text-5xl"}>Bitte wählen Sie Ihren Bezirk aus</h3>
 					<div className="p-1 w-1/2 container mx-auto bg-gradient-to-r from-sky-400 to-emerald-500 rounded shadow-xl relative">
-						<select className="w-full rounded bg-white p-2 xl:p-6 xl:text-2xl " onChange={fetchPartner}>
+						<select className="w-full rounded bg-white p-2 xl:p-6 xl:text-2xl" onChange={fetchPartner}>
 							<option>--- Bezirk wählen ---</option>
 							{data?.stateData.map((e, i) => (
 								<optgroup key={e.stateName + i} label={e.stateName}>
@@ -140,7 +142,7 @@ function BookingButton({ partnerData, index }: BookinButtonProps) {
 	function onClickHandler() {
 		setBookingData({
 			...bookingData,
-			officeId: index,
+			officeId: (partnerData.Office as OfficeProps).id,
 			officeName: (partnerData.Office as OfficeProps).officeName,
 		});
 		setBookingPage(2);

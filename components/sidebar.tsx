@@ -8,6 +8,7 @@ import { FaHome } from "react-icons/fa";
 import { RiDashboardFill } from "react-icons/ri";
 import { getCookie } from "../lib/cookie";
 import { useAuthStore } from "../store/stores";
+import { TbFileSettings } from "react-icons/tb";
 
 export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
 	const [yOffset, setYOffsset] = useState<number>(500);
@@ -57,6 +58,11 @@ export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispa
 									name={"Dashboard"}
 									to={`/user/${session.id}/dashboard`}
 									setOpen={() => setOpen(false)}
+								/>
+								<NavigationLink
+									icon={<TbFileSettings color="#ffffff" />}
+									name={"Konfiguration"}
+									to={`/user/${session.id}/config`}
 								/>
 								<LogoutLink onClick={() => setOpen(false)} />
 							</>
