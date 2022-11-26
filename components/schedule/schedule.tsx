@@ -84,8 +84,8 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 	const setColor = picked
 		? "bg-gradient-to-r from-indigo-400 to-sky-500 text-indigo-100 font-bold "
 		: todayIsNewerThenYesterday
-		? "bg-gradient-to-r from-indigo-400/[5%] to-sky-500/[5%] text-sky-900"
-		: "bg-slate-100/10";
+		? "bg-gradient-to-r from-indigo-400/[15%] to-sky-500/[15%] text-sky-900"
+		: "bg-indigo-100/10";
 
 	return (
 		<div className={"p-1"}>
