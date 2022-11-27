@@ -100,7 +100,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 				</div>
 			) : (
 				<div className={"mt-24"}>
-					<h3 className={"text-center p-8 text-xl xl:text-5xl"}>Bitte wählen Sie Ihren Bezirk aus</h3>
+					<h3 className={"text-center p-8 text-xl text-sky-900 xl:text-5xl"}>Bitte wählen Sie Ihren Bezirk aus</h3>
 					<div className="p-1 w-1/2 container mx-auto bg-gradient-to-r from-sky-400 to-emerald-500 rounded shadow-xl relative">
 						<select className="w-full rounded bg-sky-50 text-sky-900 p-2 xl:p-6 xl:text-2xl" onChange={fetchPartner}>
 							<option>--- Bezirk wählen ---</option>
