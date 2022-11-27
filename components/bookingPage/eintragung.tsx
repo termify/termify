@@ -8,6 +8,10 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { suspend } from "suspend-react";
 import { baseUrl } from "../../lib/baseUrl";
+import LoadingSpinner from "../shared/loadingSpinner";
+import { supabase } from "../../lib/supabase";
+import { useRouter } from "next/router";
+import { getCookie } from "../../lib/cookie";
 
 interface DataOfficeService {
 	id: number;
@@ -24,14 +28,62 @@ export default function Eintragung() {
 }
 
 function Reason() {
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const [files, setFiles] = useState<File[]>([]);
+	const [reason, setReason] = useState<string>("");
+	const [note, setNote] = useState<string>("");
 	const setBookingPage = useBookingStore((state) => state.setPageNumber);
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 	const bookingData = useBookingStore((state) => state.bookingData);
 
-	function submitHandler(e: React.FormEvent<HTMLFormElement>) {
+	async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-		toast.success("Ihre Buchung wurde erfolgreich getätigt");
-		setBookingPage(4);
+		setShowModal(true);
+
+		const { auth } = getCookie("auth") as { auth: { id: string } };
+
+		const time = bookingData.time.split(":");
+		const timeStamp = Math.floor(
+			new Date(
+				bookingData.date.year,
+				bookingData.date.month,
+				bookingData.date.day,
+				parseInt(time[0]),
+				parseInt(time[1])
+			).getTime() / 1000
+		);
+
+		try {
+			if (files.length > 0) {
+				for await (const file of files) {
+					const { data: supabaseData, error: supabaseError } = await supabase.storage
+						.from("appointment-bucket")
+						.upload(`${bookingData.officeId}/${auth.id}/${timeStamp}/${file.name}`, file);
+				}
+			}
+
+			const response = await (
+				await fetch(`${baseUrl()}/api/dbquery/booking/appointment`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						partnerId: bookingData.officeId,
+						userId: auth.id,
+						timestamp: timeStamp,
+						typeOfRequest: reason,
+						note: note,
+						attachment: files.length > 0 ? `${bookingData.officeId}/${auth.id}/${timeStamp}` : "",
+					}),
+				})
+			).json();
+
+			toast.success("Ihre Buchung wurde erfolgreich getätigt");
+			setBookingPage(4);
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	const reasons = suspend(async () => {
@@ -44,8 +96,6 @@ function Reason() {
 				body: JSON.stringify({ officeId: bookingData.officeId }),
 			})
 		).json()) as DataOfficeService[];
-
-		console.log("Response", response);
 
 		return response;
 	}, [bookingData]);
@@ -63,15 +113,25 @@ function Reason() {
 					</h3>
 				</div>
 				<form className={"flex flex-col items-center gap-4"} onSubmit={submitHandler}>
-					<CustomDropdown heading={"Art des Anliegens"} required>
+					<CustomDropdown
+						heading={"Art des Anliegens"}
+						required
+						value={reason}
+						onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setReason(e.target.value)}
+					>
+						<option>Bitte Anliegen wählen</option>
 						{reasons && reasons.length > 0 ? (
 							reasons.map((e, i) => <option key={i}>{e.serviceText}</option>)
 						) : (
 							<option>Keine Anliegen anwählbar</option>
 						)}
 					</CustomDropdown>
-					<CustomInput heading={"Dokumenten hochladen"} />
-					<CustomTextArea heading={"Anmerkung"} />
+					<CustomInput heading={"Dokumenten hochladen"} files={files} setFiles={setFiles} />
+					<CustomTextArea
+						heading={"Anmerkung"}
+						value={note}
+						onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNote(e.target.value)}
+					/>
 					<div className={"flex w-full justify-center"}>
 						<button
 							className={
@@ -85,6 +145,14 @@ function Reason() {
 					</div>
 				</form>
 			</div>
+
+			{showModal && (
+				<Modal>
+					<div className={"bg-slate-800/10 w-screen h-screen flex justify-center items-center"}>
+						<LoadingSpinner />
+					</div>
+				</Modal>
+			)}
 
 			{!isLoggedIn && (
 				<Modal>
@@ -163,11 +231,12 @@ function CustomDropdown(props: CustomDropdown) {
 
 interface CustomInputProps extends ComponentProps<"input"> {
 	heading: string;
+	files: File[];
+	setFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }
 
-function CustomInput({ heading, ...props }: CustomInputProps) {
+function CustomInput({ heading, files, setFiles, ...props }: CustomInputProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [files, setFiles] = useState<File[]>([]);
 
 	function removeFile(fileName: File) {
 		const index = files.findIndex((e) => e.name === fileName.name);

@@ -22,6 +22,15 @@ const nextConfig = {
 					},
 				],
 			},
+			{
+				source: "/booking",
+				headers: [
+					{
+						key: "access-control-allow-origin",
+						value: "*",
+					},
+				],
+			},
 		];
 	},
 };

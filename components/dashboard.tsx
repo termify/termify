@@ -1,10 +1,11 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import toast from "react-hot-toast";
 import { hash } from "./createHash";
 import LoadingSpinner from "./shared/loadingSpinner";
 import { suspend } from "suspend-react";
 import { useRouter } from "next/router";
 import { baseUrl } from "../lib/baseUrl";
+import { supabase } from "../lib/supabase";
 
 export default function Dashboard() {
 	console.log("HASH", hash);
@@ -20,7 +21,7 @@ export default function Dashboard() {
 	);
 }
 
-interface PersonalDataProps {
+export interface PersonalDataProps {
 	firstName: string;
 	lastName: string;
 	birthday: string;
@@ -38,6 +39,41 @@ function UserCredentials() {
 		zipCode: "75175",
 		city: "Pforzheim",
 	});
+
+	const router = useRouter();
+
+	async function updateData() {
+		const response = await (
+			await fetch(`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(personalData),
+			})
+		).json();
+
+		console.log("Update User", response);
+	}
+
+	useEffect(() => {
+		async function fetchPersonalData() {
+			const response = (await (
+				await fetch(`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}`)
+			).json()) as PersonalDataProps;
+			// console.log("Davor", personalData);
+			console.log("Response", response.birthday);
+
+			setPersonalData((prev) => ({
+				...prev,
+				birthday: "02-10-1991",
+			}));
+
+			setPersonalData(response);
+		}
+
+		fetchPersonalData();
+	}, []);
 
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500 "}>
@@ -72,10 +108,12 @@ function UserCredentials() {
 							const checkYear = parseInt(e.target.value.split("-")[0]);
 							const today = new Date().getFullYear();
 
-							if (today - checkYear <= 14) {
-								toast.error("Sie müssen mindestens 14 Jahre sein um Termify zu nutzen");
-								return;
-							}
+							// if (today - checkYear <= 14) {
+							// 	toast.error("Sie müssen mindestens 14 Jahre sein um Termify zu nutzen");
+							// 	return;
+							// }
+
+							console.log("Das ist Value", e.target.value);
 
 							setPersonalData((prev) => ({ ...prev, birthday: e.target.value }));
 						}}
@@ -103,6 +141,7 @@ function UserCredentials() {
 					/>
 					<div className={"flex justify-center mt-8 xl:mt-16"}>
 						<button
+							onClick={updateData}
 							className={
 								"bg-gradient-to-r from-sky-400 to-emerald-500 text-sky-50 p-2 rounded-md transition-all font-bold shadow-xl xl:p-4 xl:text-2xl xl:hover:scale-110"
 							}
@@ -119,16 +158,24 @@ function UserCredentials() {
 function UserSchedule() {
 	const router = useRouter();
 	const { id } = router.query as { id: string };
-
-	const termine = suspend(async () => {
-		const response = (await (await fetch(`${baseUrl()}/api/dbquery/booking/appointment?uuid=${id}`)).json()) as {
+	const [termine, setTermine] = useState<
+		{
 			timestamp: string;
 			typeOfRequest: string;
-		}[];
+		}[]
+	>([]);
 
-		console.log("R", response);
-		return response;
-	}, [id]);
+	useEffect(() => {
+		async function fetchTermine() {
+			const response = (await (await fetch(`${baseUrl()}/api/dbquery/booking/appointment?uuid=${id}`)).json()) as {
+				timestamp: string;
+				typeOfRequest: string;
+			}[];
+			setTermine(response);
+		}
+
+		fetchTermine();
+	}, []);
 
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-rose-400 to-amber-500 xl:row-span-2"}>
@@ -141,7 +188,7 @@ function UserSchedule() {
 					Termine
 				</h3>
 				<Suspense fallback={<LoadingSpinner />}>
-					{termine ? (
+					{termine && termine.length > 0 ? (
 						termine.map((e, i) => (
 							<DisplayTermine
 								key={i}
