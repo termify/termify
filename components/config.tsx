@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import React, { ComponentProps, ReactNode, useState } from "react";
 import { RiDeleteBinFill } from "react-icons/ri";
 interface OpeningDays {
@@ -148,7 +147,7 @@ function DaySlot({ day, index, checked, changeAvailablelityDay, ...props }: DayS
 					checked ? "border-emerald-400 bg-emerald-100" : "border-rose-400 bg-rose-100"
 				}  shadow-md ${
 					index === 6 ? "text-rose-900" : "text-emerald-900"
-				} transition-all xl:p-4 xl:hover:scale-110 hover:xl:cursor-pointer `}
+				} transition-all xl:p-4 hover:xl:scale-110 hover:xl:cursor-pointer `}
 			>
 				{day}
 				<input
@@ -203,7 +202,7 @@ export const AppointmentSettings = () => {
 								title={"Feiertage"}
 								type={"checkbox"}
 								checked={useVacations}
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								onChange={ _ => {
 									setUseVacations((prev) => !prev);
 								}}
 								className={"hidden"}
@@ -244,64 +243,64 @@ function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
 	);
 }
 
-// Appointment Slots => Blacklist + Date from und Date to
+// Appointment Slots => Block + Date from und Date to
 
 export const AppointmentSlotSettings = () => {
-	const [pickedBlacklistDate, setPickedBlacklistDate] = useState<string>("");
-	const [blacklistDays, setBlacklistDays] = useState<string[]>([]);
+	const [pickedBlockDate, setPickedBlockDate] = useState<string>("");
+	const [blockDays, setBlockDays] = useState<string[]>([]);
 
-	const [pickedWhitelistDate, setPickedWhitelistDate] = useState<string>("");
-	const [whitelistDays, setWhitelistDays] = useState<string[]>([]);
+	const [pickedAllowedDate, setPickedAllowedDate] = useState<string>("");
+	const [whitelistDays, setAllowedDays] = useState<string[]>([]);
 
-	function addBlacklist() {
-		if (!pickedBlacklistDate) return;
-		setBlacklistDays([...blacklistDays, pickedBlacklistDate]);
+	function addBlock() {
+		if (!pickedBlockDate) return;
+		setBlockDays([...blockDays, pickedBlockDate]);
 	}
 
-	function deleteBlacklistEntrie(index: number) {
-		blacklistDays.splice(index, 1);
-		setBlacklistDays([...blacklistDays]);
+	function deleteBlockEntrie(index: number) {
+		blockDays.splice(index, 1);
+		setBlockDays([...blockDays]);
 	}
 
-	function addWhitelist() {
-		if (!pickedWhitelistDate) return;
-		setWhitelistDays([...whitelistDays, pickedWhitelistDate]);
+	function addAllowed() {
+		if (!pickedAllowedDate) return;
+		setAllowedDays([...whitelistDays, pickedAllowedDate]);
 	}
 
-	function deleteWhitelistEntrie(index: number) {
+	function deleteAllowedEntrie(index: number) {
 		whitelistDays.splice(index, 1);
-		setWhitelistDays([...whitelistDays]);
+		setAllowedDays([...whitelistDays]);
 	}
 
 	return (
 		<GridEntrieContainer gradientType={"fromIndigo"}>
 			<div className={"h-full"}>
-				<h3 className={"font-bold xl:text-3xl"}>Blacklist- 😈 und Whitelist 😇 Tage </h3>
+				<h3 className={"font-bold xl:text-3xl"}>Blocklist- 😈 und Allowedlist 😇 Tage </h3>
 				<div className={"h-full flex flex-col justify-center"}>
 					<div>
 						<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
-							<label className={"font-bold"}>Blacklist:</label>
+							<label className={"font-bold"}>Blocklist:</label>
 							<input
 								title={"Kalendar"}
 								type={"date"}
-								value={pickedBlacklistDate}
+								value={pickedBlockDate}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-									setPickedBlacklistDate(e.target.value);
+									setPickedBlockDate(e.target.value);
 								}}
 								className={"p-2 rounded-md border-2 border-indigo-400"}
 							/>
 							<button
-								onClick={addBlacklist}
+								onClick={addBlock}
 								className={
 									"bg-gradient-to-r from-indigo-400 to-sky-500 p-2 text-indigo-50 font-bold rounded-md transition-all xl:hover:scale-110 xl:active:scale-95"
 								}
 							>
-								Zur Blacklist hinzufügen
+								Zur Block hinzufügen
 							</button>
 						</div>
 						<div className={"flex p-4 flex-wrap gap-2"}>
-							{blacklistDays.map((e, i) => (
-								<VacationDay key={i} day={e} deleteEntrie={deleteBlacklistEntrie} index={i} />
+							{blockDays.map((e, i) => (
+								<VacationDay key={i} day={e} deleteEntrie={deleteBlockEntrie} index={i} />
 							))}
 						</div>
 					</div>
@@ -309,28 +308,28 @@ export const AppointmentSlotSettings = () => {
 					<div className={"w-full h-0.5 bg-indigo-500 rounded-md my-8"}></div>
 					<div>
 						<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
-							<label className={"font-bold"}>Whitelist:</label>
+							<label className={"font-bold"}>Allowed:</label>
 							<input
 								title={"Kalendar"}
 								type={"date"}
-								value={pickedWhitelistDate}
+								value={pickedAllowedDate}
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-									setPickedWhitelistDate(e.target.value);
+									setPickedAllowedDate(e.target.value);
 								}}
 								className={"p-2 rounded-md border-2 border-indigo-400"}
 							/>
 							<button
-								onClick={addWhitelist}
+								onClick={addAllowed}
 								className={
 									"bg-gradient-to-r from-indigo-400 to-sky-500 p-2 text-indigo-50 font-bold rounded-md transition-all xl:hover:scale-110 xl:active:scale-95"
 								}
 							>
-								Zur Whitelist hinzufügen
+								Zur Allowed hinzufügen
 							</button>
 						</div>
 						<div className={"flex p-4 flex-wrap gap-2 "}>
 							{whitelistDays.map((e, i) => (
-								<VacationDay key={i} day={e} deleteEntrie={deleteWhitelistEntrie} index={i} />
+								<VacationDay key={i} day={e} deleteEntrie={deleteAllowedEntrie} index={i} />
 							))}
 						</div>
 					</div>
@@ -396,7 +395,7 @@ function returnTextColor(gradientType: GradientType): string {
 	}
 }
 
-const GridEntrieContainer = ({ children, gradientType, span = false }: GridEntrieContainerProps) => {
+const GridEntrieContainer = ({ children, gradientType }: GridEntrieContainerProps) => {
 	const gradient: string = returnGradient(gradientType);
 	const foregroundColor: string = returnForegroundColor(gradientType);
 	const textColor: string = returnTextColor(gradientType);

@@ -3,11 +3,11 @@ import { useRouter } from 'next/router';
 import { useAuthStore } from '../../store/stores';
 import { hasCookie } from '../../lib/cookie';
 
-interface ClientSideRenderCOntainerProps {
+interface ClientSideRenderContainerProps {
     children: ReactNode;
 }
 
-export default function ClientSideRenderContainer({ children }: ClientSideRenderCOntainerProps) {
+export default function ClientSideRenderContainer({ children }: ClientSideRenderContainerProps) {
     const [clientIsReady, setClientIsReady] = useState<boolean>(false);
     const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
     const router = useRouter();
@@ -17,7 +17,7 @@ export default function ClientSideRenderContainer({ children }: ClientSideRender
 
         setLoggedIn(hasCookie('auth'));
         setClientIsReady(true);
-    }, [router.isReady]);
+    }, [router.isReady, setLoggedIn]);
 
     return <
     >{clientIsReady ? children : null}</

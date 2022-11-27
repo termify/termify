@@ -5,13 +5,9 @@ import { suspend } from "suspend-react";
 import { baseUrl } from "../../lib/baseUrl";
 
 export default function AuswahlPage() {
-	return <AuswahlAmt col={4} row={3} />;
+	return <AuswahlAmt />;
 }
 
-interface AuswahlAmtProps {
-	col: number;
-	row: number;
-}
 
 //TODO Kevin Bläser: Auswahl des Landkreises
 //TODO Kevin Bläser: AuswahlAmt Style
@@ -35,7 +31,7 @@ interface AllDataState {
 	District: DistrictProps[];
 }
 
-function AuswahlAmt({ col, row }: AuswahlAmtProps) {
+function AuswahlAmt() {
 	const [pos, setPos] = useState<number>(1);
 	const [partner, setPartner] = useState<DataPartner[]>([]);
 	const bookingData = useBookingStore((state) => state.bookingData);
@@ -93,7 +89,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 				)}
 			</div>
 			{partner && partner.length > 0 ? (
-				<div className={`grid grid-cols-4 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden scroll-smooth`}>
+				<div className={`grid grid-cols-2 gap-3 xl:grid-cols-4 overflow-y-hidden scroll-smooth`}>
 					{partner.map((e, i) => (
 						<BookingButton key={e.partnerName + i} index={e.id} partnerData={e} />
 					))}
@@ -156,7 +152,7 @@ function BookingButton({ partnerData, index }: BookinButtonProps) {
 				onClick={onClickHandler}
 				id={`s-${index}`}
 				className={
-					"bg-white w-full font-bold min-h-[5rem] rounded-md group-hover:bg-gradient-to-r transition-all group-hover:from-sky-400 group-hover:to-emerald-500 xl:min-h-[13rem]"
+					"w-full font-bold bg-sky-50 min-h-[5rem] rounded-md group-hover:bg-gradient-to-r transition-all group-hover:from-sky-400 group-hover:to-emerald-500 xl:min-h-[13rem]"
 				}
 			>
 				<p

@@ -3,11 +3,9 @@ import { parseDayNumberToDayString, useShowPickedValue } from "../../lib/schedul
 import { useBookingStore, useScheduleStore } from "../../store/stores";
 import { BsFillArrowLeftCircleFill } from "react-icons/bs";
 import { OpeningData } from "../../pages/api/dbquery/booking/partnercalendar";
-import { suspend } from "suspend-react";
-import { baseUrl } from "../../lib/baseUrl";
+
 
 //TODO Kevin Bläser: Ersetze Obj durch DB Query
-
 interface TimeSlotsProps {
 	onClick?: () => void;
 }
@@ -72,20 +70,20 @@ export default function TimeSlots({ onClick }: TimeSlotsProps) {
 	const pickedValue = useScheduleStore((state) => state.pickedDay);
 	const pickedDate: number = new Date(pickedValue.year, pickedValue.month, pickedValue.day).getDay();
 
-	const timeSlotData = suspend(async () => {
-		// const response = await (
-		// 	await fetch(`${baseUrl()}/api/dbquery/booking/appointments`, {
-		// 		method: "PUT",
-		// 		headers: {
-		// 			"Content-Type": "application/json",
-		// 		},
-		// 		body: JSON.stringify({
-		// 			pickedDate: pickedValue,
-		// 		}),
-		// 	})
-		// ).json();
-		// console.log("Timeslot Response", response);
-	}, [pickedValue]);
+	// suspend(async () => {
+	// 	// const response = await (
+	// 	// 	await fetch(`${baseUrl()}/api/dbquery/booking/appointments`, {
+	// 	// 		method: "PUT",
+	// 	// 		headers: {
+	// 	// 			"Content-Type": "application/json",
+	// 	// 		},
+	// 	// 		body: JSON.stringify({
+	// 	// 			pickedDate: pickedValue,
+	// 	// 		}),
+	// 	// 	})
+	// 	// ).json();
+	// 	// console.log("Timeslot Response", response);
+	// }, [pickedValue]);
 
 	const { from, to } = returnTimeslotDay(allowedDates, pickedDate);
 
@@ -150,11 +148,11 @@ function TimeSlotEntrie({ time }: TimeSlotEntrieProps) {
 		<button
 			onClick={onClickHandler}
 			className={
-				"bg-red-300 p-1 shadow rounded bg-gradient-to-r from-indigo-400 to-sky-500 w-2/3 mx-auto group transition-all xl:hover:scale-110"
+				"p-1 shadow rounded bg-gradient-to-r from-indigo-400 to-sky-500 w-2/3 mx-auto group transition-all xl:hover:scale-110"
 			}
 		>
 			<div
-				className={`bg-white p-1 shadow rounded xl:group-hover:bg-gradient-to-r xl:group-hover:from-indigo-400 xl:group-hover:to-sky-500 xl:group-hover:shadow-none`}
+				className={`bg-indigo-50 p-1 shadow rounded xl:group-hover:bg-gradient-to-r xl:group-hover:from-indigo-400 xl:group-hover:to-sky-500 xl:group-hover:shadow-none`}
 			>
 				<p
 					className={`text-center font-bold text-2xl bg-gradient-to-r from-indigo-400 to-sky-500 p-1 bg-clip-text text-transparent xl:group-hover:text-indigo-100 `}
