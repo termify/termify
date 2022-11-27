@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import toast from "react-hot-toast";
 import { hash } from "./createHash";
+import LoadingSpinner from "./shared/loadingSpinner";
+import { suspend } from "suspend-react";
+import { useRouter } from "next/router";
+import { baseUrl } from "../lib/baseUrl";
 
 export default function Dashboard() {
 	console.log("HASH", hash);
@@ -113,17 +117,72 @@ function UserCredentials() {
 }
 
 function UserSchedule() {
+	const router = useRouter();
+	const { id } = router.query as { id: string };
+
+	const termine = suspend(async () => {
+		const response = (await (await fetch(`${baseUrl()}/api/dbquery/booking/appointment?uuid=${id}`)).json()) as {
+			timestamp: string;
+			typeOfRequest: string;
+		}[];
+
+		console.log("R", response);
+		return response;
+	}, [id]);
+
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-rose-400 to-amber-500 xl:row-span-2"}>
 			<div className={"p-4 bg-rose-50 h-full rounded-xl"}>
 				<h3
 					className={
-						"bg-gradient-to-r from-rose-400 to-amber-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl"
+						"bg-gradient-to-r  mb-4 from-rose-400 to-amber-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl"
 					}
 				>
 					Termine
 				</h3>
-				<div className={"p-4 text-rose-900"}>Es sind keine Termindaten hinterlegt</div>
+				<Suspense fallback={<LoadingSpinner />}>
+					{termine ? (
+						termine.map((e, i) => (
+							<DisplayTermine key={i} index={i} timestamp={e.timestamp} typeOfRequest={e.typeOfRequest} />
+						))
+					) : (
+						<div className={"p-4 text-rose-900"}>Es sind keine Termindaten hinterlegt</div>
+					)}
+				</Suspense>
+			</div>
+		</div>
+	);
+}
+
+interface DisplayTermineProps {
+	timestamp: string;
+	typeOfRequest: string;
+	index: number;
+}
+
+function parseUnixToDate(unixTime: string | number) {
+	const unix: number = typeof unixTime === "string" ? parseInt(unixTime) : unixTime;
+	const newDate = new Date(unix * 1000);
+
+	return newDate.toLocaleDateString("de-DE", {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+		hour: "numeric",
+		minute: "numeric",
+	});
+}
+
+function DisplayTermine({ timestamp, typeOfRequest, index }: DisplayTermineProps) {
+	return (
+		<div className={`p-2 flex  ${index % 2 === 0 ? "bg-rose-200" : "bg-rose-300"}`}>
+			<div className={"flex w-1/2 gap-8 text-rose-900"}>
+				<label className={"font-bold"}>Anliegen:</label>
+				<label>{typeOfRequest}</label>
+			</div>
+			<div className={"flex gap-8 text-rose-900"}>
+				<label className={"font-bold"}>Wann:</label>
+				<label>{parseUnixToDate(timestamp)}</label>
 			</div>
 		</div>
 	);
