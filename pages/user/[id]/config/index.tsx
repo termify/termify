@@ -8,10 +8,10 @@ import {
 
 const ConfigPage: NextPage = () => {
 	return (
-		<div className={"conatiner p-4 mx-auto grid grid-cols-2 gap-4"}>
+		<div className={"conatiner p-4 mx-auto grid  gap-4 xl:grid-cols-2"}>
 			<OpeningSettings />
-			<AppointmentSettings />
 			<AppointmentSlotSettings />
+			<AppointmentSettings />
 			<WebApiConfigSettings />
 		</div>
 	);

@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { ComponentProps, ReactNode, useState } from "react";
-
+import { RiDeleteBinFill } from "react-icons/ri";
 interface OpeningDays {
 	day: string;
 	checked: boolean;
@@ -48,9 +48,9 @@ export const OpeningSettings = () => {
 
 	return (
 		<GridEntrieContainer gradientType={"fromSky"}>
-			<h2 className={"font-bold text-3xl"}>Einstellungen Öffnungszeiten 🕰️</h2>
-			<h3 className={"indent-1 mt-2"}>An welchen Tagen geöffnet?</h3>
-			<div className={"grid grid-cols-7 my-4 gap-4 p-2"}>
+			<h2 className={"font-bold xl:text-3xl"}>Einstellungen Öffnungszeiten 🕰️</h2>
+			<h3 className={"indent-1 xl:mt-2"}>An welchen Tagen geöffnet?</h3>
+			<div className={"grid p-2  grid-cols-5 gap-4 xl:grid-cols-7 xl:my-4"}>
 				{openeningDays.map((e, i) => (
 					<DaySlot key={i} day={e.day} index={i} checked={e.checked} changeAvailablelityDay={changeAvailablelityDate} />
 				))}
@@ -104,9 +104,9 @@ interface TimeSlotProps {
 
 function TimeSlot({ dayName, from, to, index, changeAvailablelityTime }: TimeSlotProps) {
 	return (
-		<div className={"grid grid-cols-3 gap-4 "}>
-			<p className={" font-bold"}>{parseShortDayToFull(dayName)}</p>
-			<div className={"flex items-center gap-8"}>
+		<div className={"grid gap-2 grid-cols-2 xl:grid-cols-3 xl:gap-4 "}>
+			<p className={"font-bold row-span-3"}>{parseShortDayToFull(dayName)}</p>
+			<div className={"flex justify-between items-center gap-8 "}>
 				<label htmlFor={`from-${dayName}`}>Von: </label>
 				<input
 					title={"Von"}
@@ -118,7 +118,7 @@ function TimeSlot({ dayName, from, to, index, changeAvailablelityTime }: TimeSlo
 					}}
 				/>
 			</div>
-			<div className={"flex items-center gap-8"}>
+			<div className={"flex justify-between  items-center gap-8"}>
 				<label htmlFor={`to-${dayName}`}>Bis: </label>
 				<input
 					title={"Bis"}
@@ -144,11 +144,11 @@ function DaySlot({ day, index, checked, changeAvailablelityDay, ...props }: DayS
 	return (
 		<div>
 			<label
-				className={`font-bold text-center p-4 rounded-md border-2 select-none ${
+				className={`font-bold text-center p-1 rounded-md border-2 select-none ${
 					checked ? "border-emerald-400 bg-emerald-100" : "border-rose-400 bg-rose-100"
 				}  shadow-md ${
 					index === 6 ? "text-rose-900" : "text-emerald-900"
-				} transition-all hover:xl:scale-110 hover:xl:cursor-pointer `}
+				} transition-all hover:xl:scale-110 hover:xl:cursor-pointer xl:p-4`}
 			>
 				{day}
 				<input
@@ -166,19 +166,185 @@ function DaySlot({ day, index, checked, changeAvailablelityDay, ...props }: DayS
 }
 
 // Appointment Settings => Interval und Holidays
-
 export const AppointmentSettings = () => {
-	return <GridEntrieContainer gradientType={"fromRose"}>Appontment Settings</GridEntrieContainer>;
+	const [interval, setInterval] = useState<number>(30);
+	const [useVacations, setUseVacations] = useState<boolean>(false);
+
+	return (
+		<GridEntrieContainer gradientType={"fromRose"}>
+			<div>
+				<h3 className={"font-bold xl:text-3xl"}>Buchungsintervall 🕰️ und Feiertage 🆓</h3>
+				<div className={"flex flex-col gap-8 items-center xl:flex-row  xl:my-8"}>
+					<div className={"flex items-center gap-8"}>
+						<label className={"font-bold"}>Buchungsintervall:</label>
+						<input
+							title={"Interval"}
+							type={"number"}
+							step={15}
+							value={interval}
+							max={60}
+							min={15}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								setInterval(parseInt(e.target.value));
+							}}
+							className={"p-2 rounded-md border-2 border-rose-400 w-16"}
+						/>
+					</div>
+					<div className={"my-8 flex gap-8 items-center"}>
+						<label
+							className={`font-bold border-2 p-2 rounded-md select-none ${
+								useVacations
+									? "border-emerald-500 bg-emerald-200 text-emerald-900"
+									: "border-rose-500 bg-rose-200 text-rose-900"
+							} transition-all hover:xl:cursor-pointer hover:xl:scale-110 xl:active:scale-95 `}
+						>
+							Feiertage?
+							<input
+								title={"Feiertage"}
+								type={"checkbox"}
+								checked={useVacations}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									setUseVacations((prev) => !prev);
+								}}
+								className={"hidden"}
+							/>
+						</label>
+					</div>
+				</div>
+			</div>
+		</GridEntrieContainer>
+	);
 };
+
+interface VacationDayProps {
+	day: string;
+	index: number;
+	deleteEntrie: (index: number) => void;
+}
+
+function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
+	return (
+		<div
+			onClick={() => {
+				deleteEntrie(index);
+			}}
+			className={
+				"relative p-1 bg-gradient-to-r select-none from-indigo-400 to-sky-500 rounded-md group cursor-pointer transition-all hover:scale-105"
+			}
+		>
+			<div className={"p-2 font-bold bg-indigo-50"}>{day}</div>
+			<div
+				className={
+					"hidden bg-indigo-100 absolute top-0 left-0 w-full h-full rounded-md group-hover:xl:flex items-center p-1 justify-around"
+				}
+			>
+				<p className={"select-none"}>Löschen</p> <RiDeleteBinFill />
+			</div>
+		</div>
+	);
+}
+
 // Appointment Slots => Blacklist + Date from und Date to
 
 export const AppointmentSlotSettings = () => {
-	return <GridEntrieContainer gradientType={"fromIndigo"}>Appointment Slot Settings</GridEntrieContainer>;
+	const [pickedBlacklistDate, setPickedBlacklistDate] = useState<string>("");
+	const [blacklistDays, setBlacklistDays] = useState<string[]>([]);
+
+	const [pickedWhitelistDate, setPickedWhitelistDate] = useState<string>("");
+	const [whitelistDays, setWhitelistDays] = useState<string[]>([]);
+
+	function addBlacklist() {
+		if (!pickedBlacklistDate) return;
+		setBlacklistDays([...blacklistDays, pickedBlacklistDate]);
+	}
+
+	function deleteBlacklistEntrie(index: number) {
+		blacklistDays.splice(index, 1);
+		setBlacklistDays([...blacklistDays]);
+	}
+
+	function addWhitelist() {
+		if (!pickedWhitelistDate) return;
+		setWhitelistDays([...whitelistDays, pickedWhitelistDate]);
+	}
+
+	function deleteWhitelistEntrie(index: number) {
+		whitelistDays.splice(index, 1);
+		setWhitelistDays([...whitelistDays]);
+	}
+
+	return (
+		<GridEntrieContainer gradientType={"fromIndigo"}>
+			<div>
+				<h3 className={"font-bold xl:text-3xl"}>Blacklist- 😈 und Whitelist 😇 Tage </h3>
+				<div className={"xl:my-8"}>
+					<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
+						<label className={"font-bold"}>Blacklist:</label>
+						<input
+							title={"Kalendar"}
+							type={"date"}
+							value={pickedBlacklistDate}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								setPickedBlacklistDate(e.target.value);
+							}}
+							className={"p-2 rounded-md border-2 border-indigo-400"}
+						/>
+						<button
+							onClick={addBlacklist}
+							className={
+								"bg-gradient-to-r from-indigo-400 to-sky-500 p-2 text-indigo-50 font-bold rounded-md transition-all xl:hover:scale-110 xl:active:scale-95"
+							}
+						>
+							Zur Blacklist hinzufügen
+						</button>
+					</div>
+					<div className={"flex p-4 flex-wrap gap-2"}>
+						{blacklistDays.map((e, i) => (
+							<VacationDay key={i} day={e} deleteEntrie={deleteBlacklistEntrie} index={i} />
+						))}
+					</div>
+				</div>
+				{/* Divider */}
+				<div className={"w-full h-0.5 bg-indigo-500 rounded-md my-8"}></div>
+				<div>
+					<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
+						<label className={"font-bold"}>Whitelist:</label>
+						<input
+							title={"Kalendar"}
+							type={"date"}
+							value={pickedWhitelistDate}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								setPickedWhitelistDate(e.target.value);
+							}}
+							className={"p-2 rounded-md border-2 border-indigo-400"}
+						/>
+						<button
+							onClick={addWhitelist}
+							className={
+								"bg-gradient-to-r from-indigo-400 to-sky-500 p-2 text-indigo-50 font-bold rounded-md transition-all xl:hover:scale-110 xl:active:scale-95"
+							}
+						>
+							Zur Whitelist hinzufügen
+						</button>
+					</div>
+					<div className={"flex p-4 flex-wrap gap-2 "}>
+						{whitelistDays.map((e, i) => (
+							<VacationDay key={i} day={e} deleteEntrie={deleteWhitelistEntrie} index={i} />
+						))}
+					</div>
+				</div>
+			</div>
+		</GridEntrieContainer>
+	);
 };
 
 // Webapi config
 export const WebApiConfigSettings = () => {
-	return <GridEntrieContainer gradientType={"fromEmerald"}>WebApiConfig</GridEntrieContainer>;
+	return (
+		<GridEntrieContainer gradientType={"fromEmerald"} span>
+			WebApiConfig
+		</GridEntrieContainer>
+	);
 };
 
 type GradientType = "fromSky" | "fromRose" | "fromIndigo" | "fromEmerald";
@@ -186,6 +352,7 @@ type GradientType = "fromSky" | "fromRose" | "fromIndigo" | "fromEmerald";
 interface GridEntrieContainerProps {
 	children: ReactNode;
 	gradientType: GradientType;
+	span?: boolean;
 }
 
 function returnGradient(gradientType: GradientType): string {
@@ -227,14 +394,14 @@ function returnTextColor(gradientType: GradientType): string {
 	}
 }
 
-const GridEntrieContainer = ({ children, gradientType }: GridEntrieContainerProps) => {
+const GridEntrieContainer = ({ children, gradientType, span = false }: GridEntrieContainerProps) => {
 	const gradient: string = returnGradient(gradientType);
 	const foregroundColor: string = returnForegroundColor(gradientType);
 	const textColor: string = returnTextColor(gradientType);
 
 	return (
-		<div className={`p-1 rounded-md bg-gradient-to-r ${gradient}`}>
-			<div className={`p-4 rounded-md ${foregroundColor} ${textColor}`}>{children}</div>
+		<div className={`p-1 rounded-md bg-gradient-to-r  ${gradient}`}>
+			<div className={`p-4 rounded-md ${foregroundColor} ${textColor} h-full `}>{children}</div>
 		</div>
 	);
 };

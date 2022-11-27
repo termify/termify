@@ -93,7 +93,7 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 				)}
 			</div>
 			{partner && partner.length > 0 ? (
-				<div className={`grid grid-cols-2 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden scroll-smooth`}>
+				<div className={`grid grid-cols-4 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden scroll-smooth`}>
 					{partner.map((e, i) => (
 						<BookingButton key={e.partnerName + i} index={e.id} partnerData={e} />
 					))}
