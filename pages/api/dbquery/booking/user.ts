@@ -17,7 +17,7 @@ const updateController = async (req: NextApiRequest, res: NextApiResponse<{ ok: 
 	const { id } = req.query as { id: string };
 	const { firstName, lastName, birthday, street, zipCode, city } = req.body as PersonalDataProps;
 
-	const spliteDate = birthday.split("-");
+	const splitDate = birthday.split("-");
 
 	try {
 		await db.user.update({
@@ -27,7 +27,7 @@ const updateController = async (req: NextApiRequest, res: NextApiResponse<{ ok: 
 			data: {
 				firstname: firstName,
 				surname: lastName,
-				birthday: new Date(parseInt(spliteDate[0]), parseInt(spliteDate[1]) - 1, parseInt(spliteDate[2]) + 1),
+				birthday: new Date(parseInt(splitDate[0]), parseInt(splitDate[1]) - 1, parseInt(splitDate[2]) + 1),
 				address: street,
 				zipcode: parseInt(zipCode),
 				city: city,

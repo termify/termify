@@ -2,10 +2,8 @@ import React, { useState, Suspense, useEffect } from "react";
 import toast from "react-hot-toast";
 import { hash } from "./createHash";
 import LoadingSpinner from "./shared/loadingSpinner";
-import { suspend } from "suspend-react";
 import { useRouter } from "next/router";
 import { baseUrl } from "../lib/baseUrl";
-import { supabase } from "../lib/supabase";
 
 export default function Dashboard() {
 	console.log("HASH", hash);
@@ -15,7 +13,7 @@ export default function Dashboard() {
 			<>
 				<UserSchedule />
 				<UserCredentials />
-				<UserInfo />
+				<UserInfoComponent />
 			</>
 		</div>
 	);
@@ -43,17 +41,25 @@ function UserCredentials() {
 	const router = useRouter();
 
 	async function updateData() {
-		const response = await (
-			await fetch(`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(personalData),
-			})
-		).json();
-
-		console.log("Update User", response);
+		toast.promise(
+			new Promise((res, rej) => {
+				fetch(`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(personalData),
+				})
+					.then((data) => data.json())
+					.then((response) => res(response))
+					.catch((err) => rej(err));
+			}),
+			{
+				loading: "Ein Moment, überschreibe Daten 🫡",
+				error: "Es kam zu einem Fehler beim überschreiben der Daten",
+				success: "Daten erfolgreich überschrieben 🎉",
+			}
+		);
 	}
 
 	useEffect(() => {
@@ -61,13 +67,6 @@ function UserCredentials() {
 			const response = (await (
 				await fetch(`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}`)
 			).json()) as PersonalDataProps;
-			// console.log("Davor", personalData);
-			console.log("Response", response.birthday);
-
-			setPersonalData((prev) => ({
-				...prev,
-				birthday: "02-10-1991",
-			}));
 
 			setPersonalData(response);
 		}
@@ -86,27 +85,27 @@ function UserCredentials() {
 					Persönliche Daten
 				</h3>
 				<div className={"p-4"}>
-					<HorizontalText
+					<HorizontalTextComponent
 						type={"Vorname"}
 						value={personalData.firstName}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 							setPersonalData((prev) => ({ ...prev, firstName: e.target.value }));
 						}}
 					/>
-					<HorizontalText
+					<HorizontalTextComponent
 						type={"Nachname"}
 						value={personalData.lastName}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 							setPersonalData((prev) => ({ ...prev, lastName: e.target.value }));
 						}}
 					/>
-					<HorizontalText
+					<HorizontalTextComponent
 						type={"Geburtstag"}
 						value={personalData.birthday}
 						inputType={"date"}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-							const checkYear = parseInt(e.target.value.split("-")[0]);
-							const today = new Date().getFullYear();
+							// const checkYear = parseInt(e.target.value.split("-")[0]);
+							// const today = new Date().getFullYear();
 
 							// if (today - checkYear <= 14) {
 							// 	toast.error("Sie müssen mindestens 14 Jahre sein um Termify zu nutzen");
@@ -118,21 +117,21 @@ function UserCredentials() {
 							setPersonalData((prev) => ({ ...prev, birthday: e.target.value }));
 						}}
 					/>
-					<HorizontalText
+					<HorizontalTextComponent
 						type={"Straße"}
 						value={personalData.street}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 							setPersonalData((prev) => ({ ...prev, street: e.target.value }));
 						}}
 					/>
-					<HorizontalText
+					<HorizontalTextComponent
 						type={"Postleitzahl"}
 						value={personalData.zipCode}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 							setPersonalData((prev) => ({ ...prev, zipCode: e.target.value }));
 						}}
 					/>
-					<HorizontalText
+					<HorizontalTextComponent
 						type={"Stadt"}
 						value={personalData.city}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,7 +189,7 @@ function UserSchedule() {
 				<Suspense fallback={<LoadingSpinner />}>
 					{termine && termine.length > 0 ? (
 						termine.map((e, i) => (
-							<DisplayTermine
+							<DisplayTermineComponent
 								key={i}
 								index={i}
 								timestamp={e.timestamp}
@@ -237,7 +236,7 @@ function dateIsPast(timestamp: number | string) {
 	return today > time;
 }
 
-function DisplayTermine({ timestamp, typeOfRequest, index, first, last }: DisplayTermineProps) {
+function DisplayTermineComponent({ timestamp, typeOfRequest, index, first, last }: DisplayTermineProps) {
 	const schedulesDone: boolean = dateIsPast(timestamp);
 
 	if (schedulesDone) return null;
@@ -260,7 +259,7 @@ function DisplayTermine({ timestamp, typeOfRequest, index, first, last }: Displa
 	);
 }
 
-function UserInfo() {
+function UserInfoComponent() {
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-indigo-400 to-sky-500"}>
 			<div className={"p-4 bg-indigo-50 h-full rounded-xl"}>
@@ -286,7 +285,7 @@ interface HorizontalTextProps {
 	autoFocus?: boolean;
 }
 
-function HorizontalText({
+function HorizontalTextComponent({
 	type,
 	value,
 	onChange,
