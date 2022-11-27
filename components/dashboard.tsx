@@ -37,7 +37,7 @@ function UserCredentials() {
 
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500 "}>
-			<div className={"p-4 bg-white h-full rounded-xl"}>
+			<div className={"p-4 bg-sky-50 h-full rounded-xl"}>
 				<h3
 					className={
 						"bg-gradient-to-r from-sky-400 to-emerald-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl"
@@ -115,7 +115,7 @@ function UserCredentials() {
 function UserSchedule() {
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-rose-400 to-amber-500 xl:row-span-2"}>
-			<div className={"p-4 bg-white h-full rounded-xl"}>
+			<div className={"p-4 bg-rose-50 h-full rounded-xl"}>
 				<h3
 					className={
 						"bg-gradient-to-r from-rose-400 to-amber-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl"
@@ -123,7 +123,7 @@ function UserSchedule() {
 				>
 					Termine
 				</h3>
-				<div className={"p-4"}>Es sind keine Termindaten hinterlegt</div>
+				<div className={"p-4 text-rose-900"}>Es sind keine Termindaten hinterlegt</div>
 			</div>
 		</div>
 	);
@@ -132,7 +132,7 @@ function UserSchedule() {
 function UserInfo() {
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-indigo-400 to-sky-500"}>
-			<div className={"p-4 bg-white h-full rounded-xl"}>
+			<div className={"p-4 bg-indigo-50 h-full rounded-xl"}>
 				<h3
 					className={
 						"bg-gradient-to-r from-indigo-400 to-sky-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl "
@@ -140,7 +140,7 @@ function UserInfo() {
 				>
 					Informationen
 				</h3>
-				<div className={"p-4"}>Es sind keine Informationen hinterlegt</div>
+				<div className={"p-4 text-indigo-900"}>Es sind keine Informationen hinterlegt</div>
 			</div>
 		</div>
 	);
@@ -169,9 +169,7 @@ function HorizontalText({
 			<input
 				title={value}
 				autoFocus={autoFocus}
-				className={
-					"px-2 w-1/2 rounded-md border-2 border-sky-400 read-only:bg-slate-200 read-only:border-slate-600 xl:text-2xl xl:px-4"
-				}
+				className={"px-2 w-1/2 rounded-md border-2 border-sky-400 bg-sky-100 text-sky-900  xl:text-2xl xl:px-4"}
 				type={inputType}
 				value={value}
 				readOnly={readOnly}

@@ -8,7 +8,7 @@ import {
 
 const ConfigPage: NextPage = () => {
 	return (
-		<div className={"conatiner p-4 mx-auto grid  gap-4 xl:grid-cols-2"}>
+		<div className={"conatiner p-4 mx-auto grid gap-4 xl:grid-cols-2"}>
 			<OpeningSettings />
 			<AppointmentSlotSettings />
 			<AppointmentSettings />

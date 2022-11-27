@@ -132,7 +132,9 @@ function CustomTextArea(props: CustomTextAreaProps) {
 		<div className={"flex flex-col items-center w-full xl:w-1/3"}>
 			<label className={"p-2 f ont-bold text-center xl:text-start"}>{props.heading}:</label>
 			<textarea
-				className={"border-2 rounded-lg border-slate-800 shadow-md resize-y p-2 min-h-[150px] w-full max-w-[500px]"}
+				className={
+					"border-2 rounded-lg border-rose-800 bg-rose-50 shadow-md resize-y p-2 min-h-[150px] w-full max-w-[500px]"
+				}
 				{...props}
 			/>
 		</div>
@@ -149,7 +151,7 @@ function CustomDropdown(props: CustomDropdown) {
 			<label className={"p-2 font-bold text-center xl:text-start "}>{props.heading}:</label>
 			<select
 				className={
-					"border-2 rounded-lg border-slate-800 shadow-md bg-white resize-y p-2 min-h-[50px] w-full max-w-[500px]"
+					"border-2 rounded-lg border-rose-800  shadow-md bg-rose-50 text-rose-900 resize-y p-2 min-h-[50px] w-full max-w-[500px]"
 				}
 				{...props}
 			>
@@ -179,7 +181,7 @@ function CustomInput({ heading, ...props }: CustomInputProps) {
 			<label className={"p-2 font-bold text-center"}>{heading}:</label>
 			<label
 				className={
-					"h-32 border-2 max-w-[500px] w-full border-slate-800 shadow-md rounded-lg hover:bg-slate-200 hover:cursor-pointer"
+					"h-32 border-2 max-w-[500px] w-full border-rose-800 bg-rose-50 shadow-md rounded-lg hover:xl:bg-gradient-to-r hover:xl:text-rose-50 hover:xl:from-rose-400 hover:xl:to-amber-500 hover:xl:cursor-pointer"
 				}
 			>
 				<div className={" h-full flex flex-col justify-center items-center"}>

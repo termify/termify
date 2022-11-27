@@ -148,7 +148,7 @@ function DaySlot({ day, index, checked, changeAvailablelityDay, ...props }: DayS
 					checked ? "border-emerald-400 bg-emerald-100" : "border-rose-400 bg-rose-100"
 				}  shadow-md ${
 					index === 6 ? "text-rose-900" : "text-emerald-900"
-				} transition-all hover:xl:scale-110 hover:xl:cursor-pointer xl:p-4`}
+				} transition-all xl:p-4 xl:hover:scale-110 hover:xl:cursor-pointer `}
 			>
 				{day}
 				<input
@@ -275,62 +275,64 @@ export const AppointmentSlotSettings = () => {
 
 	return (
 		<GridEntrieContainer gradientType={"fromIndigo"}>
-			<div>
+			<div className={"h-full"}>
 				<h3 className={"font-bold xl:text-3xl"}>Blacklist- 😈 und Whitelist 😇 Tage </h3>
-				<div className={"xl:my-8"}>
-					<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
-						<label className={"font-bold"}>Blacklist:</label>
-						<input
-							title={"Kalendar"}
-							type={"date"}
-							value={pickedBlacklistDate}
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								setPickedBlacklistDate(e.target.value);
-							}}
-							className={"p-2 rounded-md border-2 border-indigo-400"}
-						/>
-						<button
-							onClick={addBlacklist}
-							className={
-								"bg-gradient-to-r from-indigo-400 to-sky-500 p-2 text-indigo-50 font-bold rounded-md transition-all xl:hover:scale-110 xl:active:scale-95"
-							}
-						>
-							Zur Blacklist hinzufügen
-						</button>
+				<div className={"h-full flex flex-col justify-center"}>
+					<div>
+						<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
+							<label className={"font-bold"}>Blacklist:</label>
+							<input
+								title={"Kalendar"}
+								type={"date"}
+								value={pickedBlacklistDate}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									setPickedBlacklistDate(e.target.value);
+								}}
+								className={"p-2 rounded-md border-2 border-indigo-400"}
+							/>
+							<button
+								onClick={addBlacklist}
+								className={
+									"bg-gradient-to-r from-indigo-400 to-sky-500 p-2 text-indigo-50 font-bold rounded-md transition-all xl:hover:scale-110 xl:active:scale-95"
+								}
+							>
+								Zur Blacklist hinzufügen
+							</button>
+						</div>
+						<div className={"flex p-4 flex-wrap gap-2"}>
+							{blacklistDays.map((e, i) => (
+								<VacationDay key={i} day={e} deleteEntrie={deleteBlacklistEntrie} index={i} />
+							))}
+						</div>
 					</div>
-					<div className={"flex p-4 flex-wrap gap-2"}>
-						{blacklistDays.map((e, i) => (
-							<VacationDay key={i} day={e} deleteEntrie={deleteBlacklistEntrie} index={i} />
-						))}
-					</div>
-				</div>
-				{/* Divider */}
-				<div className={"w-full h-0.5 bg-indigo-500 rounded-md my-8"}></div>
-				<div>
-					<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
-						<label className={"font-bold"}>Whitelist:</label>
-						<input
-							title={"Kalendar"}
-							type={"date"}
-							value={pickedWhitelistDate}
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								setPickedWhitelistDate(e.target.value);
-							}}
-							className={"p-2 rounded-md border-2 border-indigo-400"}
-						/>
-						<button
-							onClick={addWhitelist}
-							className={
-								"bg-gradient-to-r from-indigo-400 to-sky-500 p-2 text-indigo-50 font-bold rounded-md transition-all xl:hover:scale-110 xl:active:scale-95"
-							}
-						>
-							Zur Whitelist hinzufügen
-						</button>
-					</div>
-					<div className={"flex p-4 flex-wrap gap-2 "}>
-						{whitelistDays.map((e, i) => (
-							<VacationDay key={i} day={e} deleteEntrie={deleteWhitelistEntrie} index={i} />
-						))}
+					{/* Divider */}
+					<div className={"w-full h-0.5 bg-indigo-500 rounded-md my-8"}></div>
+					<div>
+						<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
+							<label className={"font-bold"}>Whitelist:</label>
+							<input
+								title={"Kalendar"}
+								type={"date"}
+								value={pickedWhitelistDate}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									setPickedWhitelistDate(e.target.value);
+								}}
+								className={"p-2 rounded-md border-2 border-indigo-400"}
+							/>
+							<button
+								onClick={addWhitelist}
+								className={
+									"bg-gradient-to-r from-indigo-400 to-sky-500 p-2 text-indigo-50 font-bold rounded-md transition-all xl:hover:scale-110 xl:active:scale-95"
+								}
+							>
+								Zur Whitelist hinzufügen
+							</button>
+						</div>
+						<div className={"flex p-4 flex-wrap gap-2 "}>
+							{whitelistDays.map((e, i) => (
+								<VacationDay key={i} day={e} deleteEntrie={deleteWhitelistEntrie} index={i} />
+							))}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -341,8 +343,8 @@ export const AppointmentSlotSettings = () => {
 // Webapi config
 export const WebApiConfigSettings = () => {
 	return (
-		<GridEntrieContainer gradientType={"fromEmerald"} span>
-			WebApiConfig
+		<GridEntrieContainer gradientType={"fromEmerald"}>
+			<h3 className={"font-bold xl:text-3xl"}>WebApiConfig 🥸 </h3>
 		</GridEntrieContainer>
 	);
 };
