@@ -41,7 +41,7 @@ function AccordionSection({ title, body }: AccordionSection) {
 				}
 			>
 				<h5>{title}</h5>
-				<motion.span animate={{ rotateZ: open ? -180 : 0 }}>
+				<motion.span animate={{ rotateZ: open ? 0 : -180 }}>
 					<BsFillArrowUpCircleFill className={"h-8 w-8"} />
 				</motion.span>
 			</button>
@@ -50,9 +50,9 @@ function AccordionSection({ title, body }: AccordionSection) {
 				animate={{ height: open ? height : 0 }}
 				className={"bg-sky-200 rounded-b-md origin-top"}
 			>
-				<motion.p animate={{ display: open ? "block" : "none" }} className={"p-2 text-sky-900 h-fit"}>
+				<motion.div animate={{ display: open ? "block" : "none" }} className={"p-2 text-sky-900 h-fit"}>
 					{body}
-				</motion.p>
+				</motion.div>
 			</motion.div>
 		</div>
 	);

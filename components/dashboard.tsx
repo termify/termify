@@ -143,7 +143,14 @@ function UserSchedule() {
 				<Suspense fallback={<LoadingSpinner />}>
 					{termine ? (
 						termine.map((e, i) => (
-							<DisplayTermine key={i} index={i} timestamp={e.timestamp} typeOfRequest={e.typeOfRequest} />
+							<DisplayTermine
+								key={i}
+								index={i}
+								timestamp={e.timestamp}
+								typeOfRequest={e.typeOfRequest}
+								first={i === 0}
+								last={i === termine.length - 1}
+							/>
 						))
 					) : (
 						<div className={"p-4 text-rose-900"}>Es sind keine Termindaten hinterlegt</div>
@@ -158,6 +165,8 @@ interface DisplayTermineProps {
 	timestamp: string;
 	typeOfRequest: string;
 	index: number;
+	first: boolean;
+	last: boolean;
 }
 
 function parseUnixToDate(unixTime: string | number) {
@@ -173,16 +182,32 @@ function parseUnixToDate(unixTime: string | number) {
 	});
 }
 
-function DisplayTermine({ timestamp, typeOfRequest, index }: DisplayTermineProps) {
+function dateIsPast(timestamp: number | string) {
+	const time = typeof timestamp === "string" ? parseInt(timestamp) : timestamp;
+
+	const today = Math.floor(new Date().getTime() / 1000);
+
+	return today > time;
+}
+
+function DisplayTermine({ timestamp, typeOfRequest, index, first, last }: DisplayTermineProps) {
+	const schedulesDone: boolean = dateIsPast(timestamp);
+
+	if (schedulesDone) return null;
+
 	return (
-		<div className={`p-2 flex  ${index % 2 === 0 ? "bg-rose-200" : "bg-rose-300"}`}>
-			<div className={"flex w-1/2 gap-8 text-rose-900"}>
-				<label className={"font-bold"}>Anliegen:</label>
-				<label>{typeOfRequest}</label>
+		<div
+			className={`p-2  ${index % 2 === 0 ? "bg-rose-200" : "bg-rose-300"} grid grid-cols-2 ${
+				first ? "rounded-t-md" : last ? "rounded-b-md" : ""
+			}`}
+		>
+			<div className={"flex flex-col justify-around items-center text-rose-900 "}>
+				<label className={"font-bold xl:text-xl"}>Anliegen:</label>
+				<label className={"text-center text-sm xl:text-base"}>{typeOfRequest}</label>
 			</div>
-			<div className={"flex gap-8 text-rose-900"}>
-				<label className={"font-bold"}>Wann:</label>
-				<label>{parseUnixToDate(timestamp)}</label>
+			<div className={"flex flex-col justify-around items-center text-rose-900 "}>
+				<label className={"font-bold  xl:text-xl"}>Wann:</label>
+				<label className={"text-center text-sm xl:text-base"}>{parseUnixToDate(timestamp)}</label>
 			</div>
 		</div>
 	);
