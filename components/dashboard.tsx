@@ -41,7 +41,7 @@ function UserCredentials() {
 	const router = useRouter();
 
 	async function updateData() {
-		toast.promise(
+		await toast.promise(
 			new Promise((res, rej) => {
 				fetch(`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}`, {
 					method: "PUT",
@@ -108,7 +108,7 @@ function UserCredentials() {
 							// const today = new Date().getFullYear();
 
 							// if (today - checkYear <= 14) {
-							// 	toast.error("Sie müssen mindestens 14 Jahre sein um Termify zu nutzen");
+							// 	toast.error("Sie müssen mindestens 14 Jahre sein, um Termify zu nutzen");
 							// 	return;
 							// }
 
