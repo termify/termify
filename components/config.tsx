@@ -11,7 +11,7 @@ interface OpeningDays {
 	timeslotTo: Date;
 }
 
-// Opening Ändern von bis => Weekday + Timeslots from und Timeslot to to
+// Opening Ändern von bis => Weekday + Timeslots from und Timeslot to to irgendwas funktioniert nicht
 export const OpeningSettings = () => {
 	const [openeningDays, setOpeneningDays] = useState<OpeningDays[]>([]);
 	const partnerId = useAuthStore((state) => state.partnerId);
