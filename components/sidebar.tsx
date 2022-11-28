@@ -9,11 +9,15 @@ import { RiDashboardFill } from "react-icons/ri";
 import { getCookie } from "../lib/cookie";
 import { useAuthStore } from "../store/stores";
 import { TbFileSettings } from "react-icons/tb";
+import { baseUrl } from "../lib/baseUrl";
 
 export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
 	const [yOffset, setYOffsset] = useState<number>(500);
 	const divRef = useRef<HTMLDivElement>(null);
 	const [session, setSession] = useState<AuthSession>();
+
+	const setPartnerId = useAuthStore((state) => state.setPartnerId);
+	const partnerId = useAuthStore((state) => state.partnerId);
 
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
@@ -53,17 +57,29 @@ export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispa
 					<div className="flex-grow py-8 flex flex-col items-center gap-3 bg-slate-800 shadow-xl">
 						{session ? (
 							<>
-								<NavigationLink
-									icon={<RiDashboardFill />}
-									name={"Dashboard"}
-									to={`/user/${session.id}/dashboard`}
-									setOpen={() => setOpen(false)}
-								/>
-								<NavigationLink
-									icon={<TbFileSettings color="#ffffff" />}
-									name={"Konfiguration"}
-									to={`/user/${session.id}/config`}
-								/>
+								{partnerId ? (
+									<>
+										<NavigationLink
+											icon={<RiDashboardFill />}
+											name={"Dashboard"}
+											to={`/user/${session.id}/dashboard`}
+											setOpen={() => setOpen(false)}
+										/>
+										<NavigationLink
+											icon={<TbFileSettings color="#ffffff" />}
+											name={"Konfiguration"}
+											to={`/user/${session.id}/config`}
+										/>
+									</>
+								) : (
+									<NavigationLink
+										icon={<RiDashboardFill />}
+										name={"Dashboard"}
+										to={`/user/${session.id}/dashboard`}
+										setOpen={() => setOpen(false)}
+									/>
+								)}
+
 								<LogoutLink onClick={() => setOpen(false)} />
 							</>
 						) : (

@@ -98,6 +98,21 @@ export default class ScheduleClass {
 		},
 	};
 
+	static parseTimeDatetimeToTimeString(date: Date): string {
+		const hour = new Date(date).getHours();
+		const minutes = new Date(date).getMinutes();
+
+		return `${hour < 10 ? `0${hour}` : `${hour}`}:${minutes < 10 ? `0${minutes}` : `${minutes}`}`;
+	}
+
+	static parseFullDateToDate(date: Date): string {
+		const year = new Date(date).getFullYear();
+		const month = new Date(date).getMonth();
+		const day = new Date(date).getDate();
+
+		return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`;
+	}
+
 	public static parseMonthNumberToString(month: number, language: Language): string {
 		return this.months[language][month] || "Monat";
 	}

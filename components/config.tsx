@@ -1,44 +1,52 @@
-import React, { ComponentProps, ReactNode, useState } from "react";
+import React, { ComponentProps, ReactNode, useEffect, useState } from "react";
 import { RiDeleteBinFill } from "react-icons/ri";
+import { baseUrl } from "../lib/baseUrl";
+import ScheduleClass from "../lib/schedule";
+import { useAuthStore } from "../store/stores";
+import toast from "react-hot-toast";
 interface OpeningDays {
-	day: string;
-	checked: boolean;
-	from: string;
-	to: string;
+	weekday: string;
+	disabled: boolean;
+	timeslotFrom: Date;
+	timeslotTo: Date;
 }
-
-const defaultOpeneningDays: OpeningDays[] = [
-	{
-		day: "Mo.",
-		checked: true,
-		from: "00:00",
-		to: "23:59",
-	},
-	{ day: "Di.", checked: true, from: "00:00", to: "23:59" },
-	{ day: "Mi.", checked: true, from: "00:00", to: "23:59" },
-	{ day: "Do.", checked: true, from: "00:00", to: "23:59" },
-	{ day: "Fr.", checked: true, from: "00:00", to: "23:59" },
-	{ day: "Sa.", checked: false, from: "00:00", to: "23:59" },
-	{ day: "So.", checked: false, from: "00:00", to: "23:59" },
-];
 
 // Opening Ändern von bis => Weekday + Timeslots from und Timeslot to
 export const OpeningSettings = () => {
-	const [openeningDays, setOpeneningDays] = useState<OpeningDays[]>(defaultOpeneningDays);
+	const [openeningDays, setOpeneningDays] = useState<OpeningDays[]>([]);
+	const partnerId = useAuthStore((state) => state.partnerId);
+
+	useEffect(() => {
+		async function fetchOpeningDays() {
+			try {
+				const response = await (
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
+				).json();
+
+				setOpeneningDays(response);
+			} catch (error) {
+				console.error(error);
+			}
+		}
+
+		fetchOpeningDays();
+	}, []);
 
 	function changeAvailablelityDate(index: number) {
-		openeningDays[index].checked = !openeningDays[index].checked;
+		openeningDays[index].disabled = !openeningDays[index].disabled;
 
 		setOpeneningDays([...openeningDays]);
 	}
 
 	function changeAvailablelityTime(index: number, type: "from" | "to", value: string) {
+		const time = value.split(":");
+
 		switch (type) {
 			case "from":
-				openeningDays[index].from = value;
+				openeningDays[index].timeslotFrom = new Date(0, 0, 0, parseInt(time[0]), parseInt(time[1]));
 				break;
 			case "to":
-				openeningDays[index].to = value;
+				openeningDays[index].timeslotTo = new Date(0, 0, 0, parseInt(time[0]), parseInt(time[1]));
 				break;
 		}
 
@@ -51,18 +59,24 @@ export const OpeningSettings = () => {
 			<h3 className={"indent-1 xl:mt-2"}>An welchen Tagen geöffnet?</h3>
 			<div className={"grid p-2  grid-cols-5 gap-4 xl:grid-cols-7 xl:my-4"}>
 				{openeningDays.map((e, i) => (
-					<DaySlot key={i} day={e.day} index={i} checked={e.checked} changeAvailablelityDay={changeAvailablelityDate} />
+					<DaySlot
+						key={i}
+						day={e.weekday}
+						index={i}
+						checked={!e.disabled}
+						changeAvailablelityDay={changeAvailablelityDate}
+					/>
 				))}
 			</div>
 			<div className={"flex flex-col gap-2 my-8"}>
 				{openeningDays.map((e, i) => {
-					if (e.checked) {
+					if (!e.disabled) {
 						return (
 							<TimeSlot
 								key={i}
-								dayName={e.day}
-								from={e.from}
-								to={e.to}
+								dayName={e.weekday}
+								timeslotFrom={e.timeslotFrom}
+								timeslotTo={e.timeslotTo}
 								index={i}
 								changeAvailablelityTime={changeAvailablelityTime}
 							/>
@@ -95,23 +109,23 @@ function parseShortDayToFull(day: string) {
 
 interface TimeSlotProps {
 	dayName: string;
-	from: string;
-	to: string;
+	timeslotFrom: Date;
+	timeslotTo: Date;
 	index: number;
 	changeAvailablelityTime: (index: number, type: "from" | "to", value: string) => void;
 }
 
-function TimeSlot({ dayName, from, to, index, changeAvailablelityTime }: TimeSlotProps) {
+function TimeSlot({ dayName, timeslotFrom, timeslotTo, index, changeAvailablelityTime }: TimeSlotProps) {
 	return (
 		<div className={"grid gap-2 grid-cols-2 xl:grid-cols-3 xl:gap-4 "}>
-			<p className={"font-bold row-span-3"}>{parseShortDayToFull(dayName)}</p>
-			<div className={"flex justify-between items-center gap-8 "}>
+			<p className={"font-bold row-span-3"}>{dayName}</p>
+			<div className={"flex justify-between items-center gap-8"}>
 				<label htmlFor={`from-${dayName}`}>Von: </label>
 				<input
 					title={"Von"}
 					type={"time"}
 					className={"p-1 rounded-md border-2 border-sky-400"}
-					value={from}
+					value={ScheduleClass.parseTimeDatetimeToTimeString(timeslotFrom)}
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 						changeAvailablelityTime(index, "from", e.target.value);
 					}}
@@ -123,7 +137,7 @@ function TimeSlot({ dayName, from, to, index, changeAvailablelityTime }: TimeSlo
 					title={"Bis"}
 					type={"time"}
 					className={"p-1 rounded-md border-2 border-sky-400"}
-					value={to}
+					value={ScheduleClass.parseTimeDatetimeToTimeString(timeslotTo)}
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 						changeAvailablelityTime(index, "to", e.target.value);
 					}}
@@ -140,16 +154,24 @@ interface DaySlotProps extends ComponentProps<"input"> {
 }
 
 function DaySlot({ day, index, checked, changeAvailablelityDay, ...props }: DaySlotProps) {
+	const parseWeekdaytoShort: Record<string, string> = {
+		Montag: "Mo.",
+		Dienstag: "Di.",
+		Mittwoch: "Mi.",
+		Donnerstag: "Do.",
+		Freitag: "Fr.",
+		Samstag: "Sa.",
+		Sonntag: "So.",
+	};
+
 	return (
 		<div>
 			<label
 				className={`font-bold text-center p-1 rounded-md border-2 select-none ${
-					checked ? "border-emerald-400 bg-emerald-100" : "border-rose-400 bg-rose-100"
-				}  shadow-md ${
-					index === 6 ? "text-rose-900" : "text-emerald-900"
-				} transition-all xl:p-4 hover:xl:scale-110 hover:xl:cursor-pointer `}
+					checked ? "border-emerald-400 bg-emerald-100 text-emerald-900" : "border-rose-400 bg-rose-100 text-rose-900"
+				}  shadow-md  transition-all xl:p-4 hover:xl:scale-110 hover:xl:cursor-pointer `}
 			>
-				{day}
+				{parseWeekdaytoShort[day]}
 				<input
 					{...props}
 					type={"checkbox"}
@@ -164,27 +186,77 @@ function DaySlot({ day, index, checked, changeAvailablelityDay, ...props }: DayS
 	);
 }
 
+interface SettingsData {
+	intervall: number;
+	holydaysOn: boolean;
+	id: number;
+}
+
 // Appointment Settings => Interval und Holidays
 export const AppointmentSettings = () => {
-	const [interval, setInterval] = useState<number>(30);
-	const [useVacations, setUseVacations] = useState<boolean>(false);
+	const [settingsData, setSettingsData] = useState<SettingsData>({ intervall: 30, holydaysOn: false, id: -1 });
+	const partnerId = useAuthStore((state) => state.partnerId);
+
+	async function updateSettings() {
+		const response = await toast.promise(
+			new Promise((res, rej) => {
+				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(settingsData),
+				})
+					.then((json) => json.json())
+					.then((result) => res(result))
+					.catch((err) => rej(err));
+			}),
+			{
+				success: "Einstellungen wurden erfolgreich geupdatet",
+				error: "Es kam zu einem Fehler beim überschreiben der Einstellungen",
+				loading: "Ein Moment überschreibe Daten",
+			}
+		);
+
+		console.log("Update Settings", response);
+	}
+
+	useEffect(() => {
+		async function fetchSettingsData() {
+			try {
+				const { intervall, holydaysOn, id } = (await (
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
+				).json()) as { intervall: number; holydaysOn: boolean; id: number };
+
+				setSettingsData({
+					intervall: intervall,
+					holydaysOn: holydaysOn,
+					id: id,
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		}
+
+		fetchSettingsData();
+	}, []);
 
 	return (
 		<GridEntrieContainer gradientType={"fromRose"}>
 			<div>
 				<h3 className={"font-bold xl:text-3xl"}>Buchungsintervall 🕰️ und Feiertage 🆓</h3>
-				<div className={"flex flex-col gap-8 items-center xl:flex-row  xl:my-8"}>
+				<div className={"flex flex-col gap-8 items-center xl:flex-row xl:my-8"}>
 					<div className={"flex items-center gap-8"}>
 						<label className={"font-bold"}>Buchungsintervall:</label>
 						<input
 							title={"Interval"}
 							type={"number"}
 							step={15}
-							value={interval}
+							value={settingsData.intervall}
 							max={60}
 							min={15}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								setInterval(parseInt(e.target.value));
+								setSettingsData((prev) => ({ ...prev, intervall: e.target.valueAsNumber }));
 							}}
 							className={"p-2 rounded-md border-2 border-rose-400 w-16"}
 						/>
@@ -192,7 +264,7 @@ export const AppointmentSettings = () => {
 					<div className={"my-8 flex gap-8 items-center"}>
 						<label
 							className={`font-bold border-2 p-2 rounded-md select-none ${
-								useVacations
+								settingsData.holydaysOn
 									? "border-emerald-500 bg-emerald-200 text-emerald-900"
 									: "border-rose-500 bg-rose-200 text-rose-900"
 							} transition-all hover:xl:cursor-pointer hover:xl:scale-110 xl:active:scale-95 `}
@@ -201,14 +273,22 @@ export const AppointmentSettings = () => {
 							<input
 								title={"Feiertage"}
 								type={"checkbox"}
-								checked={useVacations}
-								onChange={ _ => {
-									setUseVacations((prev) => !prev);
+								checked={settingsData.holydaysOn}
+								onChange={(_) => {
+									setSettingsData((prev) => ({ ...prev, holydaysOn: !prev.holydaysOn }));
 								}}
 								className={"hidden"}
 							/>
 						</label>
 					</div>
+				</div>
+				<div className={"flex justify-center"}>
+					<button
+						onClick={updateSettings}
+						className={"p-2 bg-gradient-to-r rounded-md font-bold text-rose-50 transition-all xl:hover:scale-110"}
+					>
+						Settings hochladen
+					</button>
 				</div>
 			</div>
 		</GridEntrieContainer>
@@ -222,6 +302,8 @@ interface VacationDayProps {
 }
 
 function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
+	const date = day.split("-");
+
 	return (
 		<div
 			onClick={() => {
@@ -231,7 +313,13 @@ function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
 				"relative p-1 bg-gradient-to-r select-none from-indigo-400 to-sky-500 rounded-md group cursor-pointer transition-all hover:scale-105"
 			}
 		>
-			<div className={"p-2 font-bold bg-indigo-50"}>{day}</div>
+			<div className={"p-2 font-bold bg-indigo-50"}>
+				{new Date(parseInt(date[0]), parseInt(date[1]), parseInt(date[2])).toLocaleDateString("de-DE", {
+					day: "numeric",
+					month: "short",
+					year: "2-digit",
+				})}
+			</div>
 			<div
 				className={
 					"hidden bg-indigo-100 absolute top-0 left-0 w-full h-full rounded-md group-hover:xl:flex items-center p-1 justify-around"
@@ -246,11 +334,34 @@ function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
 // Appointment Slots => Block + Date from und Date to
 
 export const AppointmentSlotSettings = () => {
+	const partnerId = useAuthStore((state) => state.partnerId);
 	const [pickedBlockDate, setPickedBlockDate] = useState<string>("");
 	const [blockDays, setBlockDays] = useState<string[]>([]);
 
 	const [pickedAllowedDate, setPickedAllowedDate] = useState<string>("");
 	const [whitelistDays, setAllowedDays] = useState<string[]>([]);
+
+	useEffect(() => {
+		async function fetchBlackAndAllowedList() {
+			try {
+				const response = (await (
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`)
+				).json()) as { id: number; isBlackList: boolean; dateFrom: Date; dateTo: Date }[];
+
+				response.forEach((e, i) => {
+					if (e.isBlackList) {
+						setAllowedDays([...whitelistDays, ScheduleClass.parseFullDateToDate(e.dateFrom)]);
+					} else {
+						setBlockDays([...blockDays, ScheduleClass.parseFullDateToDate(e.dateFrom)]);
+					}
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		}
+
+		fetchBlackAndAllowedList();
+	}, []);
 
 	function addBlock() {
 		if (!pickedBlockDate) return;
@@ -401,7 +512,7 @@ const GridEntrieContainer = ({ children, gradientType }: GridEntrieContainerProp
 	const textColor: string = returnTextColor(gradientType);
 
 	return (
-		<div className={`p-1 rounded-md bg-gradient-to-r  ${gradient}`}>
+		<div className={`p-1 rounded-md bg-gradient-to-r shadow-md ${gradient}`}>
 			<div className={`p-4 rounded-md ${foregroundColor} ${textColor} h-full `}>{children}</div>
 		</div>
 	);

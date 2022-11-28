@@ -27,10 +27,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 const getController = async (req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) => {
 	const { uuid } = req.query as { uuid: string };
+	const { timestamp } = req.query as { timestamp: string };
 
 	const appointmentData = (await db.appointment.findMany({
+		orderBy: {
+			timestamp: "asc",
+		},
 		where: {
 			userId: uuid,
+			timestamp: {
+				gte: timestamp,
+			},
 		},
 	})) as unknown as AppointmentData[];
 

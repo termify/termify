@@ -95,12 +95,27 @@ export const useScheduleStore = create<ScheduleStoreProps>((set) => ({
 	setAllowedDates: (allDates) => set((prevState) => ({ ...prevState, allowedDates: allDates })),
 }));
 
+type SessionData =
+	| {
+			id: string;
+			token: string;
+	  }
+	| undefined;
+
 interface AuthStoreProps {
 	isLoggedIn: boolean;
 	setLoggedIn: (loggedIn: boolean) => void;
+	partnerId: number;
+	setPartnerId: (partnerId: number) => void;
+	session: SessionData;
+	setSession: (sessionData: SessionData) => void;
 }
 
 export const useAuthStore = create<AuthStoreProps>((set) => ({
 	isLoggedIn: false,
 	setLoggedIn: (loggedIn) => set((prevState) => ({ ...prevState, isLoggedIn: loggedIn })),
+	partnerId: -1,
+	setPartnerId: (partnerId) => set((prev) => ({ ...prev, partnerId: partnerId })),
+	session: undefined,
+	setSession: (sessionData) => set((prev) => ({ ...prev, authSession: sessionData })),
 }));

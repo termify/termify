@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../../lib/database";
-import { PersonalDataProps } from "../../../../components/dashboard";
+import { PersonalDataProps } from "../../../../components/userDashboard";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<unknown>) {
 	switch (req.method) {

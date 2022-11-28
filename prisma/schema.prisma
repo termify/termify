@@ -66,6 +66,7 @@ model Opening {
   timeslotFrom DateTime @db.Timetz(6)
   timeslotTo   DateTime @db.Timetz(6)
   partnerId    Int
+  disabled     Boolean? @default(false)
   Partner      Partner  @relation(fields: [partnerId], references: [id])
 }
 
@@ -121,7 +122,7 @@ enum Weekday {
   Montag
   Dienstag
   Mittwoch
-  Donnertag
+  Donnerstag
   Freitag
   Samstag
   Sonntag

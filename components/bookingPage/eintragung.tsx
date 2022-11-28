@@ -253,9 +253,9 @@ function CustomInput({ heading, files, setFiles, ...props }: CustomInputProps) {
 					"h-32 border-2 max-w-[500px] w-full border-rose-800 bg-rose-50 shadow-md rounded-lg hover:xl:bg-gradient-to-r hover:xl:text-rose-50 hover:xl:from-rose-400 hover:xl:to-amber-500 hover:xl:cursor-pointer"
 				}
 			>
-				<div className={" h-full flex flex-col justify-center items-center"}>
-					<TbFiles className={"w-16 h-16"} />
-					<p className={"font-bold text-center xl:text-start"}>Klicken um Dateien hochzuladen</p>
+				<div className={" h-full flex flex-col text-rose-900 justify-center items-center hover:text-rose-50"}>
+					<TbFiles className={"w-16 h-16 "} />
+					<p className={"font-bold text-center  xl:text-start"}>Klicken um Dateien hochzuladen</p>
 				</div>
 				<input
 					ref={inputRef}
