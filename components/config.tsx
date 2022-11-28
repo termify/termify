@@ -34,7 +34,7 @@ export const OpeningSettings = () => {
 
 	function changeAvailablelityDate(index: number) {
 		openeningDays[index].disabled = !openeningDays[index].disabled;
-
+		// Hope
 		setOpeneningDays([...openeningDays]);
 	}
 
@@ -348,7 +348,7 @@ export const AppointmentSlotSettings = () => {
 					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`)
 				).json()) as { id: number; isBlackList: boolean; dateFrom: Date; dateTo: Date }[];
 
-				response.forEach((e, i) => {
+				response.forEach((e) => {
 					if (e.isBlackList) {
 						setAllowedDays([...whitelistDays, ScheduleClass.parseFullDateToDate(e.dateFrom)]);
 					} else {
