@@ -8,3 +8,4 @@ import { db } from "../../../../lib/database";
 //GET PartnerID,Zeitpunkt; Abgleich Termine seitens Termify
 //POST Abgleich Termine seitens Kunde
 
+// Test
