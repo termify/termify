@@ -8,7 +8,6 @@ export default function AuswahlPage() {
 	return <AuswahlAmt />;
 }
 
-
 //TODO Kevin Bläser: Auswahl des Landkreises
 //TODO Kevin Bläser: AuswahlAmt Style
 interface DataOffice {
@@ -129,7 +128,7 @@ interface BookinButtonProps {
 	partnerData: DataPartner;
 	index: number;
 }
-
+// Auswahl Seite
 function BookingButton({ partnerData, index }: BookinButtonProps) {
 	const bookingData = useBookingStore((state) => state.bookingData);
 	const setBookingData = useBookingStore((state) => state.setBookingData);
