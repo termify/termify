@@ -50,24 +50,28 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 	res.status(200).json(setAppointmentSlotData);
 };
 
-const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[]>) => {
-	const { id, isBlackList, dateFrom, dateTo } = req.body as {
-		id: number;
-		isBlackList: boolean;
-		dateFrom: string;
-		dateTo: string;
+const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[] | any>) => {
+	const { slots } = req.body as {
+		slots: { id: number; isBlackList: boolean; dateFrom: string; dateTo: string }[];
 	};
 
-	const updateAppointmentSlotData = (await db.appointmentSlots.updateMany({
-		where: {
-			id,
-		},
-		data: {
-			isBlackList,
-			dateFrom,
-			dateTo,
-		},
-	})) as unknown as AppointmentSlotData[];
+	try {
+		for await (const slot of slots) {
+			await db.appointmentSlots.updateMany({
+				where: {
+					id: slot.id,
+				},
+				data: {
+					isBlackList: slot.isBlackList,
+					dateFrom: slot.dateFrom,
+					dateTo: slot.dateTo,
+				},
+			});
+		}
 
-	res.status(200).json(updateAppointmentSlotData);
+		res.status(200).json({ success: true });
+	} catch (e) {
+		res.status(500).json({ success: false });
+	}
+
 };

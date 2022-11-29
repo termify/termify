@@ -32,22 +32,21 @@ const getController = async (req: NextApiRequest, res: NextApiResponse<Appointme
 };
 
 const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSettingData[]>) => {
-	const { id, intervall, partnerId, holydaysOn } = req.body as {
+	
+	const { id, intervall, holydaysOn } = req.body as {
 		id: number;
 		intervall: number;
-		partnerId: number;
 		holydaysOn: boolean;
 	};
 
 	console.log("BODY", req.body);
 
-	const setAppointmentSettingData = (await db.appointmentSettings.updateMany({
+	const setAppointmentSettingData = (await db.appointmentSettings.update({
 		where: {
 			id,
 		},
 		data: {
 			intervall,
-			partnerId,
 			holydaysOn,
 		},
 	})) as unknown as AppointmentSettingData[];
