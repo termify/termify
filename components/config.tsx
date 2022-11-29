@@ -5,6 +5,11 @@ import ScheduleClass from "../lib/schedule";
 import { useAuthStore } from "../store/stores";
 import toast from "react-hot-toast";
 import { getCookie } from "../lib/cookie";
+import { supabase } from "../lib/supabase";
+import { hash } from "./createHash";
+import { useRouter } from "next/router";
+import { Blob } from "buffer";
+import { WebApiConfig } from "../pages/api/dbquery/partnersetting/webapiconfig";
 interface OpeningDays {
 	weekday: string;
 	disabled: boolean;
@@ -60,15 +65,28 @@ export const OpeningSettings = () => {
 
 	async function updateOpeningDates() {
 		try {
-			const response = await (
-				await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening`, {
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ openings: openeningDays }),
-				})
-			).json();
+			const response = await toast.promise(
+				new Promise((res, rej) => {
+					fetch(`${baseUrl()}/api/dbquery/partnersetting/opening`, {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ openings: openeningDays }),
+					})
+						.then(async (json) => {
+							const response = await json.json();
+
+							res(response);
+						})
+						.catch((error) => console.error(error));
+				}),
+				{
+					loading: "Überschreibe Öffnungszeiten",
+					error: "Fehler beim Überschreiben der Öffnungszeiten",
+					success: "Öffnungszeiten wurden erfolgreich überschrieben",
+				}
+			);
 
 			console.log("Update Öffnungszeiten", response);
 		} catch (e) {
@@ -492,12 +510,156 @@ export const AppointmentSlotSettings = () => {
 
 // Webapi config
 export const WebApiConfigSettings = () => {
+	const [webApiConfig, setWebApiConfig] = useState<WebApiConfig | null>(null);
+
+	useEffect(() => {
+		const configCookie = getCookie("config") as { config: { partnerId: number } };
+
+		if (!configCookie) return;
+
+		async function fetchWebApiConfig() {
+			try {
+				const response = (await (
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${configCookie.config.partnerId}`)
+				).json()) as WebApiConfig;
+				setWebApiConfig(response);
+			} catch (e) {
+				console.error(e);
+			}
+		}
+
+		fetchWebApiConfig();
+	}, []);
+
 	return (
 		<GridEntrieContainer gradientType={"fromEmerald"}>
 			<h3 className={"font-bold xl:text-3xl"}>WebApiConfig 🥸 </h3>
+			{webApiConfig?.Appointment && (
+				<>
+					<div className={"p-4"}>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>ID:</div>
+							<AppointmentEntrie
+								hierachy={["id"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.id.active}
+								qname={webApiConfig.Appointment.id.qname}
+							/>
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>USER:</div>
+							{Object.entries(webApiConfig?.Appointment?.user).map((e, i) => (
+								<AppointmentEntrie
+									hierachy={["user", `${e[0]}`]}
+									webApiConfig={webApiConfig}
+									setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+									key={e[0] + i}
+									active={e[1].active}
+									qname={e[1].qname}
+								/>
+							))}
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>Type Of Request:</div>
+							<AppointmentEntrie
+								hierachy={["typeOfRequest"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.typeOfRequest.active}
+								qname={webApiConfig.Appointment.typeOfRequest.qname}
+							/>
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>Note:</div>
+							<AppointmentEntrie
+								hierachy={["note"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.note.active}
+								qname={webApiConfig.Appointment.note.qname}
+							/>
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>Attachment:</div>
+							<AppointmentEntrie
+								hierachy={["attachment"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.attachment.active}
+								qname={webApiConfig.Appointment.attachment.qname}
+							/>
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>Timestamp:</div>
+							<AppointmentEntrie
+								hierachy={["timestamp"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.timestamp.active}
+								qname={webApiConfig.Appointment.timestamp.qname}
+							/>
+						</div>
+					</div>
+				</>
+			)}
 		</GridEntrieContainer>
 	);
 };
+
+interface AppointmentEntrieProps {
+	hierachy: string[];
+	active: boolean;
+	qname: string;
+	webApiConfig: WebApiConfig;
+	setWebApiConfig: React.Dispatch<React.SetStateAction<WebApiConfig>>;
+}
+function AppointmentEntrie({ active, qname, webApiConfig, setWebApiConfig, hierachy }: AppointmentEntrieProps) {
+	function changeQName(e: React.ChangeEvent<HTMLInputElement>) {
+		const count = hierachy.length;
+
+		if (count === 1) {
+			(webApiConfig as any).Appointment[hierachy[0]].qname = e.target.value;
+
+			setWebApiConfig({ ...webApiConfig });
+		} else {
+			(webApiConfig as any).Appointment[hierachy[0]][hierachy[1]].qname = e.target.value;
+
+			setWebApiConfig({ ...webApiConfig });
+		}
+	}
+
+	function changeChecked(e: React.ChangeEvent<HTMLInputElement>) {
+		const count = hierachy.length;
+
+		if (count === 1) {
+			(webApiConfig as any).Appointment[hierachy[0]].active = e.target.checked;
+
+			setWebApiConfig({ ...webApiConfig });
+		} else {
+			(webApiConfig as any).Appointment[hierachy[0]][hierachy[1]].active = e.target.checked;
+
+			setWebApiConfig({ ...webApiConfig });
+		}
+	}
+
+	return (
+		<div className={"flex justify-around my-2"}>
+			<input className={"p-2 rounded-md"} value={qname} onChange={changeQName} />
+			<div className={"flex gap-4 items-center justify-end"}>
+				<label className={"select-none"} htmlFor={hierachy.length === 1 ? hierachy[0] : hierachy[1]}>
+					Aktiv?
+				</label>
+				<input
+					id={hierachy.length === 1 ? hierachy[0] : hierachy[1]}
+					type={"checkbox"}
+					checked={active}
+					onChange={changeChecked}
+				/>
+			</div>
+		</div>
+	);
+}
 
 type GradientType = "fromSky" | "fromRose" | "fromIndigo" | "fromEmerald";
 

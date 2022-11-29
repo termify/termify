@@ -5,8 +5,6 @@ import { useRouter } from "next/router";
 import { baseUrl } from "../lib/baseUrl";
 
 export default function UserDashboard() {
-	console.log("HASH", hash);
-
 	return (
 		<div className={"gap-8 flex-grow grid xl:grid-cols-2"}>
 			<>
