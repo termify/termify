@@ -63,17 +63,19 @@ function UserCredentials() {
 
 	useEffect(() => {
 		async function fetchPersonalData() {
-			const response = (await (
-				await fetch(
-					`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}&timestamp={${Math.floor(
-						new Date().getTime() / 1000
-					)}}`
-				)
-			).json()) as PersonalDataProps;
+			try {
+				const response = (await (
+					await fetch(
+						`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}&timestamp={${Math.floor(
+							new Date().getTime() / 1000
+						)}}`
+					)
+				).json()) as PersonalDataProps;
 
-			console.log("Response", response);
-
-			setPersonalData(response);
+				setPersonalData(response);
+			} catch (e) {
+				console.error("e", e);
+			}
 		}
 
 		fetchPersonalData();
