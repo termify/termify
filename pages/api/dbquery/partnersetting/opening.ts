@@ -48,7 +48,7 @@ const putController = async (req: NextApiRequest, res: NextApiResponse<OpeningDa
 		data: {
 			timeslotFrom,
 			timeslotTo,
-			disabled,
+			disabled
 		},
 	})) as unknown as OpeningData[];
 
