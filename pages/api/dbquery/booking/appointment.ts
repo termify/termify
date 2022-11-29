@@ -5,57 +5,65 @@ type AppointmentData = {
 	id: number;
 	partnerId: number;
 	userId: string;
-	timestamp: Date;
+	timestamp: number;
 	typeOfRequest: string;
 	note: string;
 	attachment: string;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<unknown>) {
 	switch (req.method) {
+		case "GET":
+			await getController(req, res);
+			break;
 		case "POST":
 			await postController(req, res);
 			break;
-        case "PUT":
-            await putController(req, res);
-            break;
+		case "PUT":
+			await putController(req, res);
+			break;
+	}
 }
-}
+
+const getController = async (req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) => {
+	const { uuid } = req.query as { uuid: string };
+	const { timestamp } = req.query as { timestamp: string };
+
+	const appointmentData = (await db.appointment.findMany({
+		orderBy: {
+			timestamp: "asc",
+		},
+		where: {
+			userId: uuid,
+			timestamp: {
+				gte: timestamp,
+			},
+		},
+	})) as unknown as AppointmentData[];
+
+	res.status(200).json(appointmentData);
+};
 
 const postController = async (req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) => {
 	const { partnerId, userId, timestamp, typeOfRequest, note, attachment } = req.body as {
 		partnerId: string;
 		userId: string;
-		timestamp: string | Date;
+		timestamp: number;
 		typeOfRequest: string;
 		note: string;
 		attachment: string;
 	};
-    
-  
-	const date = typeof timestamp === "string" ? timestamp.split("-") : timestamp;
 
 	const appointmentData = (await db.appointment.create({
 		data: {
 			userId: userId,
 			partnerId: parseInt(partnerId),
-			timestamp:
-				typeof timestamp === "string"
-					? new Date(
-							parseInt((date as string[])[0]),
-							parseInt((date as string[])[1] as string),
-							parseInt((date as string[])[2] as string),
-							parseInt((date as string[])[3] as string),
-							parseInt((date as string[])[4] as string),
-							parseInt((date as string[])[5] as string)
-					  )
-					: (timestamp as Date),
+			timestamp: timestamp,
 			typeOfRequest: typeOfRequest,
 			note: note,
 			attachment: attachment,
 		},
 	})) as unknown as AppointmentData[];
-
 
 	// /*insert into "Appointment" ("userId", "partnerId", "timestamp")
 	// values ('f0e7f64b-210e-435a-afea-de151148e873','1','2022-11-29 10:30:00')*/
@@ -70,21 +78,16 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 	res.status(200).json(appointmentData);
 };
 
-
 const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentData[]>) => {
-    const {pickDate} = req.body as { pickDate : {day:number, month:number, year:number}};
-    const appointmentPickData = (await db.appointment.findMany({
-        where: {
-            timestamp: {
-                gte: new Date(pickDate.year,pickDate.month - 1,pickDate.day,0,0,0).getTime()/1000,
-                lte: new Date(pickDate.year,pickDate.month - 1,pickDate.day,23,59,59).getTime()/1000,
-            }
-        }
-    })) as unknown as AppointmentData[];
+	const { pickDate } = req.body as { pickDate: { day: number; month: number; year: number } };
+	const appointmentPickData = (await db.appointment.findMany({
+		where: {
+			timestamp: {
+				gte: new Date(pickDate.year, pickDate.month - 1, pickDate.day, 0, 0, 0).getTime() / 1000,
+				lte: new Date(pickDate.year, pickDate.month - 1, pickDate.day, 23, 59, 59).getTime() / 1000,
+			},
+		},
+	})) as unknown as AppointmentData[];
 
-
-    res.status(200).json(appointmentPickData);
-
-
+	res.status(200).json(appointmentPickData);
 };
-

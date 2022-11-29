@@ -5,6 +5,19 @@ import { ImCross } from "react-icons/im";
 import { Modal } from "../shared/modal";
 import AuthForm from "../shared/authForm";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import { suspend } from "suspend-react";
+import { baseUrl } from "../../lib/baseUrl";
+import LoadingSpinner from "../shared/loadingSpinner";
+import { supabase } from "../../lib/supabase";
+import { useRouter } from "next/router";
+import { getCookie } from "../../lib/cookie";
+
+interface DataOfficeService {
+	id: number;
+	serviceText: string;
+	serviceDescription?: string;
+}
 
 export default function Eintragung() {
 	return (
@@ -15,14 +28,77 @@ export default function Eintragung() {
 }
 
 function Reason() {
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const [files, setFiles] = useState<File[]>([]);
+	const [reason, setReason] = useState<string>("");
+	const [note, setNote] = useState<string>("");
 	const setBookingPage = useBookingStore((state) => state.setPageNumber);
-
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+	const bookingData = useBookingStore((state) => state.bookingData);
 
-	function submitHandler(e: React.FormEvent<HTMLFormElement>) {
+	async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-		setBookingPage(4);
+		setShowModal(true);
+
+		const { auth } = getCookie("auth") as { auth: { id: string } };
+
+		const time = bookingData.time.split(":");
+		const timeStamp = Math.floor(
+			new Date(
+				bookingData.date.year,
+				bookingData.date.month,
+				bookingData.date.day,
+				parseInt(time[0]),
+				parseInt(time[1])
+			).getTime() / 1000
+		);
+
+		try {
+			if (files.length > 0) {
+				for await (const file of files) {
+					const { data: supabaseData, error: supabaseError } = await supabase.storage
+						.from("appointment-bucket")
+						.upload(`${bookingData.officeId}/${auth.id}/${timeStamp}/${file.name}`, file);
+				}
+			}
+
+			const response = await (
+				await fetch(`${baseUrl()}/api/dbquery/booking/appointment`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						partnerId: bookingData.officeId,
+						userId: auth.id,
+						timestamp: timeStamp,
+						typeOfRequest: reason,
+						note: note,
+						attachment: files.length > 0 ? `${bookingData.officeId}/${auth.id}/${timeStamp}` : "",
+					}),
+				})
+			).json();
+
+			toast.success("Ihre Buchung wurde erfolgreich getätigt");
+			setBookingPage(4);
+		} catch (e) {
+			console.error(e);
+		}
 	}
+
+	const reasons = suspend(async () => {
+		const response = (await (
+			await fetch(`${baseUrl()}/api/dbquery/booking/officeService/`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ officeId: bookingData.officeId }),
+			})
+		).json()) as DataOfficeService[];
+
+		return response;
+	}, [bookingData]);
 
 	return (
 		<>
@@ -30,22 +106,36 @@ function Reason() {
 				<div className="flex justify-center">
 					<h3
 						className={
-							"text-center font-bold bg-gradient-to-r w-full inline-block from-indigo-400 to-sky-500 text-transparent text-2xl bg-clip-text mx-auto p-4 xl:mb-8 xl:w-1/3 xl:text-4xl "
+							"text-center font-bold bg-gradient-to-r w-full inline-block from-rose-400 to-amber-500 text-transparent text-2xl bg-clip-text mx-auto p-4 xl:mb-8 xl:w-1/3 xl:text-4xl "
 						}
 					>
 						Anliegen
 					</h3>
 				</div>
 				<form className={"flex flex-col items-center gap-4"} onSubmit={submitHandler}>
-					<CustomDropdown heading={"Art des Anliegens"} required>
+					<CustomDropdown
+						heading={"Art des Anliegens"}
+						required
+						value={reason}
+						onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setReason(e.target.value)}
+					>
 						<option>Bitte Anliegen wählen</option>
+						{reasons && reasons.length > 0 ? (
+							reasons.map((e, i) => <option key={i}>{e.serviceText}</option>)
+						) : (
+							<option>Keine Anliegen anwählbar</option>
+						)}
 					</CustomDropdown>
-					<CustomInput heading={"Dokumenten hochladen"} />
-					<CustomTextArea heading={"Anmerkung"} />
+					<CustomInput heading={"Dokumenten hochladen"} files={files} setFiles={setFiles} />
+					<CustomTextArea
+						heading={"Anmerkung"}
+						value={note}
+						onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNote(e.target.value)}
+					/>
 					<div className={"flex w-full justify-center"}>
 						<button
 							className={
-								"bg-gradient-to-r from-indigo-400 to-sky-500 shadow-md w-full max-w-[500px] text-indigo-50 p-2 font-bold rounded-md text-2xl mt-8 transition-all hover:scale-110 xl:w-1/3"
+								"bg-gradient-to-r from-rose-400 to-amber-500 shadow-md w-full max-w-[500px] text-rose-50 p-2 font-bold rounded-md text-2xl mt-8 transition-all hover:scale-110 xl:w-1/3"
 							}
 							title={"Termin buchen"}
 							type={"submit"}
@@ -55,6 +145,14 @@ function Reason() {
 					</div>
 				</form>
 			</div>
+
+			{showModal && (
+				<Modal>
+					<div className={"bg-slate-800/10 w-screen h-screen flex justify-center items-center"}>
+						<LoadingSpinner />
+					</div>
+				</Modal>
+			)}
 
 			{!isLoggedIn && (
 				<Modal>
@@ -102,7 +200,9 @@ function CustomTextArea(props: CustomTextAreaProps) {
 		<div className={"flex flex-col items-center w-full xl:w-1/3"}>
 			<label className={"p-2 f ont-bold text-center xl:text-start"}>{props.heading}:</label>
 			<textarea
-				className={"border-2 rounded-lg border-slate-800 shadow-md resize-y p-2 min-h-[50px] w-full max-w-[500px]"}
+				className={
+					"border-2 rounded-lg border-rose-800 bg-rose-50 shadow-md resize-y p-2 min-h-[150px] w-full max-w-[500px]"
+				}
 				{...props}
 			/>
 		</div>
@@ -119,7 +219,7 @@ function CustomDropdown(props: CustomDropdown) {
 			<label className={"p-2 font-bold text-center xl:text-start "}>{props.heading}:</label>
 			<select
 				className={
-					"border-2 rounded-lg border-slate-800 shadow-md bg-white resize-y p-2 min-h-[50px] w-full max-w-[500px]"
+					"border-2 rounded-lg border-rose-800  shadow-md bg-rose-50 text-rose-900 resize-y p-2 min-h-[50px] w-full max-w-[500px]"
 				}
 				{...props}
 			>
@@ -131,11 +231,12 @@ function CustomDropdown(props: CustomDropdown) {
 
 interface CustomInputProps extends ComponentProps<"input"> {
 	heading: string;
+	files: File[];
+	setFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }
 
-function CustomInput({ heading, ...props }: CustomInputProps) {
+function CustomInput({ heading, files, setFiles, ...props }: CustomInputProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [files, setFiles] = useState<File[]>([]);
 
 	function removeFile(fileName: File) {
 		const index = files.findIndex((e) => e.name === fileName.name);
@@ -149,12 +250,12 @@ function CustomInput({ heading, ...props }: CustomInputProps) {
 			<label className={"p-2 font-bold text-center"}>{heading}:</label>
 			<label
 				className={
-					"h-32 border-2 max-w-[500px] w-full border-slate-800 shadow-md rounded-lg hover:bg-slate-200 hover:cursor-pointer"
+					"h-32 border-2 max-w-[500px] w-full border-rose-800 bg-rose-50 shadow-md rounded-lg hover:xl:bg-gradient-to-r hover:xl:text-rose-50 hover:xl:from-rose-400 hover:xl:to-amber-500 hover:xl:cursor-pointer"
 				}
 			>
-				<div className={" h-full flex flex-col justify-center items-center"}>
-					<TbFiles className={"w-16 h-16"} />
-					<p className={"font-bold text-center xl:text-start"}>Klicken um Dateien hochzuladen</p>
+				<div className={" h-full flex flex-col text-rose-900 justify-center items-center hover:text-rose-50"}>
+					<TbFiles className={"w-16 h-16 "} />
+					<p className={"font-bold text-center  xl:text-start"}>Klicken um Dateien hochzuladen</p>
 				</div>
 				<input
 					ref={inputRef}

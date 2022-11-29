@@ -10,10 +10,35 @@ import { FaSignOutAlt } from "react-icons/fa";
 import { RiDashboardFill } from "react-icons/ri";
 import { deleteCookie, getCookie } from "../../lib/cookie";
 import { useAuthStore, useBookingStore } from "../../store/stores";
+import { TbFileSettings } from "react-icons/tb";
+import { baseUrl } from "../../lib/baseUrl";
+import { useRouter } from "next/router";
 
 export default function Header() {
 	const setPageNumber = useBookingStore((state) => state.setPageNumber);
 	const setBookingData = useBookingStore((state) => state.setBookingData);
+	const partnerId = useAuthStore((state) => state.partnerId);
+	const setPartnerId = useAuthStore((state) => state.setPartnerId);
+
+	useEffect(() => {
+		const authCookie = getCookie("auth") as { auth: { id: string; token: string } };
+
+		if (!authCookie) return;
+		console.log("Partner ID", authCookie.auth.id);
+		async function fetchIsSystemUser() {
+			try {
+				const response = (await (
+					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${authCookie.auth.id}`)
+				).json()) as {
+					partnerId: number;
+				};
+				setPartnerId(response.partnerId);
+			} catch (error) {
+				console.error(error);
+			}
+		}
+		fetchIsSystemUser();
+	}, [partnerId]);
 
 	function resetBookingState() {
 		setBookingData({
@@ -54,6 +79,8 @@ function DesktopNavigation() {
 	const [session, setSession] = useState<AuthSession>();
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
+	const partnerId = useAuthStore((state) => state.partnerId);
+
 	useEffect(() => {
 		const authCookie = getCookie("auth") as { auth: { id: string; token: string } };
 
@@ -68,7 +95,18 @@ function DesktopNavigation() {
 		<div className="hidden gap-4 flex-grow xl:flex xl:items-center xl:justify-end">
 			{session ? (
 				<>
-					<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
+					{partnerId ? (
+						<>
+							<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
+							<NavigationLink
+								icon={<TbFileSettings color="#ffffff" />}
+								name={"Konfiguration"}
+								to={`/user/${session.id}/config`}
+							/>
+						</>
+					) : (
+						<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
+					)}
 					<LogoutLink />
 				</>
 			) : (

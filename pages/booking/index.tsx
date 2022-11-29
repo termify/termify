@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import Eintragung from "../../components/bookingPage/eintragung";
 import Abschluss from "../../components/bookingPage/abschluss";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import LoadingSpinner from "../../components/shared/loadingSpinner";
 
 const BookingPage = () => {
 	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
@@ -13,16 +14,7 @@ const BookingPage = () => {
 	return (
 		<div>
 			<Taskleiste />
-			<Suspense
-				fallback={
-					<div className={"w-full h-52 flex justify-center "}>
-						<div className={"flex gap-4 items-center"}>
-							<p className={"xl:text-3xl"}>Daten werden geladen ...</p>
-							<AiOutlineLoading3Quarters className={"h-12 w-12 animate-spin text-sky-500 xl:h-16 xl:w-16"} />
-						</div>
-					</div>
-				}
-			>
+			<Suspense fallback={<LoadingSpinner />}>
 				{bookingPageNumber === 1 ? (
 					<AuswahlPage />
 				) : bookingPageNumber === 2 ? (

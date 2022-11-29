@@ -7,54 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          Int           @id @default(autoincrement())
-  uuid        String        @unique
-  email       String        @unique
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime?
-  Appointment Appointment[]
-}
-
-model District {
-  id           Int       @id @default(autoincrement())
-  districtName String    @unique
-  stateId      Int
-  State        State     @relation(fields: [stateId], references: [id])
-  Partner      Partner[]
-}
-
-model Office {
-  id                Int             @id @default(autoincrement())
-  officeName        String          @unique
-  officeDescription String?
-  OfficeService     OfficeService[]
-  Partner           Partner[]
-}
-
-model Template {
-  id           Int    @id @default(autoincrement())
-  templateName String @unique
-}
-
-model Partner {
-  id                  Int                   @id @default(autoincrement())
-  partnerName         String?
-  partnerDescription  String?
-  officeId            Int
-  districtId          Int
-  District            District              @relation(fields: [districtId], references: [id])
-  Office              Office                @relation(fields: [officeId], references: [id])
-  Appointment         Appointment[]
-  AppointmentSettings AppointmentSettings[]
-  AppointmentSlots    AppointmentSlots[]
-  Opening             Opening[]
-}
-
-model State {
-  id        Int        @id @default(autoincrement())
-  stateName String     @unique
-  District  District[]
+model Appointment {
+  id            Int      @id @default(autoincrement())
+  userId        String
+  partnerId     Int
+  typeOfRequest String?
+  note          String?
+  attachment    String?
+  timestamp     Decimal? @db.Decimal
+  Partner       Partner  @relation(fields: [partnerId], references: [id])
+  User          User     @relation(fields: [userId], references: [uuid], onDelete: Cascade)
 }
 
 model AppointmentSettings {
@@ -74,25 +36,20 @@ model AppointmentSlots {
   Partner     Partner  @relation(fields: [partnerId], references: [id])
 }
 
-model Opening {
-  id           Int      @id @default(autoincrement())
-  weekday      Weekday
-  timeslotFrom DateTime @db.Timetz(6)
-  timeslotTo   DateTime @db.Timetz(6)
-  partnerId    Int
-  Partner      Partner  @relation(fields: [partnerId], references: [id])
+model District {
+  id           Int       @id @default(autoincrement())
+  districtName String    @unique
+  stateId      Int
+  State        State     @relation(fields: [stateId], references: [id])
+  Partner      Partner[]
 }
 
-model Appointment {
-  id            Int      @id @default(autoincrement())
-  userId        String
-  partnerId     Int
-  typeOfRequest String?
-  note          String?
-  attachment    String?
-  timestamp     Decimal? @db.Decimal
-  Partner       Partner  @relation(fields: [partnerId], references: [id])
-  User          User     @relation(fields: [userId], references: [uuid])
+model Office {
+  id                Int             @id @default(autoincrement())
+  officeName        String          @unique
+  officeDescription String?
+  OfficeService     OfficeService[]
+  Partner           Partner[]
 }
 
 model OfficeService {
@@ -103,11 +60,69 @@ model OfficeService {
   Office             Office  @relation(fields: [officeId], references: [id])
 }
 
+model Opening {
+  id           Int      @id @default(autoincrement())
+  weekday      Weekday
+  timeslotFrom DateTime @db.Timetz(6)
+  timeslotTo   DateTime @db.Timetz(6)
+  partnerId    Int
+  disabled     Boolean? @default(false)
+  Partner      Partner  @relation(fields: [partnerId], references: [id])
+}
+
+model Partner {
+  id                  Int                   @id @default(autoincrement())
+  partnerName         String?
+  partnerDescription  String?
+  officeId            Int
+  districtId          Int
+  District            District              @relation(fields: [districtId], references: [id])
+  Office              Office                @relation(fields: [officeId], references: [id])
+  Appointment         Appointment[]
+  AppointmentSettings AppointmentSettings[]
+  AppointmentSlots    AppointmentSlots[]
+  Opening             Opening[]
+  SystemUser          SystemUser[]
+}
+
+model State {
+  id        Int        @id @default(autoincrement())
+  stateName String     @unique
+  District  District[]
+}
+
+model Template {
+  id           Int    @id @default(autoincrement())
+  templateName String @unique
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  uuid        String        @unique
+  email       String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?
+  address     String?
+  birthday    DateTime?     @db.Date
+  city        String?
+  firstname   String?
+  surname     String?
+  zipcode     Int?
+  Appointment Appointment[]
+}
+
+model SystemUser {
+  id        Int     @id @default(autoincrement())
+  uuid      String  @unique
+  partnerId Int
+  Partner   Partner @relation(fields: [partnerId], references: [id])
+}
+
 enum Weekday {
   Montag
   Dienstag
   Mittwoch
-  Donnertag
+  Donnerstag
   Freitag
   Samstag
   Sonntag

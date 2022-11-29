@@ -82,10 +82,10 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 	const todayIsNewerThenYesterday = new Date() <= today && canPickDay.includes(today.getDay());
 
 	const setColor = picked
-		? "bg-gradient-to-r from-rose-400 to-amber-500 text-rose-100 font-bold "
+		? "bg-gradient-to-r from-indigo-400 to-sky-500 text-indigo-100 font-bold "
 		: todayIsNewerThenYesterday
-		? "bg-gradient-to-r from-rose-400/[5%] to-amber-500/[5%] text-sky-900"
-		: "bg-slate-100/10";
+		? "bg-gradient-to-r from-indigo-400/[15%] to-sky-500/[15%] text-sky-900"
+		: "bg-indigo-100/10";
 
 	return (
 		<div className={"p-1"}>
@@ -93,8 +93,8 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 				onClick={onClickHandler}
 				className={`${setColor} m-auto flex justify-center items-center rounded-full transition-all w-10 h-10 md:h-16 md:w-16 xl:text-2xl xl:h-18 xl:w-18 ${
 					picked
-						? "xl:hover:from-rose-400 xl:hover:to-amber-500 text-sky-50"
-						: "xl:hover:from-rose-400/[50%] xl:hover:to-amber-500/[50%]"
+						? "xl:hover:from-indigo-400 xl:hover:to-sky-500 text-sky-50"
+						: "xl:hover:from-indigo-400/[50%] xl:hover:to-sky-500/[50%]"
 				}
         ${todayIsNewerThenYesterday ? " xl:hover:scale-110" : ""} 
         xl:hover:cursor-pointer`}
@@ -112,8 +112,8 @@ function ScheduleDay({ dayNumber, date }: ScheduleDay) {
 function TodayDot() {
 	return (
 		<div className="relative flex justify-center origin-center bottom-3 left-1">
-			<span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-rose-400 to-amber-500 opacity-75  "></span>
-			<span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gradient-to-r from-rose-400 to-amber-500 "></span>
+			<span className="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-indigo-400 to-sky-500 opacity-75  "></span>
+			<span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gradient-to-r from-indigo-400 to-sky-500 "></span>
 		</div>
 	);
 }

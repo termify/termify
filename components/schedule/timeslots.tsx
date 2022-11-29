@@ -4,26 +4,11 @@ import { useBookingStore, useScheduleStore } from "../../store/stores";
 import { BsFillArrowLeftCircleFill } from "react-icons/bs";
 import { OpeningData } from "../../pages/api/dbquery/booking/partnercalendar";
 
-//TODO Kevin Bläser: Ersetze Obj durch DB Query
 
+//TODO Kevin Bläser: Ersetze Obj durch DB Query
 interface TimeSlotsProps {
 	onClick?: () => void;
 }
-
-// function getTodaysTimeslot(allowedDates: OpeningData[], pickedDate: number): OpeningData {
-// 	const weekDay: string = parseDayNumberToDayString[pickedDate];
-//
-// 	let returnValue: OpeningData;
-//
-// 	allowedDates.forEach((e) => {
-// 		if (e.weekday === weekDay) returnValue = e;
-// 	});
-//
-// 	//timeslotFrom | timeslotTo
-//
-// 	// @ts-ignore
-// 	return returnValue;
-// }
 
 function returnTimeslotDay(allowedDates: OpeningData[], pickedDate: number): { from: string; to: string } {
 	let returnData: OpeningData = {
@@ -85,6 +70,21 @@ export default function TimeSlots({ onClick }: TimeSlotsProps) {
 	const pickedValue = useScheduleStore((state) => state.pickedDay);
 	const pickedDate: number = new Date(pickedValue.year, pickedValue.month, pickedValue.day).getDay();
 
+	// suspend(async () => {
+	// 	// const response = await (
+	// 	// 	await fetch(`${baseUrl()}/api/dbquery/booking/appointments`, {
+	// 	// 		method: "PUT",
+	// 	// 		headers: {
+	// 	// 			"Content-Type": "application/json",
+	// 	// 		},
+	// 	// 		body: JSON.stringify({
+	// 	// 			pickedDate: pickedValue,
+	// 	// 		}),
+	// 	// 	})
+	// 	// ).json();
+	// 	// console.log("Timeslot Response", response);
+	// }, [pickedValue]);
+
 	const { from, to } = returnTimeslotDay(allowedDates, pickedDate);
 
 	const times = parsedTimeToInterval(from, to);
@@ -93,7 +93,7 @@ export default function TimeSlots({ onClick }: TimeSlotsProps) {
 		<div className={" overflow-auto transition-all xl:ml-8"}>
 			<div
 				className={
-					" flex items-center justify-between p-4 bg-gradient-to-r from-rose-400 to-amber-500 shadow-md text-rose-50 font-bold  xl:text-2xl"
+					" flex items-center justify-between p-4 bg-gradient-to-r from-indigo-400 to-sky-500 shadow-md text-indigo-50 font-bold  xl:text-2xl"
 				}
 			>
 				{today}
@@ -148,14 +148,14 @@ function TimeSlotEntrie({ time }: TimeSlotEntrieProps) {
 		<button
 			onClick={onClickHandler}
 			className={
-				"bg-red-300 p-1 shadow rounded bg-gradient-to-r from-rose-400 to-amber-500 w-2/3 mx-auto transition-all xl:hover:scale-110"
+				"p-1 shadow rounded bg-gradient-to-r from-indigo-400 to-sky-500 w-2/3 mx-auto group transition-all xl:hover:scale-110"
 			}
 		>
 			<div
-				className={`bg-white p-1 shadow rounded xl:hover:bg-gradient-to-r xl:hover:from-rose-400 xl:hover:to-amber-500 xl:hover:shadow-none`}
+				className={`bg-indigo-50 p-1 shadow rounded xl:group-hover:bg-gradient-to-r xl:group-hover:from-indigo-400 xl:group-hover:to-sky-500 xl:group-hover:shadow-none`}
 			>
 				<p
-					className={`text-center font-bold text-2xl bg-gradient-to-r from-rose-400 to-amber-500 p-1 bg-clip-text text-transparent xl:hover:text-rose-100 `}
+					className={`text-center font-bold text-2xl bg-gradient-to-r from-indigo-400 to-sky-500 p-1 bg-clip-text text-transparent xl:group-hover:text-indigo-100 `}
 				>
 					{time}
 				</p>

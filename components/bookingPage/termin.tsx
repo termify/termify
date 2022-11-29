@@ -20,9 +20,15 @@ export default function Termin() {
 	}, [pickedDay]);
 
 	suspend(async () => {
-		const response = (await (await fetch(`${baseUrl()}/api/dbquery/booking/partnercalendar`)).json()) as GetResponse;
-		setAllowedDates(response.openingData);
-		return response;
+		const calendarResponse = (await (
+			await fetch(`${baseUrl()}/api/dbquery/booking/partnercalendar`)
+		).json()) as GetResponse;
+
+		console.log("Calenadr", calendarResponse);
+
+		// TODO: SetAllowDates muss auch bereits Gebuchte Zeiten entfernen
+		setAllowedDates(calendarResponse.openingData);
+		return calendarResponse;
 	}, [`termin-${JSON.stringify(bookingData)}`]);
 
 	return (

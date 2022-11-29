@@ -5,12 +5,7 @@ import { suspend } from "suspend-react";
 import { baseUrl } from "../../lib/baseUrl";
 
 export default function AuswahlPage() {
-	return <AuswahlAmt col={4} row={3} />;
-}
-
-interface AuswahlAmtProps {
-	col: number;
-	row: number;
+	return <AuswahlAmt />;
 }
 
 //TODO Kevin Bläser: Auswahl des Landkreises
@@ -35,7 +30,7 @@ interface AllDataState {
 	District: DistrictProps[];
 }
 
-function AuswahlAmt({ col, row }: AuswahlAmtProps) {
+function AuswahlAmt() {
 	const [pos, setPos] = useState<number>(1);
 	const [partner, setPartner] = useState<DataPartner[]>([]);
 	const bookingData = useBookingStore((state) => state.bookingData);
@@ -44,6 +39,8 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 		try {
 			const officeResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/office`)).json()) as DataOffice[];
 			const stateResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/state`)).json()) as AllDataState[];
+
+			console.log("Office Data", officeResponse);
 
 			return {
 				officeData: officeResponse,
@@ -91,16 +88,16 @@ function AuswahlAmt({ col, row }: AuswahlAmtProps) {
 				)}
 			</div>
 			{partner && partner.length > 0 ? (
-				<div className={`grid grid-cols-2 grid-rows-${row} gap-3 xl:grid-cols-${col} overflow-y-hidden scroll-smooth`}>
+				<div className={`grid grid-cols-2 gap-3 xl:grid-cols-4 overflow-y-hidden scroll-smooth`}>
 					{partner.map((e, i) => (
-						<BookingButton key={e.partnerName + i} index={i} partnerData={e} />
+						<BookingButton key={e.partnerName + i} index={e.id} partnerData={e} />
 					))}
 				</div>
 			) : (
 				<div className={"mt-24"}>
-					<h3 className={"text-center p-8 text-xl xl:text-5xl"}>Bitte wählen Sie Ihren Bezirk aus</h3>
+					<h3 className={"text-center p-8 text-xl text-sky-900 xl:text-5xl"}>Bitte wählen Sie Ihren Bezirk aus</h3>
 					<div className="p-1 w-1/2 container mx-auto bg-gradient-to-r from-sky-400 to-emerald-500 rounded shadow-xl relative">
-						<select className="w-full rounded bg-white p-2 xl:p-6 xl:text-2xl " onChange={fetchPartner}>
+						<select className="w-full rounded bg-sky-50 text-sky-900 p-2 xl:p-6 xl:text-2xl" onChange={fetchPartner}>
 							<option>--- Bezirk wählen ---</option>
 							{data?.stateData.map((e, i) => (
 								<optgroup key={e.stateName + i} label={e.stateName}>
@@ -131,7 +128,7 @@ interface BookinButtonProps {
 	partnerData: DataPartner;
 	index: number;
 }
-
+// Auswahl Seite
 function BookingButton({ partnerData, index }: BookinButtonProps) {
 	const bookingData = useBookingStore((state) => state.bookingData);
 	const setBookingData = useBookingStore((state) => state.setBookingData);
@@ -140,7 +137,7 @@ function BookingButton({ partnerData, index }: BookinButtonProps) {
 	function onClickHandler() {
 		setBookingData({
 			...bookingData,
-			officeId: index,
+			officeId: (partnerData.Office as OfficeProps).id,
 			officeName: (partnerData.Office as OfficeProps).officeName,
 		});
 		setBookingPage(2);
@@ -154,7 +151,7 @@ function BookingButton({ partnerData, index }: BookinButtonProps) {
 				onClick={onClickHandler}
 				id={`s-${index}`}
 				className={
-					"bg-white w-full font-bold min-h-[5rem] rounded-md group-hover:bg-gradient-to-r transition-all group-hover:from-sky-400 group-hover:to-emerald-500 xl:min-h-[13rem]"
+					"w-full font-bold bg-sky-50 min-h-[5rem] rounded-md group-hover:bg-gradient-to-r transition-all group-hover:from-sky-400 group-hover:to-emerald-500 xl:min-h-[13rem]"
 				}
 			>
 				<p
