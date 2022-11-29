@@ -45,6 +45,9 @@ const getController = async (req: NextApiRequest, res: NextApiResponse<GetRespon
 			timeslotFrom: true,
 			timeslotTo: true,
 		},
+		where: {
+			disabled: false,
+		},
 	})) as unknown as OpeningData[];
 
 	const appointmentData = (await db.appointmentSlots.findMany({
