@@ -23,26 +23,23 @@ export default function Header() {
 	const router = useRouter();
 
 	useEffect(() => {
-		if (!router.isReady) return;
-
-		const { auth } = getCookie("auth") as { auth: { id: string } };
-		if (!auth) return;
-		console.log("Partner ID", auth.id);
-		async function fetchIsSystemUser() {
-			try {
-				const { partnerId } = (await (
-					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.id}`)
-				).json()) as {
-					partnerId: number;
-				};
-
-				setPartnerId(partnerId);
-			} catch (error) {
-				console.error(error);
-			}
-		}
-
-		fetchIsSystemUser();
+		// if (!router.isReady) return;
+		// const { auth } = getCookie("auth") as { auth: { id: string } };
+		// if (!auth) return;
+		// console.log("Partner ID", auth.id);
+		// async function fetchIsSystemUser() {
+		// 	try {
+		// 		const { partnerId } = (await (
+		// 			await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.id}`)
+		// 		).json()) as {
+		// 			partnerId: number;
+		// 		};
+		// 		setPartnerId(partnerId);
+		// 	} catch (error) {
+		// 		console.error(error);
+		// 	}
+		// }
+		// fetchIsSystemUser();
 	}, [router.isReady, router.asPath]);
 
 	function resetBookingState() {
