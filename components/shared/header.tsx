@@ -23,6 +23,8 @@ export default function Header() {
 	const router = useRouter();
 
 	useEffect(() => {
+		if (!router.isReady) return;
+
 		const { auth } = getCookie("auth") as { auth: { id: string } };
 		if (!auth) return;
 		console.log("Partner ID", auth.id);
@@ -41,7 +43,7 @@ export default function Header() {
 		}
 
 		fetchIsSystemUser();
-	}, [router.asPath]);
+	}, [router.isReady, router.asPath]);
 
 	function resetBookingState() {
 		setBookingData({
