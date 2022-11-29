@@ -198,7 +198,7 @@ export const AppointmentSettings = () => {
 	const partnerId = useAuthStore((state) => state.partnerId);
 
 	async function updateSettings() {
-		const response = await toast.promise(
+		await toast.promise(
 			new Promise((res, rej) => {
 				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings`, {
 					method: "PUT",
@@ -217,8 +217,6 @@ export const AppointmentSettings = () => {
 				loading: "Ein Moment überschreibe Daten",
 			}
 		);
-
-		console.log("Update Settings", response);
 	}
 
 	useEffect(() => {

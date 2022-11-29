@@ -16,7 +16,7 @@ model Appointment {
   attachment    String?
   timestamp     Decimal? @db.Decimal
   Partner       Partner  @relation(fields: [partnerId], references: [id])
-  User          User     @relation(fields: [userId], references: [uuid])
+  User          User     @relation(fields: [userId], references: [uuid], onDelete: Cascade)
 }
 
 model AppointmentSettings {
@@ -99,7 +99,7 @@ model Template {
 model User {
   id          Int           @id @default(autoincrement())
   uuid        String        @unique
-  email       String        @unique
+  email       String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime?
   address     String?

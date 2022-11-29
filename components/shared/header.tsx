@@ -20,27 +20,25 @@ export default function Header() {
 	const partnerId = useAuthStore((state) => state.partnerId);
 	const setPartnerId = useAuthStore((state) => state.setPartnerId);
 
-	const router = useRouter();
-
 	useEffect(() => {
-		// if (!router.isReady) return;
-		// const { auth } = getCookie("auth") as { auth: { id: string } };
-		// if (!auth) return;
-		// console.log("Partner ID", auth.id);
-		// async function fetchIsSystemUser() {
-		// 	try {
-		// 		const { partnerId } = (await (
-		// 			await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.id}`)
-		// 		).json()) as {
-		// 			partnerId: number;
-		// 		};
-		// 		setPartnerId(partnerId);
-		// 	} catch (error) {
-		// 		console.error(error);
-		// 	}
-		// }
-		// fetchIsSystemUser();
-	}, [router.isReady, router.asPath]);
+		const authCookie = getCookie("auth") as { auth: { id: string; token: string } };
+
+		if (!authCookie) return;
+		console.log("Partner ID", authCookie.auth.id);
+		async function fetchIsSystemUser() {
+			try {
+				const response = (await (
+					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${authCookie.auth.id}`)
+				).json()) as {
+					partnerId: number;
+				};
+				setPartnerId(response.partnerId);
+			} catch (error) {
+				console.error(error);
+			}
+		}
+		fetchIsSystemUser();
+	}, [partnerId]);
 
 	function resetBookingState() {
 		setBookingData({
