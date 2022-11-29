@@ -33,24 +33,27 @@ const getController = async (req: NextApiRequest, res: NextApiResponse<OpeningDa
 	res.status(200).json(openingData);
 };
 
-const putController = async (req: NextApiRequest, res: NextApiResponse<OpeningData[]>) => {
-	const { id, timeslotFrom, timeslotTo, disabled } = req.body as {
-		id: number;
-		timeslotFrom: string;
-		timeslotTo: string;
-		disabled: boolean;
+const putController = async (req: NextApiRequest, res: NextApiResponse<OpeningData[] | any>) => {
+	const { openings } = req.body as {
+		openings: { id: number; timeslotFrom: string; timeslotTo: string; disabled: boolean }[];
 	};
 
-	const setOpeningData = (await db.opening.updateMany({
-		where: {
-			id,
-		},
-		data: {
-			timeslotFrom,
-			timeslotTo,
-			disabled
-		},
-	})) as unknown as OpeningData[];
+	try {
+		for await (const open of openings) {
+			await db.opening.updateMany({
+				where: {
+					id: open.id,
+				},
+				data: {
+					timeslotFrom: open.timeslotFrom,
+					timeslotTo: open.timeslotTo,
+					disabled: open.disabled,
+				},
+			});
+		}
 
-	res.status(200).json(setOpeningData);
+		res.status(200).json({ success: true });
+	} catch (e) {
+		res.status(500).json({ success: false });
+	}
 };

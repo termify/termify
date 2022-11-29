@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { AiFillHome } from "react-icons/ai";
 import { FaSignOutAlt } from "react-icons/fa";
 import { RiDashboardFill } from "react-icons/ri";
-import { deleteCookie, getCookie } from "../../lib/cookie";
+import { deleteCookie, getCookie, setCookie } from "../../lib/cookie";
 import { useAuthStore, useBookingStore } from "../../store/stores";
 import { TbFileSettings } from "react-icons/tb";
 import { baseUrl } from "../../lib/baseUrl";
@@ -32,6 +32,12 @@ export default function Header() {
 				).json()) as {
 					partnerId: number;
 				};
+				setCookie(
+					"config",
+					JSON.stringify({ partnerId: response.partnerId }),
+					new Date(new Date().getFullYear()).toUTCString(),
+					"/config"
+				);
 				setPartnerId(response.partnerId);
 			} catch (error) {
 				console.error(error);

@@ -4,6 +4,7 @@ import { baseUrl } from "../lib/baseUrl";
 import ScheduleClass from "../lib/schedule";
 import { useAuthStore } from "../store/stores";
 import toast from "react-hot-toast";
+import { getCookie } from "../lib/cookie";
 interface OpeningDays {
 	weekday: string;
 	disabled: boolean;
@@ -17,10 +18,14 @@ export const OpeningSettings = () => {
 	const partnerId = useAuthStore((state) => state.partnerId);
 
 	useEffect(() => {
+		const configCookie = getCookie("config") as { config: { partnerId: number } };
+
+		if (!configCookie) return;
+
 		async function fetchOpeningDays() {
 			try {
 				const response = await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${configCookie.config.partnerId}`)
 				).json();
 
 				setOpeneningDays(response);
@@ -53,6 +58,24 @@ export const OpeningSettings = () => {
 		setOpeneningDays([...openeningDays]);
 	}
 
+	async function updateOpeningDates() {
+		try {
+			const response = await (
+				await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ openings: openeningDays }),
+				})
+			).json();
+
+			console.log("Update Öffnungszeiten", response);
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
 	return (
 		<GridEntrieContainer gradientType={"fromSky"}>
 			<h2 className={"font-bold xl:text-3xl"}>Einstellungen Öffnungszeiten 🕰️</h2>
@@ -83,6 +106,14 @@ export const OpeningSettings = () => {
 						);
 					}
 				})}
+			</div>
+			<div className={"flex justify-center"}>
+				<button
+					className={"p-2 bg-gradient-to-r text-sky-50 font-bold rounded-md transition-all xl:hover:scale-110"}
+					onClick={updateOpeningDates}
+				>
+					Öffnungszeiten aktuallisieren
+				</button>
 			</div>
 		</GridEntrieContainer>
 	);
@@ -220,16 +251,22 @@ export const AppointmentSettings = () => {
 	}
 
 	useEffect(() => {
+		const configCookie = getCookie("config") as { config: { partnerId: number } };
+
+		if (!configCookie) return;
+
 		async function fetchSettingsData() {
 			try {
-				const { intervall, holydaysOn, id } = (await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
+				const response = (await (
+					await fetch(
+						`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${configCookie.config.partnerId}`
+					)
 				).json()) as { intervall: number; holydaysOn: boolean; id: number };
 
 				setSettingsData({
-					intervall: intervall,
-					holydaysOn: holydaysOn,
-					id: id,
+					intervall: response.intervall,
+					holydaysOn: response.holydaysOn,
+					id: response.id,
 				});
 			} catch (e) {
 				console.error(e);
@@ -340,14 +377,19 @@ export const AppointmentSlotSettings = () => {
 	const [whitelistDays, setAllowedDays] = useState<string[]>([]);
 
 	useEffect(() => {
+		const configCookie = getCookie("config") as { config: { partnerId: number } };
+
+		if (!configCookie) return;
 		async function fetchBlackAndAllowedList() {
 			try {
 				const response = (await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`)
+					await fetch(
+						`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${configCookie.config.partnerId}`
+					)
 				).json()) as { id: number; isBlackList: boolean; dateFrom: Date; dateTo: Date }[];
 
 				response.forEach((e) => {
-					if (e.isBlackList) {
+					if (!e.isBlackList) {
 						setAllowedDays([...whitelistDays, ScheduleClass.parseFullDateToDate(e.dateFrom)]);
 					} else {
 						setBlockDays([...blockDays, ScheduleClass.parseFullDateToDate(e.dateFrom)]);
