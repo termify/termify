@@ -191,20 +191,22 @@ function UserSchedule() {
 				>
 					Termine
 				</h3>
-				{termine && termine.length > 0 ? (
-					termine.map((e, i) => (
-						<DisplayTermineComponent
-							key={i}
-							index={i}
-							timestamp={e.timestamp}
-							typeOfRequest={e.typeOfRequest}
-							first={i === 0}
-							last={i === termine.length - 1}
-						/>
-					))
-				) : (
-					<div className={"p-4 text-rose-900"}>Es sind keine Termindaten hinterlegt</div>
-				)}
+				<div className={"overflow-y-scroll h-[70vh] rounded-xl"}>
+					{termine && termine.length > 0 ? (
+						termine.map((e, i) => (
+							<DisplayTermineComponent
+								key={i}
+								index={i}
+								timestamp={e.timestamp}
+								typeOfRequest={e.typeOfRequest}
+								first={i === 0}
+								last={i === termine.length - 1}
+							/>
+						))
+					) : (
+						<div className={"p-4 text-rose-900"}>Es sind keine Termindaten hinterlegt</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);
