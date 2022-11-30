@@ -1,6 +1,6 @@
 describe('empty spec', () => {
   it('passes', () => {
-    cy.visit('termintool.vercel.app')
+    cy.visit('develop-termintool.vercel.app')
     /* ==== Generated with Cypress Studio ==== */
     cy.get('.mt-24 > .text-center').click();
     cy.get('.hidden > .w-1\\/2.p-2 > .rounded').click();
