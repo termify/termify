@@ -70,6 +70,15 @@ function UserCredentials() {
 					)
 				).json()) as PersonalDataProps;
 
+				if (response.zipCode.length < 5) {
+					let zipCode = response.zipCode;
+					for (let i = response.zipCode.length; i < 5; i++) {
+						zipCode = `0${zipCode}`;
+					}
+
+					response.zipCode = zipCode;
+				}
+
 				setPersonalData(response);
 			} catch (e) {
 				console.error("e", e);
@@ -131,8 +140,10 @@ function UserCredentials() {
 					/>
 					<HorizontalTextComponent
 						type={"Postleitzahl"}
+						inputType={"tel"}
 						value={personalData.zipCode}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+							if (e.target.value.length > 5) return;
 							setPersonalData((prev) => ({ ...prev, zipCode: e.target.value }));
 						}}
 					/>
@@ -272,7 +283,7 @@ function UserInfoComponent() {
 interface HorizontalTextProps {
 	type: string;
 	value: string;
-	inputType?: "text" | "date";
+	inputType?: "text" | "date" | "number" | "tel";
 	readOnly?: boolean;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	autoFocus?: boolean;
@@ -290,9 +301,8 @@ function HorizontalTextComponent({
 		<div className={"flex justify-between text-slate-800 my-2 xl:my-3"}>
 			<label className={"font-black xl:text-3xl"}>{type}</label>
 			<input
-				title={value}
 				autoFocus={autoFocus}
-				className={"px-2 w-1/2 rounded-md border-2 border-sky-400 bg-sky-100 text-sky-900  xl:text-2xl xl:px-4"}
+				className={"px-2 w-1/2 rounded-md border-2 border-sky-400 bg-sky-100 text-sky-900 xl:text-2xl xl:px-4"}
 				type={inputType}
 				value={value}
 				readOnly={readOnly}
