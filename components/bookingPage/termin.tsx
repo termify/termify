@@ -19,12 +19,10 @@ export default function Termin() {
 		);
 	}, [pickedDay]);
 
-	suspend(async () => {
+	const calendarResponse = suspend(async () => {
 		const calendarResponse = (await (
 			await fetch(`${baseUrl()}/api/dbquery/booking/partnercalendar`)
 		).json()) as GetResponse;
-
-		console.log("Calenadr", calendarResponse);
 
 		// TODO: SetAllowDates muss auch bereits Gebuchte Zeiten entfernen
 		setAllowedDates(calendarResponse.openingData);

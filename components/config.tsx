@@ -79,8 +79,6 @@ export const OpeningSettings = () => {
 					success: "Öffnungszeiten wurden erfolgreich überschrieben",
 				}
 			);
-
-			console.log("Update Öffnungszeiten", response);
 		} catch (e) {
 			console.error(e);
 		}
@@ -397,7 +395,6 @@ export const AppointmentSlotSettings = () => {
 					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`)
 				).json()) as { whiteList: Blocklist[]; blackList: Blocklist[] };
 
-				console.log("Mi Response", response);
 				setAllowedDays(response.whiteList);
 				setBlockDays(response.blackList);
 			} catch (e) {
@@ -408,9 +405,7 @@ export const AppointmentSlotSettings = () => {
 		fetchBlackAndAllowedList();
 	}, []);
 
-	useEffect(() => {
-		console.log("Block", blockDays, "White", whitelistDays);
-	}, [blockDays, whitelistDays]);
+	useEffect(() => {}, [blockDays, whitelistDays]);
 
 	function addBlock() {
 		if (!pickedBlockDate) return;
@@ -470,8 +465,6 @@ export const AppointmentSlotSettings = () => {
 				success: "Daten wurden erfolgreich hochgeladen 🎉",
 			}
 		);
-
-		console.log("Response Block", response);
 	}
 
 	return (
