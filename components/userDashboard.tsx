@@ -182,11 +182,11 @@ function UserSchedule() {
 	}, []);
 
 	return (
-		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-rose-400 to-amber-500 xl:row-span-2"}>
-			<div className={"p-4 bg-rose-50 h-full rounded-xl"}>
+		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-amber-400 to-pink-500 xl:row-span-2"}>
+			<div className={"p-4 bg-amber-50 h-full rounded-xl"}>
 				<h3
 					className={
-						"bg-gradient-to-r  mb-4 from-rose-400 to-amber-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl"
+						"bg-gradient-to-r  mb-4 from-amber-400 to-pink-500 text-transparent bg-clip-text font-bold inline-block drop-shadow-lg text-2xl xl:mb-8 xl:text-5xl"
 					}
 				>
 					Termine
