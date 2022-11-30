@@ -20,17 +20,15 @@ interface OpeningDays {
 // Opening Ändern von bis => Weekday + Timeslots from und Timeslot
 export const OpeningSettings = () => {
 	const [openeningDays, setOpeneningDays] = useState<OpeningDays[]>([]);
-	const partnerId = useAuthStore((state) => state.partnerId);
 
 	useEffect(() => {
-		const configCookie = getCookie("config") as { config: { partnerId: number } };
-
-		if (!configCookie) return;
+		const partnerId = sessionStorage.getItem("partnerId");
+		if (!partnerId) return;
 
 		async function fetchOpeningDays() {
 			try {
 				const response = await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${configCookie.config.partnerId}`)
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
 				).json();
 
 				setOpeneningDays(response);
@@ -269,16 +267,14 @@ export const AppointmentSettings = () => {
 	}
 
 	useEffect(() => {
-		const configCookie = getCookie("config") as { config: { partnerId: number } };
+		const partnerId = sessionStorage.getItem("partnerId");
 
-		if (!configCookie) return;
+		if (!partnerId) return;
 
 		async function fetchSettingsData() {
 			try {
 				const response = (await (
-					await fetch(
-						`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${configCookie.config.partnerId}`
-					)
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
 				).json()) as { intervall: number; holydaysOn: boolean; id: number };
 
 				setSettingsData({
@@ -395,15 +391,13 @@ export const AppointmentSlotSettings = () => {
 	const [whitelistDays, setAllowedDays] = useState<string[]>([]);
 
 	useEffect(() => {
-		const configCookie = getCookie("config") as { config: { partnerId: number } };
+		const partnerId = sessionStorage.getItem("partnerId");
 
-		if (!configCookie) return;
+		if (!partnerId) return;
 		async function fetchBlackAndAllowedList() {
 			try {
 				const response = (await (
-					await fetch(
-						`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${configCookie.config.partnerId}`
-					)
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`)
 				).json()) as { id: number; isBlackList: boolean; dateFrom: Date; dateTo: Date }[];
 
 				response.forEach((e) => {
@@ -524,13 +518,11 @@ export const WebApiConfigSettings = () => {
 			try {
 				const response = (await (
 					await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
-				).json()) as { data: string };
+				).json()) as WebApiConfig;
 
 				console.log("RRR", response);
-				const parsed = JSON.parse(response.data) as WebApiConfig;
-				console.log("Parsed", parsed);
 
-				setWebApiConfig({ ...parsed });
+				setWebApiConfig({ ...response });
 			} catch (e) {
 				console.error(e);
 			}
@@ -653,7 +645,7 @@ function AppointmentEntrie({ active, qname, webApiConfig, setWebApiConfig, hiera
 
 	return (
 		<div className={"flex justify-around my-2"}>
-			<input className={"p-2 rounded-md"} value={qname} onChange={changeQName} />
+			<input className={"p-2 rounded-md border-2 border-emerald-500"} value={qname} onChange={changeQName} />
 			<div className={"flex gap-4 items-center justify-end"}>
 				<label className={"select-none"} htmlFor={hierachy.length === 1 ? hierachy[0] : hierachy[1]}>
 					Aktiv?

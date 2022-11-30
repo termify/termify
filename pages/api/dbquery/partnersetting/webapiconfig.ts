@@ -31,7 +31,7 @@ export interface WebApiConfig {
 	};
 }
 
-const getController = async (req: NextApiRequest, res: NextApiResponse) => {
+const getController = async (req: NextApiRequest, res: NextApiResponse<WebApiConfig>) => {
 	const partnerId = req.query.partnerId as string;
 
 	const data = (await db.partner.findFirst({
@@ -42,5 +42,5 @@ const getController = async (req: NextApiRequest, res: NextApiResponse) => {
 
 	console.log("Data", data);
 
-	res.status(200).json({ data: JSON.stringify(data.webapiconfig) });
+	res.status(200).json(data.webapiconfig);
 };
