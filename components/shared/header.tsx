@@ -12,21 +12,21 @@ import { deleteCookie, getCookie, setCookie } from "../../lib/cookie";
 import { useAuthStore, useBookingStore } from "../../store/stores";
 import { TbFileSettings } from "react-icons/tb";
 import { baseUrl } from "../../lib/baseUrl";
-import { useRouter } from "next/router";
 
 export default function Header() {
 	const setPageNumber = useBookingStore((state) => state.setPageNumber);
 	const setBookingData = useBookingStore((state) => state.setBookingData);
 	const setPartnerId = useAuthStore((state) => state.setPartnerId);
+	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
 	useEffect(() => {
-		const { auth } = getCookie("auth") as { auth: { id: string } };
+		const auth = getCookie("auth") as { auth: { id: string } };
 		if (!auth) return;
 
 		async function fetchIsSystemUser() {
 			try {
 				const { partnerId } = (await (
-					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.id}`)
+					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
 				).json()) as {
 					partnerId: number;
 				};
@@ -39,6 +39,27 @@ export default function Header() {
 
 		fetchIsSystemUser();
 	}, []);
+
+	useEffect(() => {
+		const auth = getCookie("auth") as { auth: { id: string } };
+		if (!auth) return;
+
+		async function fetchIsSystemUser() {
+			try {
+				const { partnerId } = (await (
+					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
+				).json()) as {
+					partnerId: number;
+				};
+				setCookie("config", JSON.stringify({ partnerId }));
+				setPartnerId(partnerId);
+			} catch (error) {
+				console.error(error);
+			}
+		}
+
+		fetchIsSystemUser();
+	}, [isLoggedIn]);
 
 	function resetBookingState() {
 		setBookingData({
