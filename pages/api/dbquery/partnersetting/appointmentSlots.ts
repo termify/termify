@@ -20,8 +20,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 		case "PUT":
 			await putController(req, res);
 			break;
+		case "DELETE":
+			await deleteController(req, res);
+			break;
 	}
 }
+
+const deleteController = async (req: NextApiRequest, res: NextApiResponse) => {
+	const id = req.query.id as string;
+
+	console.log("EEE", id);
+
+	await db.appointmentSlots.delete({
+		where: {
+			id: parseInt(id),
+		},
+	});
+
+	res.status(200).json({ success: true });
+};
 
 const getController = async (
 	req: NextApiRequest,
@@ -68,35 +85,21 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[] | any>) => {
 	const { partnerId } = req.query as { partnerId: string };
 
-	const { slots } = req.body as {
-		slots: { id: number; isBlackList: boolean; dateFrom: string; dateTo: string }[];
+	const { slot } = req.body as {
+		slot: { id: number; isBlackList: boolean; dateFrom: string; dateTo: string };
 	};
 
 	try {
-		for await (const slot of slots) {
-			if (slot.id === -1) {
-				await db.appointmentSlots.create({
-					data: {
-						partnerId: parseInt(partnerId),
-						isBlackList: slot.isBlackList,
-						dateFrom: slot.dateFrom,
-						dateTo: slot.dateTo,
-					},
-				});
-			} else {
-				await db.appointmentSlots.update({
-					where: {
-						id: slot.id,
-					},
-					data: {
-						isBlackList: slot.isBlackList,
-						dateFrom: slot.dateFrom,
-						dateTo: slot.dateTo,
-					},
-				});
-			}
-		}
-		res.status(200).json({ success: true });
+		const response = await db.appointmentSlots.create({
+			data: {
+				partnerId: parseInt(partnerId),
+				isBlackList: slot.isBlackList,
+				dateFrom: slot.dateFrom,
+				dateTo: slot.dateTo,
+			},
+		});
+
+		res.status(200).json({ id: response.id });
 	} catch (e) {
 		res.status(500).json({ success: false });
 	}

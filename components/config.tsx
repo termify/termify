@@ -476,47 +476,33 @@ export const AppointmentSlotSettings = () => {
 		fetchBlackAndAllowedList();
 	}, []);
 
-	useEffect(() => {}, [blockDays, whitelistDays]);
+	// async function uploadBlockAndAllowList() {
+	// 	const response = await toast.promise(
+	// 		new Promise((res, _) => {
+	// 			const partnerId = sessionStorage.getItem("partnerId");
+	// 			fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
+	// 				method: "PUT",
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 				},
+	// 				body: JSON.stringify({ slots: [...blockDays, ...whitelistDays] }),
+	// 			}).then(async (json) => {
+	// 				const response = await json.json();
+	// 				res(response);
+	// 			});
+	// 		}),
+	// 		{
+	// 			error: "Es kam zu einem Fehler 😰",
+	// 			loading: "Ein Moment lade Daten hoch 🫡",
+	// 			success: "Daten wurden erfolgreich hochgeladen 🎉",
+	// 		}
+	// 	);
+	// }
 
-	function addBlock() {
+	async function addBlock() {
 		if (!pickedBlockDate) return;
 
-		setBlockDays([
-			...blockDays,
-			{
-				id: -1,
-				isBlackList: true,
-				dateFrom: new Date(pickedBlockDate),
-				dateTo: new Date(pickedBlockDate),
-			},
-		]);
-	}
-
-	function deleteBlockEntrie(index: number) {
-		blockDays.splice(index, 1);
-		setBlockDays([...blockDays]);
-	}
-
-	function addAllowed() {
-		if (!pickedAllowedDate) return;
-		setAllowedDays([
-			...blockDays,
-			{
-				id: -1,
-				isBlackList: false,
-				dateFrom: new Date(pickedBlockDate),
-				dateTo: new Date(pickedBlockDate),
-			},
-		]);
-	}
-
-	function deleteAllowedEntrie(index: number) {
-		whitelistDays.splice(index, 1);
-		setAllowedDays([...whitelistDays]);
-	}
-
-	async function uploadBlockAndAllowList() {
-		const response = toast.promise(
+		const response = (await toast.promise(
 			new Promise((res, _) => {
 				const partnerId = sessionStorage.getItem("partnerId");
 				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
@@ -524,7 +510,13 @@ export const AppointmentSlotSettings = () => {
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ slots: [...blockDays, ...whitelistDays] }),
+					body: JSON.stringify({
+						slot: {
+							isBlackList: true,
+							dateFrom: new Date(pickedBlockDate),
+							dateTo: new Date(pickedBlockDate),
+						},
+					}),
 				}).then(async (json) => {
 					const response = await json.json();
 					res(response);
@@ -535,7 +527,100 @@ export const AppointmentSlotSettings = () => {
 				loading: "Ein Moment lade Daten hoch 🫡",
 				success: "Daten wurden erfolgreich hochgeladen 🎉",
 			}
-		);
+		)) as { id: number };
+
+		setBlockDays([
+			...blockDays,
+			{
+				id: response.id,
+				isBlackList: true,
+				dateFrom: new Date(pickedBlockDate),
+				dateTo: new Date(pickedBlockDate),
+			},
+		]);
+	}
+
+	async function addAllowed() {
+		if (!pickedAllowedDate) return;
+
+		const response = (await toast.promise(
+			new Promise((res, _) => {
+				const partnerId = sessionStorage.getItem("partnerId");
+				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						slot: {
+							isBlackList: true,
+							dateFrom: new Date(pickedBlockDate),
+							dateTo: new Date(pickedBlockDate),
+						},
+					}),
+				}).then(async (json) => {
+					const response = await json.json();
+					res(response);
+				});
+			}),
+			{
+				error: "Es kam zu einem Fehler 😰",
+				loading: "Ein Moment lade Daten hoch 🫡",
+				success: "Daten wurden erfolgreich hochgeladen 🎉",
+			}
+		)) as { id: number };
+
+		setAllowedDays([
+			...whitelistDays,
+			{
+				id: response.id,
+				isBlackList: false,
+				dateFrom: new Date(pickedAllowedDate),
+				dateTo: new Date(pickedAllowedDate),
+			},
+		]);
+	}
+
+	async function deleteAllowedEntrie(index: number) {
+		const delteEntrie = whitelistDays[index];
+		try {
+			const response = await (
+				await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?id=${delteEntrie.id}`, {
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				})
+			).json();
+			whitelistDays.splice(index, 1);
+			setAllowedDays([...whitelistDays]);
+
+			toast.success("Eintrag wurde erfolgreich gelöscht");
+		} catch (e) {
+			console.error(e);
+
+			toast.error("Es kam zu einem Fehler beim löschen");
+		}
+	}
+
+	async function deleteBlockEntrie(index: number) {
+		const delteEntrie = blockDays[index];
+		try {
+			const response = await (
+				await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?id=${delteEntrie.id}`, {
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				})
+			).json();
+			blockDays.splice(index, 1);
+			setBlockDays([...blockDays]);
+			toast.success("Eintrag wurde erfolgreich gelöscht");
+		} catch (e) {
+			console.error(e);
+			toast.error("Es kam zu einem Fehler beim löschen");
+		}
 	}
 
 	return (
@@ -599,7 +684,7 @@ export const AppointmentSlotSettings = () => {
 							))}
 						</div>
 					</div>
-					<div className={"flex justify-center"}>
+					{/* <div className={"flex justify-center"}>
 						<button
 							onClick={uploadBlockAndAllowList}
 							className={
@@ -608,7 +693,7 @@ export const AppointmentSlotSettings = () => {
 						>
 							Block- und Allowliste hochladen
 						</button>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</GridEntrieContainer>

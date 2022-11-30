@@ -32,7 +32,6 @@ const getController = async (req: NextApiRequest, res: NextApiResponse<Appointme
 };
 
 const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSettingData[]>) => {
-	
 	const { id, intervall, holydaysOn } = req.body as {
 		id: number;
 		intervall: number;
