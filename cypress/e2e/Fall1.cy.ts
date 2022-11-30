@@ -1,8 +1,4 @@
 describe('empty spec', () => {
-  it('passes', () => {
-    cy.visit('develop-termintool.vercel.app')
-  })
-
   /* ==== Test Created with Cypress Studio ==== */
   it('Fall 1', function() {
     /* ==== Generated with Cypress Studio ==== */
