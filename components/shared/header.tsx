@@ -25,13 +25,15 @@ export default function Header() {
 
 		async function fetchIsSystemUser() {
 			try {
-				const { partnerId } = (await (
+				const response = (await (
 					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
 				).json()) as {
 					partnerId: number;
 				};
-				sessionStorage.setItem("partnerId", partnerId.toString());
-				setPartnerId(partnerId);
+				if (response) {
+					sessionStorage.setItem("partnerId", response.partnerId.toString());
+					setPartnerId(response.partnerId);
+				}
 			} catch (error) {
 				console.error(error);
 			}
@@ -46,13 +48,16 @@ export default function Header() {
 
 		async function fetchIsSystemUser() {
 			try {
-				const { partnerId } = (await (
+				const response = (await (
 					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
 				).json()) as {
 					partnerId: number;
 				};
-				sessionStorage.setItem("partnerId", partnerId.toString());
-				setPartnerId(partnerId);
+
+				if (response) {
+					sessionStorage.setItem("partnerId", response.partnerId.toString());
+					setPartnerId(response.partnerId);
+				}
 			} catch (error) {
 				console.error(error);
 			}
