@@ -236,15 +236,15 @@ function parseUnixToDate(unixTime: string | number) {
 function DisplayTermineComponent({ timestamp, typeOfRequest, index, first, last }: DisplayTermineProps) {
 	return (
 		<div
-			className={`p-2  ${index % 2 === 1 ? "bg-rose-200" : "bg-rose-300"} grid grid-cols-2 ${
+			className={`p-2  ${index % 2 === 1 ? "bg-amber-200" : "bg-amber-300"} grid grid-cols-2 ${
 				first ? "rounded-t-md" : last ? "rounded-b-md" : ""
 			}`}
 		>
-			<div className={"flex flex-col justify-around items-center text-rose-900 "}>
+			<div className={"flex flex-col justify-around items-center text-amber-900 "}>
 				<label className={"font-bold xl:text-xl"}>Anliegen:</label>
 				<label className={"text-center text-sm xl:text-base"}>{typeOfRequest}</label>
 			</div>
-			<div className={"flex flex-col justify-around items-center text-rose-900 "}>
+			<div className={"flex flex-col justify-around items-center text-amber-900 "}>
 				<label className={"font-bold  xl:text-xl"}>Wann:</label>
 				<label className={"text-center text-sm xl:text-base"}>{parseUnixToDate(timestamp)}</label>
 			</div>
