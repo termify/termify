@@ -17,34 +17,28 @@ import { useRouter } from "next/router";
 export default function Header() {
 	const setPageNumber = useBookingStore((state) => state.setPageNumber);
 	const setBookingData = useBookingStore((state) => state.setBookingData);
-	const partnerId = useAuthStore((state) => state.partnerId);
 	const setPartnerId = useAuthStore((state) => state.setPartnerId);
 
 	useEffect(() => {
-		const authCookie = getCookie("auth") as { auth: { id: string; token: string } };
+		const { auth } = getCookie("auth") as { auth: { id: string } };
+		if (!auth) return;
 
-		if (!authCookie) return;
-		console.log("Partner ID", authCookie.auth.id);
 		async function fetchIsSystemUser() {
 			try {
-				const response = (await (
-					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${authCookie.auth.id}`)
+				const { partnerId } = (await (
+					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.id}`)
 				).json()) as {
 					partnerId: number;
 				};
-				setCookie(
-					"config",
-					JSON.stringify({ partnerId: response.partnerId }),
-					new Date(new Date().getFullYear()).toUTCString(),
-					"/config"
-				);
-				setPartnerId(response.partnerId);
+				setCookie("config", JSON.stringify({ partnerId }));
+				setPartnerId(partnerId);
 			} catch (error) {
 				console.error(error);
 			}
 		}
+
 		fetchIsSystemUser();
-	}, [partnerId]);
+	}, []);
 
 	function resetBookingState() {
 		setBookingData({

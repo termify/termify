@@ -522,6 +522,9 @@ export const WebApiConfigSettings = () => {
 				const response = (await (
 					await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${configCookie.config.partnerId}`)
 				).json()) as WebApiConfig;
+
+				console.log("RRR", response);
+
 				setWebApiConfig(response);
 			} catch (e) {
 				console.error(e);
