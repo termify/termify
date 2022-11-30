@@ -513,14 +513,17 @@ export const WebApiConfigSettings = () => {
 	const [webApiConfig, setWebApiConfig] = useState<WebApiConfig | null>(null);
 
 	useEffect(() => {
-		const configCookie = getCookie("config") as { config: { partnerId: number } };
+		const partnerId = sessionStorage.getItem("partnerId");
 
-		if (!configCookie) return;
+		if (!partnerId) {
+			console.error("Keine Partner ID in Storage");
+			return;
+		}
 
 		async function fetchWebApiConfig() {
 			try {
 				const response = (await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${configCookie.config.partnerId}`)
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
 				).json()) as WebApiConfig;
 
 				console.log("RRR", response);
