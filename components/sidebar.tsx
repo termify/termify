@@ -10,6 +10,7 @@ import { getCookie } from "../lib/cookie";
 import { useAuthStore } from "../store/stores";
 import { TbFileSettings } from "react-icons/tb";
 import { baseUrl } from "../lib/baseUrl";
+import { suspend } from "suspend-react";
 
 export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
 	const [yOffset, setYOffsset] = useState<number>(500);
@@ -17,7 +18,7 @@ export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispa
 	const [session, setSession] = useState<AuthSession>();
 
 	const setPartnerId = useAuthStore((state) => state.setPartnerId);
-	const partnerId = useAuthStore((state) => state.partnerId);
+	// const partnerId = useAuthStore((state) => state.partnerId);
 
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
@@ -34,6 +35,12 @@ export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispa
 			setSession(undefined);
 		}
 	}, [isLoggedIn]);
+
+	const isPartner = suspend(async () => {
+		const partner = sessionStorage.getItem("partnerId");
+
+		return partner ? true : false;
+	}, [`isPartner`]);
 
 	return (
 		<Modal>
@@ -57,7 +64,7 @@ export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispa
 					<div className="flex-grow py-8 flex flex-col items-center gap-3 bg-slate-800 shadow-xl">
 						{session ? (
 							<>
-								{partnerId ? (
+								{isPartner ? (
 									<>
 										<NavigationLink
 											icon={<RiDashboardFill />}

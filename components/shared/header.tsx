@@ -8,37 +8,64 @@ import toast from "react-hot-toast";
 import { AiFillHome } from "react-icons/ai";
 import { FaSignOutAlt } from "react-icons/fa";
 import { RiDashboardFill } from "react-icons/ri";
-import { deleteCookie, getCookie } from "../../lib/cookie";
+import { deleteCookie, getCookie, setCookie } from "../../lib/cookie";
 import { useAuthStore, useBookingStore } from "../../store/stores";
 import { TbFileSettings } from "react-icons/tb";
 import { baseUrl } from "../../lib/baseUrl";
-import { useRouter } from "next/router";
+import { suspend } from "suspend-react";
 
 export default function Header() {
 	const setPageNumber = useBookingStore((state) => state.setPageNumber);
 	const setBookingData = useBookingStore((state) => state.setBookingData);
-	const partnerId = useAuthStore((state) => state.partnerId);
 	const setPartnerId = useAuthStore((state) => state.setPartnerId);
+	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
 	useEffect(() => {
-		const authCookie = getCookie("auth") as { auth: { id: string; token: string } };
+		const auth = getCookie("auth") as { auth: { id: string } };
+		if (!auth) return;
 
-		if (!authCookie) return;
-		console.log("Partner ID", authCookie.auth.id);
 		async function fetchIsSystemUser() {
 			try {
 				const response = (await (
-					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${authCookie.auth.id}`)
+					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
 				).json()) as {
 					partnerId: number;
 				};
-				setPartnerId(response.partnerId);
+				if (response) {
+					sessionStorage.setItem("partnerId", response.partnerId.toString());
+					setPartnerId(response.partnerId);
+				}
 			} catch (error) {
 				console.error(error);
 			}
 		}
+
 		fetchIsSystemUser();
-	}, [partnerId]);
+	}, []);
+
+	useEffect(() => {
+		const auth = getCookie("auth") as { auth: { id: string } };
+		if (!auth) return;
+
+		async function fetchIsSystemUser() {
+			try {
+				const response = (await (
+					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
+				).json()) as {
+					partnerId: number;
+				};
+
+				if (response) {
+					sessionStorage.setItem("partnerId", response.partnerId.toString());
+					setPartnerId(response.partnerId);
+				}
+			} catch (error) {
+				console.error(error);
+			}
+		}
+
+		fetchIsSystemUser();
+	}, [isLoggedIn]);
 
 	function resetBookingState() {
 		setBookingData({
@@ -79,8 +106,6 @@ function DesktopNavigation() {
 	const [session, setSession] = useState<AuthSession>();
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-	const partnerId = useAuthStore((state) => state.partnerId);
-
 	useEffect(() => {
 		const authCookie = getCookie("auth") as { auth: { id: string; token: string } };
 
@@ -91,11 +116,17 @@ function DesktopNavigation() {
 		}
 	}, [isLoggedIn]);
 
+	const isPartner = suspend(async () => {
+		const partner = sessionStorage.getItem("partnerId");
+
+		return partner ? true : false;
+	}, [`isPartner`]);
+
 	return (
 		<div className="hidden gap-4 flex-grow xl:flex xl:items-center xl:justify-end">
 			{session ? (
 				<>
-					{partnerId ? (
+					{isPartner ? (
 						<>
 							<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
 							<NavigationLink

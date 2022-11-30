@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 const getController = async (req: NextApiRequest, res: NextApiResponse<SystemUserData[]>) => {
 	const uuid = req.query.id as string;
 
-	const userPartnerData = (await db.systemUser.findUnique({
+	const userPartnerData = (await db.systemUser.findFirst({
 		select: {
 			partnerId: true,
 		},

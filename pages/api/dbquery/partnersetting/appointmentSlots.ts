@@ -20,11 +20,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 		case "PUT":
 			await putController(req, res);
 			break;
+		case "DELETE":
+			await deleteController(req, res);
+			break;
 	}
 }
 
-const getController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[]>) => {
+const deleteController = async (req: NextApiRequest, res: NextApiResponse) => {
+	const id = req.query.id as string;
+
+	console.log("EEE", id);
+
+	await db.appointmentSlots.delete({
+		where: {
+			id: parseInt(id),
+		},
+	});
+
+	res.status(200).json({ success: true });
+};
+
+const getController = async (
+	req: NextApiRequest,
+	res: NextApiResponse<Record<"whiteList" | "blackList", AppointmentSlotData[]>>
+) => {
 	const partnerId = req.query.partnerId as string;
+	const responseObject: Record<"whiteList" | "blackList", AppointmentSlotData[]> = {
+		whiteList: [],
+		blackList: [],
+	};
 
 	const appointmentSlotData = (await db.appointmentSlots.findMany({
 		where: {
@@ -32,7 +56,15 @@ const getController = async (req: NextApiRequest, res: NextApiResponse<Appointme
 		},
 	})) as unknown as AppointmentSlotData[];
 
-	res.status(200).json(appointmentSlotData);
+	appointmentSlotData.forEach((e, i) => {
+		if (e.isBlackList) {
+			responseObject.blackList.push(e);
+		} else {
+			responseObject.whiteList.push(e);
+		}
+	});
+
+	res.status(200).json(responseObject);
 };
 
 const postController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[]>) => {
@@ -50,24 +82,25 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 	res.status(200).json(setAppointmentSlotData);
 };
 
-const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[]>) => {
-	const { id, isBlackList, dateFrom, dateTo } = req.body as {
-		id: number;
-		isBlackList: boolean;
-		dateFrom: string;
-		dateTo: string;
+const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[] | any>) => {
+	const { partnerId } = req.query as { partnerId: string };
+
+	const { slot } = req.body as {
+		slot: { id: number; isBlackList: boolean; dateFrom: string; dateTo: string };
 	};
 
-	const updateAppointmentSlotData = (await db.appointmentSlots.updateMany({
-		where: {
-			id,
-		},
-		data: {
-			isBlackList,
-			dateFrom,
-			dateTo,
-		},
-	})) as unknown as AppointmentSlotData[];
+	try {
+		const response = await db.appointmentSlots.create({
+			data: {
+				partnerId: parseInt(partnerId),
+				isBlackList: slot.isBlackList,
+				dateFrom: slot.dateFrom,
+				dateTo: slot.dateTo,
+			},
+		});
 
-	res.status(200).json(updateAppointmentSlotData);
+		res.status(200).json({ id: response.id });
+	} catch (e) {
+		res.status(500).json({ success: false });
+	}
 };

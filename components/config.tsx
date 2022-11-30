@@ -2,8 +2,9 @@ import React, { ComponentProps, ReactNode, useEffect, useState } from "react";
 import { RiDeleteBinFill } from "react-icons/ri";
 import { baseUrl } from "../lib/baseUrl";
 import ScheduleClass from "../lib/schedule";
-import { useAuthStore } from "../store/stores";
 import toast from "react-hot-toast";
+import { WebApiConfig } from "../pages/api/dbquery/partnersetting/webapiconfig";
+import { suspend } from "suspend-react";
 interface OpeningDays {
 	weekday: string;
 	disabled: boolean;
@@ -13,24 +14,56 @@ interface OpeningDays {
 
 // Opening Ändern von bis => Weekday + Timeslots from und Timeslot
 export const OpeningSettings = () => {
-	const [openeningDays, setOpeneningDays] = useState<OpeningDays[]>([]);
-	const partnerId = useAuthStore((state) => state.partnerId);
+	const [openeningDays, setOpeneningDays] = useState<OpeningDays[]>(() =>
+		suspend(async () => {
+			const partnerId = sessionStorage.getItem("partnerId");
+			if (!partnerId) return;
 
-	useEffect(() => {
-		async function fetchOpeningDays() {
 			try {
 				const response = await (
 					await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
 				).json();
 
-				setOpeneningDays(response);
+				return response ?? [];
 			} catch (error) {
 				console.error(error);
 			}
-		}
+		}, ["partnerId-opening"])
+	);
 
-		fetchOpeningDays();
-	}, []);
+	// useEffect(() => {
+	// 	const partnerId = sessionStorage.getItem("partnerId");
+	// 	if (!partnerId) return;
+
+	// 	async function fetchOpeningDays() {
+	// 		try {
+	// 			const response = await (
+	// 				await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
+	// 			).json();
+
+	// 			setOpeneningDays(response);
+	// 		} catch (error) {
+	// 			console.error(error);
+	// 		}
+	// 	}
+
+	// 	fetchOpeningDays();
+	// }, []);
+
+	// suspend(async () => {
+	// 	const partnerId = sessionStorage.getItem("partnerId");
+	// 	if (!partnerId) return;
+
+	// 	try {
+	// 		const response = await (
+	// 			await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
+	// 		).json();
+
+	// 		setOpeneningDays(response);
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// }, ["partnerId-opening"]);
 
 	function changeAvailablelityDate(index: number) {
 		openeningDays[index].disabled = !openeningDays[index].disabled;
@@ -51,6 +84,35 @@ export const OpeningSettings = () => {
 		}
 
 		setOpeneningDays([...openeningDays]);
+	}
+
+	async function updateOpeningDates() {
+		try {
+			const response = await toast.promise(
+				new Promise((res, _) => {
+					fetch(`${baseUrl()}/api/dbquery/partnersetting/opening`, {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ openings: openeningDays }),
+					})
+						.then(async (json) => {
+							const response = await json.json();
+
+							res(response);
+						})
+						.catch((error) => console.error(error));
+				}),
+				{
+					loading: "Überschreibe Öffnungszeiten",
+					error: "Fehler beim Überschreiben der Öffnungszeiten",
+					success: "Öffnungszeiten wurden erfolgreich überschrieben",
+				}
+			);
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	return (
@@ -83,6 +145,14 @@ export const OpeningSettings = () => {
 						);
 					}
 				})}
+			</div>
+			<div className={"flex justify-center"}>
+				<button
+					className={"p-2 bg-gradient-to-r text-sky-50 font-bold rounded-md transition-all xl:hover:scale-110"}
+					onClick={updateOpeningDates}
+				>
+					Öffnungszeiten aktuallisieren
+				</button>
 			</div>
 		</GridEntrieContainer>
 	);
@@ -154,7 +224,7 @@ interface DaySlotProps extends ComponentProps<"input"> {
 }
 
 function DaySlot({ day, index, checked, changeAvailablelityDay, ...props }: DaySlotProps) {
-	const parseWeekdaytoShort: Record<string, string> = {
+	const parseWeekdayToShort: Record<string, string> = {
 		Montag: "Mo.",
 		Dienstag: "Di.",
 		Mittwoch: "Mi.",
@@ -171,7 +241,7 @@ function DaySlot({ day, index, checked, changeAvailablelityDay, ...props }: DayS
 					checked ? "border-emerald-400 bg-emerald-100 text-emerald-900" : "border-rose-400 bg-rose-100 text-rose-900"
 				}  shadow-md  transition-all xl:p-4 hover:xl:scale-110 hover:xl:cursor-pointer `}
 			>
-				{parseWeekdaytoShort[day]}
+				{parseWeekdayToShort[day]}
 				<input
 					{...props}
 					type={"checkbox"}
@@ -194,8 +264,22 @@ interface SettingsData {
 
 // Appointment Settings => Interval und Holidays
 export const AppointmentSettings = () => {
-	const [settingsData, setSettingsData] = useState<SettingsData>({ intervall: 30, holydaysOn: false, id: -1 });
-	const partnerId = useAuthStore((state) => state.partnerId);
+	const [settingsData, setSettingsData] = useState<SettingsData>(() =>
+		suspend(async () => {
+			const partnerId = sessionStorage.getItem("partnerId");
+			if (!partnerId) return;
+
+			try {
+				const response = await (
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
+				).json();
+
+				return response;
+			} catch (error) {
+				console.error(error);
+			}
+		}, ["partnerId-appointment"])
+	);
 
 	async function updateSettings() {
 		await toast.promise(
@@ -212,96 +296,123 @@ export const AppointmentSettings = () => {
 					.catch((err) => rej(err));
 			}),
 			{
-				success: "Einstellungen wurden erfolgreich geupdatet",
+				success: "Einstellungen wurden erfolgreich geupdated",
 				error: "Es kam zu einem Fehler beim überschreiben der Einstellungen",
 				loading: "Ein Moment überschreibe Daten",
 			}
 		);
 	}
 
-	useEffect(() => {
-		async function fetchSettingsData() {
-			try {
-				const { intervall, holydaysOn, id } = (await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
-				).json()) as { intervall: number; holydaysOn: boolean; id: number };
+	// useEffect(() => {
+	// 	const partnerId = sessionStorage.getItem("partnerId");
 
-				setSettingsData({
-					intervall: intervall,
-					holydaysOn: holydaysOn,
-					id: id,
-				});
-			} catch (e) {
-				console.error(e);
-			}
-		}
+	// 	if (!partnerId) return;
 
-		fetchSettingsData();
-	}, []);
+	// 	async function fetchSettingsData() {
+	// 		try {
+	// 			const response = (await (
+	// 				await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
+	// 			).json()) as { intervall: number; holydaysOn: boolean; id: number };
+
+	// 			setSettingsData({
+	// 				intervall: response.intervall,
+	// 				holydaysOn: response.holydaysOn,
+	// 				id: response.id,
+	// 			});
+	// 		} catch (e) {
+	// 			console.error(e);
+	// 		}
+	// 	}
+
+	// 	fetchSettingsData();
+	// }, []);
+
+	// suspend(async () => {
+	// 	const partnerId = sessionStorage.getItem("partnerId");
+	// 	if (!partnerId) return;
+
+	// 	try {
+	// 		const response = await (
+	// 			await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
+	// 		).json();
+
+	// 		setSettingsData({
+	// 			intervall: response.intervall,
+	// 			holydaysOn: response.holydaysOn,
+	// 			id: response.id,
+	// 		});
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// }, ["partnerId-appointment"]);
 
 	return (
 		<GridEntrieContainer gradientType={"fromRose"}>
 			<div>
 				<h3 className={"font-bold xl:text-3xl"}>Buchungsintervall 🕰️ und Feiertage 🆓</h3>
-				<div className={"flex flex-col gap-8 items-center xl:flex-row xl:my-8"}>
-					<div className={"flex items-center gap-8"}>
-						<label className={"font-bold"}>Buchungsintervall:</label>
-						<input
-							title={"Interval"}
-							type={"number"}
-							step={15}
-							value={settingsData.intervall}
-							max={60}
-							min={15}
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								setSettingsData((prev) => ({ ...prev, intervall: e.target.valueAsNumber }));
-							}}
-							className={"p-2 rounded-md border-2 border-rose-400 w-16"}
-						/>
-					</div>
-					<div className={"my-8 flex gap-8 items-center"}>
-						<label
-							className={`font-bold border-2 p-2 rounded-md select-none ${
-								settingsData.holydaysOn
-									? "border-emerald-500 bg-emerald-200 text-emerald-900"
-									: "border-rose-500 bg-rose-200 text-rose-900"
-							} transition-all hover:xl:cursor-pointer hover:xl:scale-110 xl:active:scale-95 `}
-						>
-							Feiertage?
-							<input
-								title={"Feiertage"}
-								type={"checkbox"}
-								checked={settingsData.holydaysOn}
-								onChange={(_) => {
-									setSettingsData((prev) => ({ ...prev, holydaysOn: !prev.holydaysOn }));
-								}}
-								className={"hidden"}
-							/>
-						</label>
-					</div>
-				</div>
-				<div className={"flex justify-center"}>
-					<button
-						onClick={updateSettings}
-						className={"p-2 bg-gradient-to-r rounded-md font-bold text-rose-50 transition-all xl:hover:scale-110"}
-					>
-						Settings hochladen
-					</button>
-				</div>
+				{settingsData ? (
+					<>
+						<div className={"flex flex-col gap-8 items-center xl:flex-row xl:my-8"}>
+							<div className={"flex items-center gap-8"}>
+								<label className={"font-bold"}>Buchungsintervall:</label>
+								<input
+									title={"Interval"}
+									type={"number"}
+									step={15}
+									value={settingsData.intervall}
+									max={60}
+									min={15}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+										setSettingsData((prev) => ({ ...prev, intervall: e.target.valueAsNumber }));
+									}}
+									className={"p-2 rounded-md border-2 border-rose-400 w-16"}
+								/>
+							</div>
+							<div className={"my-8 flex gap-8 items-center"}>
+								<label
+									className={`font-bold border-2 p-2 rounded-md select-none ${
+										settingsData.holydaysOn
+											? "border-emerald-500 bg-emerald-200 text-emerald-900"
+											: "border-rose-500 bg-rose-200 text-rose-900"
+									} transition-all hover:xl:cursor-pointer hover:xl:scale-110 xl:active:scale-95 `}
+								>
+									Feiertage?
+									<input
+										title={"Feiertage"}
+										type={"checkbox"}
+										checked={settingsData.holydaysOn}
+										onChange={(_) => {
+											setSettingsData((prev) => ({ ...prev, holydaysOn: !prev.holydaysOn }));
+										}}
+										className={"hidden"}
+									/>
+								</label>
+							</div>
+						</div>
+						<div className={"flex justify-center"}>
+							<button
+								onClick={updateSettings}
+								className={"p-2 bg-gradient-to-r rounded-md font-bold text-rose-50 transition-all xl:hover:scale-110"}
+							>
+								Settings hochladen
+							</button>
+						</div>
+					</>
+				) : (
+					<p>Keine Daten hinterlegt</p>
+				)}
 			</div>
 		</GridEntrieContainer>
 	);
 };
 
 interface VacationDayProps {
-	day: string;
+	day: Date;
 	index: number;
 	deleteEntrie: (index: number) => void;
 }
 
 function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
-	const date = day.split("-");
-
 	return (
 		<div
 			onClick={() => {
@@ -312,9 +423,9 @@ function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
 			}
 		>
 			<div className={"p-2 font-bold bg-indigo-50"}>
-				{new Date(parseInt(date[0]), parseInt(date[1]), parseInt(date[2])).toLocaleDateString("de-DE", {
+				{new Date(day).toLocaleDateString("de-DE", {
 					day: "numeric",
-					month: "short",
+					month: "numeric",
 					year: "2-digit",
 				})}
 			</div>
@@ -329,30 +440,34 @@ function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
 	);
 }
 
+interface Blocklist {
+	id: number;
+	isBlackList: boolean;
+	dateFrom: Date;
+	dateTo: Date;
+}
+
 // Appointment Slots => Block + Date from und Date to
 
 export const AppointmentSlotSettings = () => {
-	const partnerId = useAuthStore((state) => state.partnerId);
 	const [pickedBlockDate, setPickedBlockDate] = useState<string>("");
-	const [blockDays, setBlockDays] = useState<string[]>([]);
+	const [blockDays, setBlockDays] = useState<Blocklist[]>([]);
 
 	const [pickedAllowedDate, setPickedAllowedDate] = useState<string>("");
-	const [whitelistDays, setAllowedDays] = useState<string[]>([]);
+	const [whitelistDays, setAllowedDays] = useState<Blocklist[]>([]);
 
 	useEffect(() => {
+		const partnerId = sessionStorage.getItem("partnerId");
+
+		if (!partnerId) return;
 		async function fetchBlackAndAllowedList() {
 			try {
 				const response = (await (
 					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`)
-				).json()) as { id: number; isBlackList: boolean; dateFrom: Date; dateTo: Date }[];
+				).json()) as { whiteList: Blocklist[]; blackList: Blocklist[] };
 
-				response.forEach((e) => {
-					if (e.isBlackList) {
-						setAllowedDays([...whitelistDays, ScheduleClass.parseFullDateToDate(e.dateFrom)]);
-					} else {
-						setBlockDays([...blockDays, ScheduleClass.parseFullDateToDate(e.dateFrom)]);
-					}
-				});
+				setAllowedDays(response.whiteList);
+				setBlockDays(response.blackList);
 			} catch (e) {
 				console.error(e);
 			}
@@ -361,33 +476,160 @@ export const AppointmentSlotSettings = () => {
 		fetchBlackAndAllowedList();
 	}, []);
 
-	function addBlock() {
+	// async function uploadBlockAndAllowList() {
+	// 	const response = await toast.promise(
+	// 		new Promise((res, _) => {
+	// 			const partnerId = sessionStorage.getItem("partnerId");
+	// 			fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
+	// 				method: "PUT",
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 				},
+	// 				body: JSON.stringify({ slots: [...blockDays, ...whitelistDays] }),
+	// 			}).then(async (json) => {
+	// 				const response = await json.json();
+	// 				res(response);
+	// 			});
+	// 		}),
+	// 		{
+	// 			error: "Es kam zu einem Fehler 😰",
+	// 			loading: "Ein Moment lade Daten hoch 🫡",
+	// 			success: "Daten wurden erfolgreich hochgeladen 🎉",
+	// 		}
+	// 	);
+	// }
+
+	async function addBlock() {
 		if (!pickedBlockDate) return;
-		setBlockDays([...blockDays, pickedBlockDate]);
+
+		const response = (await toast.promise(
+			new Promise((res, _) => {
+				const partnerId = sessionStorage.getItem("partnerId");
+				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						slot: {
+							isBlackList: true,
+							dateFrom: new Date(pickedBlockDate),
+							dateTo: new Date(pickedBlockDate),
+						},
+					}),
+				}).then(async (json) => {
+					const response = await json.json();
+					res(response);
+				});
+			}),
+			{
+				error: "Es kam zu einem Fehler 😰",
+				loading: "Ein Moment lade Daten hoch 🫡",
+				success: "Daten wurden erfolgreich hochgeladen 🎉",
+			}
+		)) as { id: number };
+
+		setBlockDays([
+			...blockDays,
+			{
+				id: response.id,
+				isBlackList: true,
+				dateFrom: new Date(pickedBlockDate),
+				dateTo: new Date(pickedBlockDate),
+			},
+		]);
 	}
 
-	function deleteBlockEntrie(index: number) {
-		blockDays.splice(index, 1);
-		setBlockDays([...blockDays]);
-	}
-
-	function addAllowed() {
+	async function addAllowed() {
 		if (!pickedAllowedDate) return;
-		setAllowedDays([...whitelistDays, pickedAllowedDate]);
+
+		const response = (await toast.promise(
+			new Promise((res, _) => {
+				const partnerId = sessionStorage.getItem("partnerId");
+				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						slot: {
+							isBlackList: true,
+							dateFrom: new Date(pickedBlockDate),
+							dateTo: new Date(pickedBlockDate),
+						},
+					}),
+				}).then(async (json) => {
+					const response = await json.json();
+					res(response);
+				});
+			}),
+			{
+				error: "Es kam zu einem Fehler 😰",
+				loading: "Ein Moment lade Daten hoch 🫡",
+				success: "Daten wurden erfolgreich hochgeladen 🎉",
+			}
+		)) as { id: number };
+
+		setAllowedDays([
+			...whitelistDays,
+			{
+				id: response.id,
+				isBlackList: false,
+				dateFrom: new Date(pickedAllowedDate),
+				dateTo: new Date(pickedAllowedDate),
+			},
+		]);
 	}
 
-	function deleteAllowedEntrie(index: number) {
-		whitelistDays.splice(index, 1);
-		setAllowedDays([...whitelistDays]);
+	async function deleteAllowedEntrie(index: number) {
+		const delteEntrie = whitelistDays[index];
+		try {
+			const response = await (
+				await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?id=${delteEntrie.id}`, {
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				})
+			).json();
+			whitelistDays.splice(index, 1);
+			setAllowedDays([...whitelistDays]);
+
+			toast.success("Eintrag wurde erfolgreich gelöscht");
+		} catch (e) {
+			console.error(e);
+
+			toast.error("Es kam zu einem Fehler beim löschen");
+		}
+	}
+
+	async function deleteBlockEntrie(index: number) {
+		const delteEntrie = blockDays[index];
+		try {
+			const response = await (
+				await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?id=${delteEntrie.id}`, {
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				})
+			).json();
+			blockDays.splice(index, 1);
+			setBlockDays([...blockDays]);
+			toast.success("Eintrag wurde erfolgreich gelöscht");
+		} catch (e) {
+			console.error(e);
+			toast.error("Es kam zu einem Fehler beim löschen");
+		}
 	}
 
 	return (
 		<GridEntrieContainer gradientType={"fromIndigo"}>
 			<div className={"h-full"}>
 				<h3 className={"font-bold xl:text-3xl"}>Blocklist- 😈 und Allowedlist 😇 Tage </h3>
-				<div className={"h-full flex flex-col justify-center"}>
+				<div className={"h-full flex flex-col flex-grow justify-around"}>
 					<div>
-						<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
+						<div className={"flex flex-col justify-between items-center xl:flex-row"}>
 							<label className={"font-bold"}>Blocklist:</label>
 							<input
 								title={"Kalendar"}
@@ -409,12 +651,12 @@ export const AppointmentSlotSettings = () => {
 						</div>
 						<div className={"flex p-4 flex-wrap gap-2"}>
 							{blockDays.map((e, i) => (
-								<VacationDay key={i} day={e} deleteEntrie={deleteBlockEntrie} index={i} />
+								<VacationDay key={i} day={e.dateFrom} deleteEntrie={deleteBlockEntrie} index={i} />
 							))}
 						</div>
 					</div>
 					{/* Divider */}
-					<div className={"w-full h-0.5 bg-indigo-500 rounded-md my-8"}></div>
+					<div className={"w-full h-0.5 bg-indigo-500 rounded-md "}></div>
 					<div>
 						<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
 							<label className={"font-bold"}>Allowed:</label>
@@ -438,10 +680,20 @@ export const AppointmentSlotSettings = () => {
 						</div>
 						<div className={"flex p-4 flex-wrap gap-2 "}>
 							{whitelistDays.map((e, i) => (
-								<VacationDay key={i} day={e} deleteEntrie={deleteAllowedEntrie} index={i} />
+								<VacationDay key={i} day={e.dateFrom} deleteEntrie={deleteAllowedEntrie} index={i} />
 							))}
 						</div>
 					</div>
+					{/* <div className={"flex justify-center"}>
+						<button
+							onClick={uploadBlockAndAllowList}
+							className={
+								"p-2 bg-gradient-to-r from-indigo-400 to-sky-500 font-bold text-indigo-50 rounded-md transition-all xl:hover:scale-110"
+							}
+						>
+							Block- und Allowliste hochladen
+						</button>
+					</div> */}
 				</div>
 			</div>
 		</GridEntrieContainer>
@@ -450,12 +702,234 @@ export const AppointmentSlotSettings = () => {
 
 // Webapi config
 export const WebApiConfigSettings = () => {
+	const [webApiConfig, setWebApiConfig] = useState<WebApiConfig>(() =>
+		suspend(async () => {
+			const partnerId = sessionStorage.getItem("partnerId");
+			if (!partnerId) return;
+
+			try {
+				const response = await (
+					await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
+				).json();
+
+				return { ...response };
+				// setWebApiConfig();
+			} catch (error) {
+				console.error(error);
+			}
+		}, ["partnerId-webapi"])
+	);
+
+	// useEffect(() => {
+	// 	const partnerId = sessionStorage.getItem("partnerId");
+
+	// 	if (!partnerId) {
+	// 		console.error("Keine Partner ID in Storage");
+	// 		return;
+	// 	}
+
+	// 	async function fetchWebApiConfig() {
+	// 		try {
+	// 			const response = (await (
+	// 				await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
+	// 			).json()) as WebApiConfig;
+
+	// 			setWebApiConfig({ ...response });
+	// 		} catch (e) {
+	// 			console.error(e);
+	// 		}
+	// 	}
+
+	// 	fetchWebApiConfig();
+	// }, []);
+
+	// suspend(async () => {
+	// 	const partnerId = sessionStorage.getItem("partnerId");
+	// 	if (!partnerId) return;
+
+	// 	try {
+	// 		const response = await (
+	// 			await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
+	// 		).json();
+
+	// 		setWebApiConfig({ ...response });
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// }, ["partnerId-webapi"]);
+
+	async function uploadWebApi() {
+		const partnerId = sessionStorage.getItem("partnerId");
+
+		const response = toast.promise(
+			new Promise((res, _) => {
+				fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(webApiConfig),
+				})
+					.then(async (json) => {
+						const response = await json.json();
+						res(response);
+					})
+					.catch((err) => console.error(err));
+			}),
+			{
+				error: "Es kam zu einem Fehler 😰",
+				loading: "Ein Moment lade Daten hoch 🫡",
+				success: "Daten wurden erfolgreich hochgeladen 🎉",
+			}
+		);
+	}
+
 	return (
 		<GridEntrieContainer gradientType={"fromEmerald"}>
 			<h3 className={"font-bold xl:text-3xl"}>WebApiConfig 🥸 </h3>
+			{webApiConfig && webApiConfig?.Appointment ? (
+				<>
+					<div className={"p-4"}>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>ID:</div>
+							<AppointmentEntrie
+								hierarchy={["id"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.id.active}
+								qname={webApiConfig.Appointment.id.qname}
+							/>
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>USER:</div>
+							{Object.entries(webApiConfig?.Appointment?.user).map((e, i) => (
+								<AppointmentEntrie
+									hierarchy={["user", `${e[0]}`]}
+									webApiConfig={webApiConfig}
+									setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+									key={e[0] + i}
+									active={e[1].active}
+									qname={e[1].qname}
+								/>
+							))}
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>Type Of Request:</div>
+							<AppointmentEntrie
+								hierarchy={["typeOfRequest"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.typeOfRequest.active}
+								qname={webApiConfig.Appointment.typeOfRequest.qname}
+							/>
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>Note:</div>
+							<AppointmentEntrie
+								hierarchy={["note"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.note.active}
+								qname={webApiConfig.Appointment.note.qname}
+							/>
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>Attachment:</div>
+							<AppointmentEntrie
+								hierarchy={["attachment"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.attachment.active}
+								qname={webApiConfig.Appointment.attachment.qname}
+							/>
+						</div>
+						<div className={"my-2"}>
+							<div className={"text-3xl font-bold"}>Timestamp:</div>
+							<AppointmentEntrie
+								hierarchy={["timestamp"]}
+								webApiConfig={webApiConfig}
+								setWebApiConfig={setWebApiConfig as React.Dispatch<React.SetStateAction<WebApiConfig>>}
+								active={webApiConfig.Appointment.timestamp.active}
+								qname={webApiConfig.Appointment.timestamp.qname}
+							/>
+						</div>
+						<div className={"flex justify-center mt-12"}>
+							<button
+								onClick={uploadWebApi}
+								className={
+									"bg-gradient-to-r from-emerald-400 to-sky-500 font-bold text-emerald-50 rounded-md transition-all p-2 xl:hover:scale-110"
+								}
+							>
+								Web API Config updaten
+							</button>
+						</div>
+					</div>
+				</>
+			) : (
+				<p>Keine Config Datei vorhanden</p>
+			)}
 		</GridEntrieContainer>
 	);
 };
+
+interface AppointmentEntrieProps {
+	hierarchy: string[];
+	active: boolean;
+	qname: string;
+	webApiConfig: WebApiConfig;
+	setWebApiConfig: React.Dispatch<React.SetStateAction<WebApiConfig>>;
+}
+function AppointmentEntrie({ active, qname, webApiConfig, setWebApiConfig, hierarchy }: AppointmentEntrieProps) {
+	function changeQName(e: React.ChangeEvent<HTMLInputElement>) {
+		const count = hierarchy.length;
+
+		if (count === 1) {
+			(webApiConfig as any).Appointment[hierarchy[0]].qname = e.target.value;
+
+			setWebApiConfig({ ...webApiConfig });
+		} else {
+			(webApiConfig as any).Appointment[hierarchy[0]][hierarchy[1]].qname = e.target.value;
+
+			setWebApiConfig({ ...webApiConfig });
+		}
+	}
+
+	function changeChecked(e: React.ChangeEvent<HTMLInputElement>) {
+		const count = hierarchy.length;
+
+		if (count === 1) {
+			(webApiConfig as any).Appointment[hierarchy[0]].active = e.target.checked;
+
+			setWebApiConfig({ ...webApiConfig });
+		} else {
+			(webApiConfig as any).Appointment[hierarchy[0]][hierarchy[1]].active = e.target.checked;
+
+			setWebApiConfig({ ...webApiConfig });
+		}
+	}
+
+	return (
+		<div className={"flex justify-around my-2"}>
+			<input
+				title="Query Name"
+				className={"p-2 rounded-md border-2 border-emerald-500"}
+				value={qname}
+				onChange={changeQName}
+			/>
+			<div className={"flex gap-4 items-center justify-end"}>
+				<label className={"select-none"} htmlFor={hierarchy.length === 1 ? hierarchy[0] : hierarchy[1]}>
+					Aktiv?
+				</label>
+				<input
+					id={hierarchy.length === 1 ? hierarchy[0] : hierarchy[1]}
+					type={"checkbox"}
+					checked={active}
+					onChange={changeChecked}
+				/>
+			</div>
+		</div>
+	);
+}
 
 type GradientType = "fromSky" | "fromRose" | "fromIndigo" | "fromEmerald";
 

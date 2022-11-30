@@ -6,12 +6,23 @@ import Container from "../components/shared/container";
 import { Toaster } from "react-hot-toast";
 import ClientSideRenderContainer from "../components/shared/clientSideRenderContainer";
 import Head from "next/head";
-import { useBookingStore } from "../store/stores";
+import { useAuthStore, useBookingStore } from "../store/stores";
 import { useEffect, useRef } from "react";
+import { getCookie } from "../lib/cookie";
+import { stat } from "fs";
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
 	const pageDivRef = useRef<HTMLDivElement>(null);
+	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+
+	useEffect(() => {
+		const authCookie = getCookie("auth");
+
+		if (authCookie) {
+			setLoggedIn(true);
+		}
+	}, []);
 
 	useEffect(() => {
 		pageDivRef.current?.scrollIntoView({

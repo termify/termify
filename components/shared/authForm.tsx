@@ -136,11 +136,13 @@ export default function AuthForm({ authType, onDone }: AuthForm) {
 					value={formData.email}
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })}
 					placeholder="Email"
+					required
 					type={"email"}
 				/>
 				<Textinput
 					value={formData.password}
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
+					required
 					placeholder="Password"
 					type={"password"}
 				/>
