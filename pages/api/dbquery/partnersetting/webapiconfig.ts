@@ -6,6 +6,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 		case "GET":
 			await getController(req, res);
 			break;
+		case "POST":
+			await postController(req, res);
+			break;
 	}
 }
 
@@ -40,7 +43,24 @@ const getController = async (req: NextApiRequest, res: NextApiResponse<WebApiCon
 		},
 	})) as unknown as { webapiconfig: WebApiConfig };
 
-	console.log("Data", data);
-
 	res.status(200).json(data.webapiconfig);
+};
+
+const postController = async (req: NextApiRequest, res: NextApiResponse<{ success: boolean }>) => {
+	const partnerId = req.query.partnerId as string;
+	const body = req.body as WebApiConfig;
+
+	console.log("Diese Body", body);
+
+	await db.partner.update({
+		where: {
+			id: parseInt(partnerId),
+		},
+		data: {
+			// @ts-ignore
+			webapiconfig: body,
+		},
+	});
+
+	res.status(200).json({ success: true });
 };
