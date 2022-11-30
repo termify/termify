@@ -338,14 +338,12 @@ export const AppointmentSettings = () => {
 };
 
 interface VacationDayProps {
-	day: string;
+	day: Date;
 	index: number;
 	deleteEntrie: (index: number) => void;
 }
 
 function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
-	const date = day.split("-");
-
 	return (
 		<div
 			onClick={() => {
@@ -356,9 +354,9 @@ function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
 			}
 		>
 			<div className={"p-2 font-bold bg-indigo-50"}>
-				{new Date(parseInt(date[0]), parseInt(date[1]), parseInt(date[2])).toLocaleDateString("de-DE", {
+				{new Date(day).toLocaleDateString("de-DE", {
 					day: "numeric",
-					month: "short",
+					month: "numeric",
 					year: "2-digit",
 				})}
 			</div>
@@ -373,14 +371,21 @@ function VacationDay({ day, deleteEntrie, index }: VacationDayProps) {
 	);
 }
 
+interface Blocklist {
+	id: number;
+	isBlackList: boolean;
+	dateFrom: Date;
+	dateTo: Date;
+}
+
 // Appointment Slots => Block + Date from und Date to
 
 export const AppointmentSlotSettings = () => {
 	const [pickedBlockDate, setPickedBlockDate] = useState<string>("");
-	const [blockDays, setBlockDays] = useState<string[]>([]);
+	const [blockDays, setBlockDays] = useState<Blocklist[]>([]);
 
 	const [pickedAllowedDate, setPickedAllowedDate] = useState<string>("");
-	const [whitelistDays, setAllowedDays] = useState<string[]>([]);
+	const [whitelistDays, setAllowedDays] = useState<Blocklist[]>([]);
 
 	useEffect(() => {
 		const partnerId = sessionStorage.getItem("partnerId");
@@ -390,15 +395,11 @@ export const AppointmentSlotSettings = () => {
 			try {
 				const response = (await (
 					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`)
-				).json()) as { id: number; isBlackList: boolean; dateFrom: Date; dateTo: Date }[];
+				).json()) as { whiteList: Blocklist[]; blackList: Blocklist[] };
 
-				response.forEach((e) => {
-					if (!e.isBlackList) {
-						setAllowedDays([...whitelistDays, ScheduleClass.parseFullDateToDate(e.dateFrom)]);
-					} else {
-						setBlockDays([...blockDays, ScheduleClass.parseFullDateToDate(e.dateFrom)]);
-					}
-				});
+				console.log("Mi Response", response);
+				setAllowedDays(response.whiteList);
+				setBlockDays(response.blackList);
 			} catch (e) {
 				console.error(e);
 			}
@@ -407,9 +408,22 @@ export const AppointmentSlotSettings = () => {
 		fetchBlackAndAllowedList();
 	}, []);
 
+	useEffect(() => {
+		console.log("Block", blockDays, "White", whitelistDays);
+	}, [blockDays, whitelistDays]);
+
 	function addBlock() {
 		if (!pickedBlockDate) return;
-		setBlockDays([...blockDays, pickedBlockDate]);
+
+		setBlockDays([
+			...blockDays,
+			{
+				id: -1,
+				isBlackList: true,
+				dateFrom: new Date(pickedBlockDate),
+				dateTo: new Date(pickedBlockDate),
+			},
+		]);
 	}
 
 	function deleteBlockEntrie(index: number) {
@@ -419,7 +433,15 @@ export const AppointmentSlotSettings = () => {
 
 	function addAllowed() {
 		if (!pickedAllowedDate) return;
-		setAllowedDays([...whitelistDays, pickedAllowedDate]);
+		setAllowedDays([
+			...blockDays,
+			{
+				id: -1,
+				isBlackList: false,
+				dateFrom: new Date(pickedBlockDate),
+				dateTo: new Date(pickedBlockDate),
+			},
+		]);
 	}
 
 	function deleteAllowedEntrie(index: number) {
@@ -430,14 +452,16 @@ export const AppointmentSlotSettings = () => {
 	async function uploadBlockAndAllowList() {
 		const response = toast.promise(
 			new Promise((res, _) => {
-				// const allDays = [...blo]
-
-				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots`, {
+				const partnerId = sessionStorage.getItem("partnerId");
+				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
 					method: "PUT",
 					headers: {
 						"Content-Type": "application/json",
 					},
-					// body:JSON.stringify({slots: })
+					body: JSON.stringify({ slots: [...blockDays, ...whitelistDays] }),
+				}).then(async (json) => {
+					const response = await json.json();
+					res(response);
 				});
 			}),
 			{
@@ -446,6 +470,8 @@ export const AppointmentSlotSettings = () => {
 				success: "Daten wurden erfolgreich hochgeladen 🎉",
 			}
 		);
+
+		console.log("Response Block", response);
 	}
 
 	return (
@@ -476,7 +502,7 @@ export const AppointmentSlotSettings = () => {
 						</div>
 						<div className={"flex p-4 flex-wrap gap-2"}>
 							{blockDays.map((e, i) => (
-								<VacationDay key={i} day={e} deleteEntrie={deleteBlockEntrie} index={i} />
+								<VacationDay key={i} day={e.dateFrom} deleteEntrie={deleteBlockEntrie} index={i} />
 							))}
 						</div>
 					</div>
@@ -505,7 +531,7 @@ export const AppointmentSlotSettings = () => {
 						</div>
 						<div className={"flex p-4 flex-wrap gap-2 "}>
 							{whitelistDays.map((e, i) => (
-								<VacationDay key={i} day={e} deleteEntrie={deleteAllowedEntrie} index={i} />
+								<VacationDay key={i} day={e.dateFrom} deleteEntrie={deleteAllowedEntrie} index={i} />
 							))}
 						</div>
 					</div>

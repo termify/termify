@@ -23,8 +23,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 	}
 }
 
-const getController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[]>) => {
+const getController = async (
+	req: NextApiRequest,
+	res: NextApiResponse<Record<"whiteList" | "blackList", AppointmentSlotData[]>>
+) => {
 	const partnerId = req.query.partnerId as string;
+	const responseObject: Record<"whiteList" | "blackList", AppointmentSlotData[]> = {
+		whiteList: [],
+		blackList: [],
+	};
 
 	const appointmentSlotData = (await db.appointmentSlots.findMany({
 		where: {
@@ -32,7 +39,15 @@ const getController = async (req: NextApiRequest, res: NextApiResponse<Appointme
 		},
 	})) as unknown as AppointmentSlotData[];
 
-	res.status(200).json(appointmentSlotData);
+	appointmentSlotData.forEach((e, i) => {
+		if (e.isBlackList) {
+			responseObject.blackList.push(e);
+		} else {
+			responseObject.whiteList.push(e);
+		}
+	});
+
+	res.status(200).json(responseObject);
 };
 
 const postController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[]>) => {
@@ -51,27 +66,38 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<Appointm
 };
 
 const putController = async (req: NextApiRequest, res: NextApiResponse<AppointmentSlotData[] | any>) => {
+	const { partnerId } = req.query as { partnerId: string };
+
 	const { slots } = req.body as {
 		slots: { id: number; isBlackList: boolean; dateFrom: string; dateTo: string }[];
 	};
 
 	try {
 		for await (const slot of slots) {
-			await db.appointmentSlots.updateMany({
-				where: {
-					id: slot.id,
-				},
-				data: {
-					isBlackList: slot.isBlackList,
-					dateFrom: slot.dateFrom,
-					dateTo: slot.dateTo,
-				},
-			});
+			if (slot.id === -1) {
+				await db.appointmentSlots.create({
+					data: {
+						partnerId: parseInt(partnerId),
+						isBlackList: slot.isBlackList,
+						dateFrom: slot.dateFrom,
+						dateTo: slot.dateTo,
+					},
+				});
+			} else {
+				await db.appointmentSlots.update({
+					where: {
+						id: slot.id,
+					},
+					data: {
+						isBlackList: slot.isBlackList,
+						dateFrom: slot.dateFrom,
+						dateTo: slot.dateTo,
+					},
+				});
+			}
 		}
-
 		res.status(200).json({ success: true });
 	} catch (e) {
 		res.status(500).json({ success: false });
 	}
-
 };
