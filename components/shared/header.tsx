@@ -30,7 +30,7 @@ export default function Header() {
 				).json()) as {
 					partnerId: number;
 				};
-				setCookie("config", JSON.stringify({ partnerId }));
+				sessionStorage.setItem("partnerId", partnerId.toString());
 				setPartnerId(partnerId);
 			} catch (error) {
 				console.error(error);

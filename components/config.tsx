@@ -524,11 +524,13 @@ export const WebApiConfigSettings = () => {
 			try {
 				const response = (await (
 					await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
-				).json()) as WebApiConfig;
+				).json()) as { data: string };
 
 				console.log("RRR", response);
+				const parsed = JSON.parse(response.data) as WebApiConfig;
+				console.log("Parsed", parsed);
 
-				setWebApiConfig(response);
+				setWebApiConfig({ ...parsed });
 			} catch (e) {
 				console.error(e);
 			}
