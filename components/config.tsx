@@ -24,7 +24,7 @@ export const OpeningSettings = () => {
 					await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
 				).json();
 
-				return response;
+				return response ?? [];
 			} catch (error) {
 				console.error(error);
 			}

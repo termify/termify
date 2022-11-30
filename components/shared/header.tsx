@@ -12,6 +12,7 @@ import { deleteCookie, getCookie, setCookie } from "../../lib/cookie";
 import { useAuthStore, useBookingStore } from "../../store/stores";
 import { TbFileSettings } from "react-icons/tb";
 import { baseUrl } from "../../lib/baseUrl";
+import { suspend } from "suspend-react";
 
 export default function Header() {
 	const setPageNumber = useBookingStore((state) => state.setPageNumber);
@@ -105,8 +106,6 @@ function DesktopNavigation() {
 	const [session, setSession] = useState<AuthSession>();
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-	const partnerId = useAuthStore((state) => state.partnerId);
-
 	useEffect(() => {
 		const authCookie = getCookie("auth") as { auth: { id: string; token: string } };
 
@@ -117,11 +116,17 @@ function DesktopNavigation() {
 		}
 	}, [isLoggedIn]);
 
+	const isPartner = suspend(async () => {
+		const partner = sessionStorage.getItem("partnerId");
+
+		return partner ? true : false;
+	}, [`isPartner`]);
+
 	return (
 		<div className="hidden gap-4 flex-grow xl:flex xl:items-center xl:justify-end">
 			{session ? (
 				<>
-					{partnerId ? (
+					{isPartner ? (
 						<>
 							<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
 							<NavigationLink
