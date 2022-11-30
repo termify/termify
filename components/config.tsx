@@ -427,13 +427,34 @@ export const AppointmentSlotSettings = () => {
 		setAllowedDays([...whitelistDays]);
 	}
 
+	async function uploadBlockAndAllowList() {
+		const response = toast.promise(
+			new Promise((res, _) => {
+				// const allDays = [...blo]
+
+				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots`, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					// body:JSON.stringify({slots: })
+				});
+			}),
+			{
+				error: "Es kam zu einem Fehler 😰",
+				loading: "Ein Moment lade Daten hoch 🫡",
+				success: "Daten wurden erfolgreich hochgeladen 🎉",
+			}
+		);
+	}
+
 	return (
 		<GridEntrieContainer gradientType={"fromIndigo"}>
 			<div className={"h-full"}>
 				<h3 className={"font-bold xl:text-3xl"}>Blocklist- 😈 und Allowedlist 😇 Tage </h3>
-				<div className={"h-full flex flex-col justify-center"}>
+				<div className={"h-full flex flex-col flex-grow justify-around"}>
 					<div>
-						<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
+						<div className={"flex flex-col justify-between items-center xl:flex-row"}>
 							<label className={"font-bold"}>Blocklist:</label>
 							<input
 								title={"Kalendar"}
@@ -460,7 +481,7 @@ export const AppointmentSlotSettings = () => {
 						</div>
 					</div>
 					{/* Divider */}
-					<div className={"w-full h-0.5 bg-indigo-500 rounded-md my-8"}></div>
+					<div className={"w-full h-0.5 bg-indigo-500 rounded-md "}></div>
 					<div>
 						<div className={"flex flex-col justify-between gap-8 items-center xl:flex-row"}>
 							<label className={"font-bold"}>Allowed:</label>
@@ -487,6 +508,16 @@ export const AppointmentSlotSettings = () => {
 								<VacationDay key={i} day={e} deleteEntrie={deleteAllowedEntrie} index={i} />
 							))}
 						</div>
+					</div>
+					<div className={"flex justify-center"}>
+						<button
+							onClick={uploadBlockAndAllowList}
+							className={
+								"p-2 bg-gradient-to-r from-indigo-400 to-sky-500 font-bold text-indigo-50 rounded-md transition-all xl:hover:scale-110"
+							}
+						>
+							Block- und Allowliste hochladen
+						</button>
 					</div>
 				</div>
 			</div>
