@@ -2,15 +2,9 @@ import React, { useState } from "react";
 import { BsFillArrowUpCircleFill } from "react-icons/bs";
 import { useBookingStore } from "../../store/stores";
 import { suspend } from "suspend-react";
-import { baseUrl } from "../../lib/baseUrl";
+import { useBaseUrl } from "../../lib/baseUrl";
 
-export default function AuswahlPage() {
-	return <AuswahlAmt />;
-}
-
-//TODO Kevin Bläser: Auswahl des Landkreises
-//TODO Kevin Bläser: AuswahlAmt Style
-interface DataOffice {
+export interface DataOffice {
 	id: number;
 	officeName: string;
 	officeDescription?: string;
@@ -24,32 +18,21 @@ interface DataPartner {
 	Office: OfficeProps[] | OfficeProps;
 }
 
-interface AllDataState {
+export interface AllDataState {
 	id: number;
 	stateName: string;
 	District: DistrictProps[];
 }
 
-function AuswahlAmt() {
+export default function AuswahlPage({data}:{data:{
+	stateData:AllDataState[],
+	officeData:DataOffice[]
+}}) {
 	const [pos, setPos] = useState<number>(1);
 	const [partner, setPartner] = useState<DataPartner[]>([]);
 	const bookingData = useBookingStore((state) => state.bookingData);
+	const baseUrl = useBaseUrl();
 
-	const data = suspend(async () => {
-		try {
-			const officeResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/office`)).json()) as DataOffice[];
-			const stateResponse = (await (await fetch(`${baseUrl()}/api/dbquery/booking/state`)).json()) as AllDataState[];
-
-			console.log("Office Data", officeResponse);
-
-			return {
-				officeData: officeResponse,
-				stateData: stateResponse,
-			};
-		} catch (e) {
-			console.error("OfficeData und StateData konnten nicht geladen werden", e);
-		}
-	}, [`auswahl-${JSON.stringify(bookingData)}`]);
 
 	function setHref(dest: number) {
 		setPos(dest);
@@ -66,7 +49,7 @@ function AuswahlAmt() {
 		});
 
 		const response = await (
-			await fetch(`${baseUrl()}/api/dbquery/booking/partner`, {
+			await fetch(`${baseUrl}/api/dbquery/booking/partner`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -114,7 +97,7 @@ function AuswahlAmt() {
 	);
 }
 
-interface DistrictProps {
+export interface DistrictProps {
 	id: number;
 	districtName: string;
 }

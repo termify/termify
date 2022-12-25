@@ -4,7 +4,7 @@ import { useBookingStore, useScheduleStore } from "../../store/stores";
 import Schedule from "../schedule/schedule";
 import TimeSlots from "../schedule/timeslots";
 import { suspend } from "suspend-react";
-import { baseUrl } from "../../lib/baseUrl";
+import { useBaseUrl } from "../../lib/baseUrl";
 import { GetResponse } from "../../pages/api/dbquery/booking/partnercalendar";
 
 export default function Termin() {
@@ -12,6 +12,7 @@ export default function Termin() {
 	const [dateWasPicked, setDateWasPicked] = useState<boolean>(false);
 	const setAllowedDates = useScheduleStore((state) => state.setAllowedDates);
 	const bookingData = useBookingStore((state) => state.bookingData);
+	const baseUrl = useBaseUrl();
 
 	useMemo(() => {
 		setDateWasPicked(
@@ -19,12 +20,11 @@ export default function Termin() {
 		);
 	}, [pickedDay]);
 
-	const calendarResponse = suspend(async () => {
+	suspend(async () => {
 		const calendarResponse = (await (
-			await fetch(`${baseUrl()}/api/dbquery/booking/partnercalendar`)
+			await fetch(`${baseUrl}/api/dbquery/booking/partnercalendar`)
 		).json()) as GetResponse;
 
-		// TODO: SetAllowDates muss auch bereits Gebuchte Zeiten entfernen
 		setAllowedDates(calendarResponse.openingData);
 		return calendarResponse;
 	}, [`termin-${JSON.stringify(bookingData)}`]);

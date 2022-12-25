@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '../../../../lib/database';
 
-type OfficeData = {
+export type OfficeData = {
     id: number;
     officeName: string;
     officeDescription?: string;

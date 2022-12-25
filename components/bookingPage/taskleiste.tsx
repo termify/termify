@@ -1,14 +1,20 @@
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useBookingStore } from "../../store/stores";
 import { ArrowIcon } from "../icons";
 import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 const sections: string[] = ["Auswahl", "Termin", "Eintragung", "Abschluss"];
 const mobileSections: string[] = ["Amt wählen", "Termin aussuchen", "Was ist Ihr Anliegen?", "Alles erledigt"];
 
 export default function Taskleiste() {
 	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
+	const [screenWidth, setScreenWidth] = useState<number>(0);
+
+	useEffect(()=>{
+		setScreenWidth(screen.width);
+	},[])
 
 	return (
 		<div
@@ -26,7 +32,7 @@ export default function Taskleiste() {
 				{/* Mobile */}
 				<motion.div
 					initial={{ x: 0 }}
-					animate={{ x: -((bookingPageNumber - 1) * screen.width) }}
+					animate={{ x: -((bookingPageNumber - 1) * screenWidth) }}
 					className={"flex items-center xl:hidden"}
 				>
 					<TaskleisteMobileSection index={1}>{mobileSections[0]}</TaskleisteMobileSection>

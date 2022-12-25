@@ -7,7 +7,7 @@ import AuthForm from "../shared/authForm";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { suspend } from "suspend-react";
-import { baseUrl } from "../../lib/baseUrl";
+import { useBaseUrl } from "../../lib/baseUrl";
 import LoadingSpinner from "../shared/loadingSpinner";
 import { supabase } from "../../lib/supabase";
 import { useRouter } from "next/router";
@@ -36,6 +36,8 @@ function Reason() {
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 	const bookingData = useBookingStore((state) => state.bookingData);
 
+	const baseUrl = useBaseUrl();
+
 	async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setShowModal(true);
@@ -63,7 +65,7 @@ function Reason() {
 			}
 
 			const response = await (
-				await fetch(`${baseUrl()}/api/dbquery/booking/appointment`, {
+				await fetch(`${baseUrl}/api/dbquery/booking/appointment`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -88,7 +90,7 @@ function Reason() {
 
 	const reasons = suspend(async () => {
 		const response = (await (
-			await fetch(`${baseUrl()}/api/dbquery/booking/officeService/`, {
+			await fetch(`${baseUrl}/api/dbquery/booking/officeService/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

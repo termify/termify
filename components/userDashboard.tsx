@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { hash } from "./createHash";
 import { useRouter } from "next/router";
-import { baseUrl } from "../lib/baseUrl";
+import { useBaseUrl } from "../lib/baseUrl";
 
 export default function UserDashboard() {
 	return (
@@ -36,11 +35,12 @@ function UserCredentials() {
 	});
 
 	const router = useRouter();
+	const baseUrl = useBaseUrl();
 
 	async function updateData() {
 		await toast.promise(
 			new Promise((res, rej) => {
-				fetch(`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}`, {
+				fetch(`${baseUrl}/api/dbquery/booking/user?id=${router.query.id}`, {
 					method: "PUT",
 					headers: {
 						"Content-Type": "application/json",
@@ -64,7 +64,7 @@ function UserCredentials() {
 			try {
 				const response = (await (
 					await fetch(
-						`${baseUrl()}/api/dbquery/booking/user?id=${router.query.id}&timestamp={${Math.floor(
+						`${baseUrl}/api/dbquery/booking/user?id=${router.query.id}&timestamp={${Math.floor(
 							new Date().getTime() / 1000
 						)}}`
 					)
@@ -179,10 +179,11 @@ function UserSchedule() {
 			typeOfRequest: string;
 		}[]
 	>([]);
+	const baseUrl = useBaseUrl();
 
 	useEffect(() => {
 		async function fetchTermine() {
-			const response = (await (await fetch(`${baseUrl()}/api/dbquery/booking/appointment?uuid=${id}`)).json()) as {
+			const response = (await (await fetch(`${baseUrl}/api/dbquery/booking/appointment?uuid=${id}`)).json()) as {
 				timestamp: string;
 				typeOfRequest: string;
 			}[];

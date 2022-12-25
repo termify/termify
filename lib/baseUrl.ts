@@ -1,3 +1,12 @@
-export const baseUrl = () => {
-    return location.origin;
+import { useEffect, useState } from "react";
+
+export const useBaseUrl = () => {
+
+    const [baseUrl, setBaseUrl] = useState<string>("");
+
+    useEffect(()=>{
+        setBaseUrl(location.origin);
+    },[])
+
+    return baseUrl;
 };

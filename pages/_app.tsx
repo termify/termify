@@ -9,7 +9,6 @@ import Head from "next/head";
 import { useAuthStore, useBookingStore } from "../store/stores";
 import { useEffect, useRef } from "react";
 import { getCookie } from "../lib/cookie";
-import { stat } from "fs";
 
 function MyApp({ Component, pageProps }: AppProps) {
 	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
@@ -55,7 +54,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 				<meta name="google" content="nositelinkssearchbox" key="sitelinks" />
 				<meta name="google" content="notranslate" key="notranslate" />
 			</Head>
-			<ClientSideRenderContainer>
 				<div ref={pageDivRef} className="min-h-screen flex flex-col">
 					<Header />
 					<Container>
@@ -64,7 +62,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 					<Footer />
 					<Toaster />
 				</div>
-			</ClientSideRenderContainer>
+
 		</>
 	);
 }

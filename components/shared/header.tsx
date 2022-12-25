@@ -11,14 +11,17 @@ import { RiDashboardFill } from "react-icons/ri";
 import { deleteCookie, getCookie, setCookie } from "../../lib/cookie";
 import { useAuthStore, useBookingStore } from "../../store/stores";
 import { TbFileSettings } from "react-icons/tb";
-import { baseUrl } from "../../lib/baseUrl";
-import { suspend } from "suspend-react";
+import { useBaseUrl } from "../../lib/baseUrl";
+import { useRouter } from "next/router";
 
 export default function Header() {
 	const setPageNumber = useBookingStore((state) => state.setPageNumber);
 	const setBookingData = useBookingStore((state) => state.setBookingData);
 	const setPartnerId = useAuthStore((state) => state.setPartnerId);
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+	const router = useRouter();
+
+	const baseUrl = useBaseUrl();
 
 	useEffect(() => {
 		const auth = getCookie("auth") as { auth: { id: string } };
@@ -27,7 +30,7 @@ export default function Header() {
 		async function fetchIsSystemUser() {
 			try {
 				const response = (await (
-					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
+					await fetch(`${baseUrl}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
 				).json()) as {
 					partnerId: number;
 				};
@@ -44,13 +47,14 @@ export default function Header() {
 	}, []);
 
 	useEffect(() => {
+		if (!router.isReady) return;
 		const auth = getCookie("auth") as { auth: { id: string } };
 		if (!auth) return;
 
 		async function fetchIsSystemUser() {
 			try {
 				const response = (await (
-					await fetch(`${baseUrl()}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
+					await fetch(`${baseUrl}/api/dbquery/booking/systemuser?id=${auth.auth.id}`)
 				).json()) as {
 					partnerId: number;
 				};
@@ -65,7 +69,7 @@ export default function Header() {
 		}
 
 		fetchIsSystemUser();
-	}, [isLoggedIn]);
+	}, [isLoggedIn, router.isReady]);
 
 	function resetBookingState() {
 		setBookingData({
@@ -105,8 +109,13 @@ export default function Header() {
 function DesktopNavigation() {
 	const [session, setSession] = useState<AuthSession>();
 	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+	const [isPartner, setIsPartner] = useState<boolean>(false); 
+	
+	const router = useRouter();
 
 	useEffect(() => {
+		if (!router.isReady) return;
+
 		const authCookie = getCookie("auth") as { auth: { id: string; token: string } };
 
 		if (authCookie) {
@@ -114,13 +123,12 @@ function DesktopNavigation() {
 		} else {
 			setSession(undefined);
 		}
-	}, [isLoggedIn]);
+	}, [isLoggedIn,router.isReady]);
 
-	const isPartner = suspend(async () => {
-		const partner = sessionStorage.getItem("partnerId");
 
-		return partner ? true : false;
-	}, [`isPartner`]);
+	useEffect(()=>{
+		setIsPartner(sessionStorage.getItem("partnerId") ? true : false)
+	},[])
 
 	return (
 		<div className="hidden gap-4 flex-grow xl:flex xl:items-center xl:justify-end">
