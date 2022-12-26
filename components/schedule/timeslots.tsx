@@ -4,7 +4,6 @@ import { useBookingStore, useScheduleStore } from "../../store/stores";
 import { BsFillArrowLeftCircleFill } from "react-icons/bs";
 import { OpeningData } from "../../pages/api/dbquery/booking/partnercalendar";
 
-
 //TODO Kevin Bläser: Ersetze Obj durch DB Query
 interface TimeSlotsProps {
 	onClick?: () => void;
@@ -69,21 +68,6 @@ export default function TimeSlots({ onClick }: TimeSlotsProps) {
 	const allowedDates = useScheduleStore((state) => state.allowedDates);
 	const pickedValue = useScheduleStore((state) => state.pickedDay);
 	const pickedDate: number = new Date(pickedValue.year, pickedValue.month, pickedValue.day).getDay();
-
-	// suspend(async () => {
-	// 	// const response = await (
-	// 	// 	await fetch(`${baseUrl()}/api/dbquery/booking/appointments`, {
-	// 	// 		method: "PUT",
-	// 	// 		headers: {
-	// 	// 			"Content-Type": "application/json",
-	// 	// 		},
-	// 	// 		body: JSON.stringify({
-	// 	// 			pickedDate: pickedValue,
-	// 	// 		}),
-	// 	// 	})
-	// 	// ).json();
-	// 	// console.log("Timeslot Response", response);
-	// }, [pickedValue]);
 
 	const { from, to } = returnTimeslotDay(allowedDates, pickedDate);
 

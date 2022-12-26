@@ -30,7 +30,5 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<AllPartn
 		},
 	})) as unknown as AllPartnerData[];
 
-	console.log("Data", partnerAllData);
-
 	res.status(200).json(partnerAllData);
 };

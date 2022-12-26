@@ -77,12 +77,12 @@ model Partner {
   officeId            Int
   districtId          Int
   webapiconfig        Json?                 @default("{     \"Appointment\": {         \"id\": {             \"active\": true,             \"qname\": \"id\"         },         \"user\": {             \"userid\": {                 \"active\": false,                 \"qname\": \"userid\"             },             \"email\": {                 \"active\": true,                 \"qname\": \"email\"             },             \"birthday\": {                 \"active\": true,                 \"qname\": \"birthday\"             },             \"firstname\": {                 \"active\": true,                 \"qname\": \"firstname\"             },             \"surname\": {                 \"active\": true,                 \"qname\": \"lastname\"             },             \"address\": {                 \"active\": true,                 \"qname\": \"address\"             },             \"zipcode\": {                 \"active\": true,                 \"qname\": \"zipcode\"             },             \"city\": {                 \"active\": true,                 \"qname\": \"city\"             }         },         \"typeOfRequest\": {             \"active\": true,             \"qname\": \"typeOfRequest\"         },         \"note\": {             \"active\": true,             \"qname\": \"note\"         },         \"attachment\": {             \"active\": false,             \"qname\": \"attachment\"         },         \"timestamp\": {             \"active\": true,             \"qname\": \"timestamp\"         }     } }") @db.Json
-  District            District              @relation(fields: [districtId], references: [id])
-  Office              Office                @relation(fields: [officeId], references: [id])
   Appointment         Appointment[]
   AppointmentSettings AppointmentSettings[]
   AppointmentSlots    AppointmentSlots[]
   Opening             Opening[]
+  District            District              @relation(fields: [districtId], references: [id])
+  Office              Office                @relation(fields: [officeId], references: [id])
   SystemUser          SystemUser[]
 }
 
@@ -101,7 +101,6 @@ model User {
   id          Int           @id @default(autoincrement())
   uuid        String        @unique
   email       String
-  password    String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime?
   address     String?
@@ -110,6 +109,7 @@ model User {
   firstname   String?
   surname     String?
   zipcode     Int?
+  password    String?
   Appointment Appointment[]
 }
 

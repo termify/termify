@@ -5,73 +5,76 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { randomBytes, randomUUID } from "crypto";
 import { db } from "../../../lib/database";
 import crypto from "crypto";
+import bcrypt from "bcrypt";
 
 export const authOptions: AuthOptions = {
-    // Here comes all Providers
-    providers:[
-        GithubProvider({
-            clientId: "",
-            clientSecret: ""
-        }),
-        CredentialsProvider({
-            name:"Credentials Provider",
-            credentials:{},
-            async authorize(credentials, req){
-                const {email, password} = credentials as {email:string; password:string};
-                
-                const userExists = await db.user.findFirst({
-                    where:{
-                        email:email,
-                        password: password
-                    }
-                })
+	// Here comes all Providers
+	providers: [
+		GithubProvider({
+			clientId: "",
+			clientSecret: "",
+		}),
+		CredentialsProvider({
+			name: "Credentials Provider",
+			credentials: {},
+			async authorize(credentials) {
+				const { email, password } = credentials as { email: string; password: string };
+				const cryptedPW = await bcrypt.hash(password, 5);
 
-                if (!userExists){
-                    const newUser = await db.user.create({
-                        data:{
-                            uuid:crypto.randomUUID(),
-                            email,
-                            password
-                        }
-                    })
-                    return {id:newUser?.uuid!,email:newUser?.email}
-                }
+				const userExist = await db.user.findFirst({
+					where: {
+						email: email,
+					},
+				});
 
-                return {id:userExists?.uuid!,email:userExists?.email}
-                
-            }
-        })
-    ],
-    session:{
-        strategy: "jwt",
-        maxAge: 30 * 24* 60 * 60,
-        generateSessionToken: () => {
-            return randomUUID?.() ?? randomBytes(32).toString("hex")
-        }
-    },
-    callbacks:{
-        jwt: async ({token, user}) => {
-            if (user){
-                token.sub = user.id;
-            }
-            
-            return token
-        },
-        session: async ({session, token, user}) => {
-            if (session?.user){
-                // @ts-ignore
-                session.user.id = token.sub;
-            }
+				if (!userExist) {
+					const newUser = await db.user.create({
+						data: {
+							uuid: crypto.randomUUID(),
+							email,
+							password: cryptedPW,
+						},
+					});
+					return { id: newUser?.uuid!, email: newUser?.email };
+				}
 
-            return session
-        },
+				if (!(await bcrypt.compare(password, userExist.password!))) {
+					throw new Error("Email oder Passwort falsch");
+				}
 
-    },
-    pages:{
-        signIn: '/login',
-        signOut: '/auth/signout',
-        newUser: '/auth/new-user'
-    }
-}
+				return { id: userExist?.uuid!, email: userExist?.email };
+			},
+		}),
+	],
+	session: {
+		strategy: "jwt",
+		maxAge: 30 * 24 * 60 * 60,
+		generateSessionToken: () => {
+			return randomUUID?.() ?? randomBytes(32).toString("hex");
+		},
+	},
+	callbacks: {
+		jwt: async ({ token, user }) => {
+			if (user) {
+				token.sub = user.id;
+			}
+
+			return token;
+		},
+		session: async ({ session, token }) => {
+			if (session?.user) {
+				// @ts-ignore
+				session.user.id = token.sub;
+			}
+
+			return session;
+		},
+	},
+	pages: {
+		signIn: "/login",
+		signOut: "/auth/signout",
+		newUser: "/auth/new-user",
+	},
+};
 
 export default NextAuth(authOptions);

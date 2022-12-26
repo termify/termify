@@ -1,45 +1,27 @@
 import { Modal } from "./shared/modal";
 import { motion } from "framer-motion";
-import { FaCalendarAlt, FaWindowClose } from "react-icons/fa";
+import { FaWindowClose } from "react-icons/fa";
 import React, { useEffect, useRef, useState } from "react";
-import { AuthSession } from "../types/storage";
 import { LoginLink, LogoutLink, NavigationLink, RegisterLink } from "./shared/header";
 import { FaHome } from "react-icons/fa";
 import { RiDashboardFill } from "react-icons/ri";
-import { getCookie } from "../lib/cookie";
-import { useAuthStore } from "../store/stores";
 import { TbFileSettings } from "react-icons/tb";
-import { baseUrl } from "../lib/baseUrl";
 import { suspend } from "suspend-react";
+import { useSession } from "next-auth/react";
 
 export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
-	const [yOffset, setYOffsset] = useState<number>(500);
+	const [yOffset, setYOffset] = useState<number>(500);
 	const divRef = useRef<HTMLDivElement>(null);
-	const [session, setSession] = useState<AuthSession>();
-
-	const setPartnerId = useAuthStore((state) => state.setPartnerId);
-	// const partnerId = useAuthStore((state) => state.partnerId);
-
-	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+	const session = useSession();
 
 	useEffect(() => {
-		setYOffsset(divRef.current!.offsetHeight);
+		setYOffset(divRef.current!.offsetHeight);
 	}, []);
-
-	useEffect(() => {
-		const authSession = getCookie("auth") as { auth: AuthSession };
-
-		if (authSession) {
-			setSession(authSession.auth);
-		} else {
-			setSession(undefined);
-		}
-	}, [isLoggedIn]);
 
 	const isPartner = suspend(async () => {
 		const partner = sessionStorage.getItem("partnerId");
 
-		return partner ? true : false;
+		return !!partner;
 	}, [`isPartner`]);
 
 	return (
@@ -62,27 +44,27 @@ export function Sidebar({ open, setOpen }: { open: boolean; setOpen: React.Dispa
 						/>
 					</div>
 					<div className="flex-grow py-8 flex flex-col items-center gap-3 bg-slate-800 shadow-xl">
-						{session ? (
+						{session.status === "authenticated" ? (
 							<>
 								{isPartner ? (
 									<>
 										<NavigationLink
 											icon={<RiDashboardFill />}
 											name={"Dashboard"}
-											to={`/user/${session.id}/dashboard`}
+											to={`/user/${session.data.user.id}/dashboard`}
 											setOpen={() => setOpen(false)}
 										/>
 										<NavigationLink
 											icon={<TbFileSettings color="#ffffff" />}
 											name={"Konfiguration"}
-											to={`/user/${session.id}/config`}
+											to={`/user/${session.data.user.id}/config`}
 										/>
 									</>
 								) : (
 									<NavigationLink
 										icon={<RiDashboardFill />}
 										name={"Dashboard"}
-										to={`/user/${session.id}/dashboard`}
+										to={`/user/${session.data.user.id}/dashboard`}
 										setOpen={() => setOpen(false)}
 									/>
 								)}

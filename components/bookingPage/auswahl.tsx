@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { BsFillArrowUpCircleFill } from "react-icons/bs";
 import { useBookingStore } from "../../store/stores";
-import { suspend } from "suspend-react";
 import { useBaseUrl } from "../../lib/baseUrl";
 
 export interface DataOffice {
@@ -24,15 +23,17 @@ export interface AllDataState {
 	District: DistrictProps[];
 }
 
-export default function AuswahlPage({data}:{data:{
-	stateData:AllDataState[],
-	officeData:DataOffice[]
-}}) {
+export default function AuswahlPage({
+	data,
+}: {
+	data: {
+		stateData: AllDataState[];
+		officeData: DataOffice[];
+	};
+}) {
 	const [pos, setPos] = useState<number>(1);
 	const [partner, setPartner] = useState<DataPartner[]>([]);
-	const bookingData = useBookingStore((state) => state.bookingData);
 	const baseUrl = useBaseUrl();
-
 
 	function setHref(dest: number) {
 		setPos(dest);
@@ -107,12 +108,12 @@ interface OfficeProps {
 	officeDescription: string;
 }
 
-interface BookinButtonProps {
+interface BookingButtonProps {
 	partnerData: DataPartner;
 	index: number;
 }
 // Auswahl Seite
-function BookingButton({ partnerData, index }: BookinButtonProps) {
+function BookingButton({ partnerData, index }: BookingButtonProps) {
 	const bookingData = useBookingStore((state) => state.bookingData);
 	const setBookingData = useBookingStore((state) => state.setBookingData);
 	const setBookingPage = useBookingStore((state) => state.setPageNumber);

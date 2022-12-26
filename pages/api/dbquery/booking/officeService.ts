@@ -18,8 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 const postController = async (req: NextApiRequest, res: NextApiResponse<OfficeServiceData[]>) => {
 	const { officeId } = req.body as { officeId: number };
 
-	console.log("ID", officeId);
-
 	const officeServiceData = (await db.officeService.findMany({
 		select: {
 			serviceText: true,
@@ -30,6 +28,5 @@ const postController = async (req: NextApiRequest, res: NextApiResponse<OfficeSe
 		},
 	})) as unknown as OfficeServiceData[];
 
-	console.log("Office Service", officeServiceData);
 	res.status(200).json(officeServiceData);
 };

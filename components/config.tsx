@@ -1,6 +1,6 @@
 import React, { ComponentProps, ReactNode, useEffect, useState } from "react";
 import { RiDeleteBinFill } from "react-icons/ri";
-import { baseUrl } from "../lib/baseUrl";
+import { useBaseUrl } from "../lib/baseUrl";
 import ScheduleClass from "../lib/schedule";
 import toast from "react-hot-toast";
 import { WebApiConfig } from "../pages/api/dbquery/partnersetting/webapiconfig";
@@ -14,6 +14,8 @@ interface OpeningDays {
 
 // Opening Ändern von bis => Weekday + Timeslots from und Timeslot
 export const OpeningSettings = () => {
+	const baseUrl = useBaseUrl();
+
 	const [openeningDays, setOpeneningDays] = useState<OpeningDays[]>(() =>
 		suspend(async () => {
 			const partnerId = sessionStorage.getItem("partnerId");
@@ -21,7 +23,7 @@ export const OpeningSettings = () => {
 
 			try {
 				const response = await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
+					await fetch(`${baseUrl}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
 				).json();
 
 				return response ?? [];
@@ -38,7 +40,7 @@ export const OpeningSettings = () => {
 	// 	async function fetchOpeningDays() {
 	// 		try {
 	// 			const response = await (
-	// 				await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
+	// 				await fetch(`${baseUrl}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
 	// 			).json();
 
 	// 			setOpeneningDays(response);
@@ -56,7 +58,7 @@ export const OpeningSettings = () => {
 
 	// 	try {
 	// 		const response = await (
-	// 			await fetch(`${baseUrl()}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
+	// 			await fetch(`${baseUrl}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
 	// 		).json();
 
 	// 		setOpeneningDays(response);
@@ -88,9 +90,9 @@ export const OpeningSettings = () => {
 
 	async function updateOpeningDates() {
 		try {
-			const response = await toast.promise(
+			await toast.promise(
 				new Promise((res, _) => {
-					fetch(`${baseUrl()}/api/dbquery/partnersetting/opening`, {
+					fetch(`${baseUrl}/api/dbquery/partnersetting/opening`, {
 						method: "PUT",
 						headers: {
 							"Content-Type": "application/json",
@@ -157,25 +159,6 @@ export const OpeningSettings = () => {
 		</GridEntrieContainer>
 	);
 };
-
-function parseShortDayToFull(day: string) {
-	switch (day) {
-		case "Mo.":
-			return "Montag";
-		case "Di.":
-			return "Dienstag";
-		case "Mi.":
-			return "Mittwoch";
-		case "Do.":
-			return "Donnerstag";
-		case "Fr.":
-			return "Freitag";
-		case "Sa.":
-			return "Samstag";
-		case "So.":
-			return "Sonntag";
-	}
-}
 
 interface TimeSlotProps {
 	dayName: string;
@@ -264,17 +247,16 @@ interface SettingsData {
 
 // Appointment Settings => Interval und Holidays
 export const AppointmentSettings = () => {
+	const baseUrl = useBaseUrl();
 	const [settingsData, setSettingsData] = useState<SettingsData>(() =>
 		suspend(async () => {
 			const partnerId = sessionStorage.getItem("partnerId");
 			if (!partnerId) return;
 
 			try {
-				const response = await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
+				return await (
+					await fetch(`${baseUrl}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
 				).json();
-
-				return response;
 			} catch (error) {
 				console.error(error);
 			}
@@ -284,7 +266,7 @@ export const AppointmentSettings = () => {
 	async function updateSettings() {
 		await toast.promise(
 			new Promise((res, rej) => {
-				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings`, {
+				fetch(`${baseUrl}/api/dbquery/partnersetting/appointmentSettings`, {
 					method: "PUT",
 					headers: {
 						"Content-Type": "application/json",
@@ -302,49 +284,6 @@ export const AppointmentSettings = () => {
 			}
 		);
 	}
-
-	// useEffect(() => {
-	// 	const partnerId = sessionStorage.getItem("partnerId");
-
-	// 	if (!partnerId) return;
-
-	// 	async function fetchSettingsData() {
-	// 		try {
-	// 			const response = (await (
-	// 				await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
-	// 			).json()) as { intervall: number; holydaysOn: boolean; id: number };
-
-	// 			setSettingsData({
-	// 				intervall: response.intervall,
-	// 				holydaysOn: response.holydaysOn,
-	// 				id: response.id,
-	// 			});
-	// 		} catch (e) {
-	// 			console.error(e);
-	// 		}
-	// 	}
-
-	// 	fetchSettingsData();
-	// }, []);
-
-	// suspend(async () => {
-	// 	const partnerId = sessionStorage.getItem("partnerId");
-	// 	if (!partnerId) return;
-
-	// 	try {
-	// 		const response = await (
-	// 			await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
-	// 		).json();
-
-	// 		setSettingsData({
-	// 			intervall: response.intervall,
-	// 			holydaysOn: response.holydaysOn,
-	// 			id: response.id,
-	// 		});
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// }, ["partnerId-appointment"]);
 
 	return (
 		<GridEntrieContainer gradientType={"fromRose"}>
@@ -452,7 +391,7 @@ interface Blocklist {
 export const AppointmentSlotSettings = () => {
 	const [pickedBlockDate, setPickedBlockDate] = useState<string>("");
 	const [blockDays, setBlockDays] = useState<Blocklist[]>([]);
-
+	const baseUrl = useBaseUrl();
 	const [pickedAllowedDate, setPickedAllowedDate] = useState<string>("");
 	const [whitelistDays, setAllowedDays] = useState<Blocklist[]>([]);
 
@@ -460,10 +399,10 @@ export const AppointmentSlotSettings = () => {
 		const partnerId = sessionStorage.getItem("partnerId");
 
 		if (!partnerId) return;
-		async function fetchBlackAndAllowedList() {
+		(async function fetchBlackAndAllowedList() {
 			try {
 				const response = (await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`)
+					await fetch(`${baseUrl}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`)
 				).json()) as { whiteList: Blocklist[]; blackList: Blocklist[] };
 
 				setAllowedDays(response.whiteList);
@@ -471,63 +410,13 @@ export const AppointmentSlotSettings = () => {
 			} catch (e) {
 				console.error(e);
 			}
-		}
-
-		fetchBlackAndAllowedList();
-	}, []);
-
-	// async function uploadBlockAndAllowList() {
-	// 	const response = await toast.promise(
-	// 		new Promise((res, _) => {
-	// 			const partnerId = sessionStorage.getItem("partnerId");
-	// 			fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
-	// 				method: "PUT",
-	// 				headers: {
-	// 					"Content-Type": "application/json",
-	// 				},
-	// 				body: JSON.stringify({ slots: [...blockDays, ...whitelistDays] }),
-	// 			}).then(async (json) => {
-	// 				const response = await json.json();
-	// 				res(response);
-	// 			});
-	// 		}),
-	// 		{
-	// 			error: "Es kam zu einem Fehler 😰",
-	// 			loading: "Ein Moment lade Daten hoch 🫡",
-	// 			success: "Daten wurden erfolgreich hochgeladen 🎉",
-	// 		}
-	// 	);
-	// }
+		})();
+	}, [baseUrl]);
 
 	async function addBlock() {
 		if (!pickedBlockDate) return;
 
-		const response = (await toast.promise(
-			new Promise((res, _) => {
-				const partnerId = sessionStorage.getItem("partnerId");
-				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						slot: {
-							isBlackList: true,
-							dateFrom: new Date(pickedBlockDate),
-							dateTo: new Date(pickedBlockDate),
-						},
-					}),
-				}).then(async (json) => {
-					const response = await json.json();
-					res(response);
-				});
-			}),
-			{
-				error: "Es kam zu einem Fehler 😰",
-				loading: "Ein Moment lade Daten hoch 🫡",
-				success: "Daten wurden erfolgreich hochgeladen 🎉",
-			}
-		)) as { id: number };
+		const response = await fetchDays();
 
 		setBlockDays([
 			...blockDays,
@@ -540,13 +429,11 @@ export const AppointmentSlotSettings = () => {
 		]);
 	}
 
-	async function addAllowed() {
-		if (!pickedAllowedDate) return;
-
-		const response = (await toast.promise(
+	async function fetchDays(): Promise<{ id: number }> {
+		return (await toast.promise(
 			new Promise((res, _) => {
 				const partnerId = sessionStorage.getItem("partnerId");
-				fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
+				fetch(`${baseUrl}/api/dbquery/partnersetting/appointmentSlots?partnerId=${partnerId}`, {
 					method: "PUT",
 					headers: {
 						"Content-Type": "application/json",
@@ -569,6 +456,12 @@ export const AppointmentSlotSettings = () => {
 				success: "Daten wurden erfolgreich hochgeladen 🎉",
 			}
 		)) as { id: number };
+	}
+
+	async function addAllowed() {
+		if (!pickedAllowedDate) return;
+
+		const response = await fetchDays();
 
 		setAllowedDays([
 			...whitelistDays,
@@ -582,10 +475,10 @@ export const AppointmentSlotSettings = () => {
 	}
 
 	async function deleteAllowedEntrie(index: number) {
-		const delteEntrie = whitelistDays[index];
+		const deleteEntrie = whitelistDays[index];
 		try {
-			const response = await (
-				await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?id=${delteEntrie.id}`, {
+			await (
+				await fetch(`${baseUrl}/api/dbquery/partnersetting/appointmentSlots?id=${deleteEntrie.id}`, {
 					method: "DELETE",
 					headers: {
 						"Content-Type": "application/json",
@@ -604,10 +497,10 @@ export const AppointmentSlotSettings = () => {
 	}
 
 	async function deleteBlockEntrie(index: number) {
-		const delteEntrie = blockDays[index];
+		const deleteEntrie = blockDays[index];
 		try {
-			const response = await (
-				await fetch(`${baseUrl()}/api/dbquery/partnersetting/appointmentSlots?id=${delteEntrie.id}`, {
+			await (
+				await fetch(`${baseUrl}/api/dbquery/partnersetting/appointmentSlots?id=${deleteEntrie.id}`, {
 					method: "DELETE",
 					headers: {
 						"Content-Type": "application/json",
@@ -684,16 +577,6 @@ export const AppointmentSlotSettings = () => {
 							))}
 						</div>
 					</div>
-					{/* <div className={"flex justify-center"}>
-						<button
-							onClick={uploadBlockAndAllowList}
-							className={
-								"p-2 bg-gradient-to-r from-indigo-400 to-sky-500 font-bold text-indigo-50 rounded-md transition-all xl:hover:scale-110"
-							}
-						>
-							Block- und Allowliste hochladen
-						</button>
-					</div> */}
 				</div>
 			</div>
 		</GridEntrieContainer>
@@ -702,6 +585,7 @@ export const AppointmentSlotSettings = () => {
 
 // Webapi config
 export const WebApiConfigSettings = () => {
+	const baseUrl = useBaseUrl();
 	const [webApiConfig, setWebApiConfig] = useState<WebApiConfig>(() =>
 		suspend(async () => {
 			const partnerId = sessionStorage.getItem("partnerId");
@@ -709,7 +593,7 @@ export const WebApiConfigSettings = () => {
 
 			try {
 				const response = await (
-					await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
+					await fetch(`${baseUrl}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
 				).json();
 
 				return { ...response };
@@ -731,7 +615,7 @@ export const WebApiConfigSettings = () => {
 	// 	async function fetchWebApiConfig() {
 	// 		try {
 	// 			const response = (await (
-	// 				await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
+	// 				await fetch(`${baseUrl}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
 	// 			).json()) as WebApiConfig;
 
 	// 			setWebApiConfig({ ...response });
@@ -749,7 +633,7 @@ export const WebApiConfigSettings = () => {
 
 	// 	try {
 	// 		const response = await (
-	// 			await fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
+	// 			await fetch(`${baseUrl}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
 	// 		).json();
 
 	// 		setWebApiConfig({ ...response });
@@ -761,9 +645,9 @@ export const WebApiConfigSettings = () => {
 	async function uploadWebApi() {
 		const partnerId = sessionStorage.getItem("partnerId");
 
-		const response = toast.promise(
+		await toast.promise(
 			new Promise((res, _) => {
-				fetch(`${baseUrl()}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`, {
+				fetch(`${baseUrl}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`, {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",

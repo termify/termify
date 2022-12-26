@@ -3,12 +3,11 @@ import React, { ReactElement, useEffect, useState } from "react";
 import { Sidebar } from "../sidebar";
 import useDocument from "../hooks/useDocument";
 import Link from "next/link";
-import { AuthSession } from "../../types/storage";
 import toast from "react-hot-toast";
 import { AiFillHome } from "react-icons/ai";
 import { FaSignOutAlt } from "react-icons/fa";
 import { RiDashboardFill } from "react-icons/ri";
-import { deleteCookie, getCookie, setCookie } from "../../lib/cookie";
+import { getCookie } from "../../lib/cookie";
 import { useAuthStore, useBookingStore } from "../../store/stores";
 import { TbFileSettings } from "react-icons/tb";
 import { useBaseUrl } from "../../lib/baseUrl";
@@ -96,7 +95,7 @@ export default function Header() {
 							<p className="bg-gradient-to-r from-sky-400 to-emerald-500 bg-clip-text text-transparent">
 								{process.env.APP_NAME}
 							</p>
-							<AiFillSchedule className="bg-gradient-to-r from-sky-400 to-emerald-500 xl:h-12 xl:w-12" />
+							<AiFillSchedule className="bg-gradient-to-r from-sky-400 to-emerald-500 rounded-md xl:h-12 xl:w-12" />
 						</h1>
 					</Link>
 				</div>
@@ -108,13 +107,12 @@ export default function Header() {
 }
 
 function DesktopNavigation() {
-
-	const [isPartner, setIsPartner] = useState<boolean>(false); 
+	const [isPartner, setIsPartner] = useState<boolean>(false);
 	const session = useSession();
 
-	useEffect(()=>{
-		setIsPartner(sessionStorage.getItem("partnerId") ? true : false)
-	},[])
+	useEffect(() => {
+		setIsPartner(!!sessionStorage.getItem("partnerId"));
+	}, []);
 
 	return (
 		<div className="hidden gap-4 flex-grow xl:flex xl:items-center xl:justify-end">
@@ -122,26 +120,30 @@ function DesktopNavigation() {
 				<>
 					{isPartner ? (
 						<>
-							<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} 
-							// @ts-ignore
-							to={`/user/${session.data?.user.id}/dashboard`} />
+							<NavigationLink
+								icon={<RiDashboardFill />}
+								name={"Dashboard"}
+								to={`/user/${session.data?.user.id}/dashboard`}
+							/>
 							<NavigationLink
 								icon={<TbFileSettings color="#ffffff" />}
 								name={"Konfiguration"}
-								// @ts-ignore
 								to={`/user/${session.data?.user.id}/config`}
 							/>
 						</>
 					) : (
-						// @ts-ignore
-						<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.data?.user.id}/dashboard`} />
+						<NavigationLink
+							icon={<RiDashboardFill />}
+							name={"Dashboard"}
+							to={`/user/${session.data?.user.id}/dashboard`}
+						/>
 					)}
 					<LogoutLink />
 				</>
 			) : (
 				<>
 					<NavigationLink icon={<AiFillHome className="w-5 h-5" />} name={"Startseite"} to={"/"} />
-					<RegisterLink />
+					{/*<RegisterLink />*/}
 					<LoginLink />
 				</>
 			)}
@@ -189,14 +191,8 @@ export function NavigationLink({ name, to, setOpen, icon }: NavigationLink) {
 }
 
 export function LogoutLink({ onClick }: SpecialLink) {
-	const baseUrl = useBaseUrl();
-
-
 	async function onClickHandler() {
-
-		await signOut({callbackUrl:`${baseUrl}/booking`});
-
-		// router.replace("/booking");
+		await signOut();
 
 		toast.success("Erfolgreich ausgeloggt");
 
