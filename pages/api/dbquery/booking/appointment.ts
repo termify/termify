@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../../lib/database";
 
-type AppointmentData = {
+export type AppointmentData = {
 	id: number;
 	partnerId: number;
 	userId: string;

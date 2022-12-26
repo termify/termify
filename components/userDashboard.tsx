@@ -1,38 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useBaseUrl } from "../lib/baseUrl";
+import { AppointmentProps, UserProps } from "../pages/user/[id]/dashboard";
 
-export default function UserDashboard() {
-	return (
-		<div className={"gap-8 flex-grow grid xl:grid-cols-2"}>
-			<>
-				<UserSchedule />
-				<UserCredentials />
-				<UserInfoComponent />
-			</>
-		</div>
-	);
-}
-
-export interface PersonalDataProps {
-	firstName: string;
-	lastName: string;
-	birthday: string;
-	street: string;
-	zipCode: string;
-	city: string;
-}
-
-function UserCredentials() {
-	const [personalData, setPersonalData] = useState<PersonalDataProps>({
-		firstName: "Max",
-		lastName: "Mustergott",
-		birthday: `${new Date().getFullYear() - 15}-${new Date().getMonth()}-${new Date().getDate()}`,
-		street: "Gute Straße 32",
-		zipCode: "75175",
-		city: "Pforzheim",
-	});
+export function UserCredentials({ initData }: { initData: UserProps }) {
+	const [personalData, setPersonalData] = useState<UserProps>(initData);
 
 	const router = useRouter();
 	const baseUrl = useBaseUrl();
@@ -58,35 +31,6 @@ function UserCredentials() {
 			}
 		);
 	}
-
-	useEffect(() => {
-		async function fetchPersonalData() {
-			try {
-				const response = (await (
-					await fetch(
-						`${baseUrl}/api/dbquery/booking/user?id=${router.query.id}&timestamp={${Math.floor(
-							new Date().getTime() / 1000
-						)}}`
-					)
-				).json()) as PersonalDataProps;
-
-				if (response.zipCode.length < 5) {
-					let zipCode = response.zipCode;
-					for (let i = response.zipCode.length; i < 5; i++) {
-						zipCode = `0${zipCode}`;
-					}
-
-					response.zipCode = zipCode;
-				}
-
-				setPersonalData(response);
-			} catch (e) {
-				console.error("e", e);
-			}
-		}
-
-		fetchPersonalData();
-	}, []);
 
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-sky-400 to-emerald-500 "}>
@@ -118,14 +62,6 @@ function UserCredentials() {
 						value={personalData.birthday}
 						inputType={"date"}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-							// const checkYear = parseInt(e.target.value.split("-")[0]);
-							// const today = new Date().getFullYear();
-
-							// if (today - checkYear <= 14) {
-							// 	toast.error("Sie müssen mindestens 14 Jahre sein, um Termify zu nutzen");
-							// 	return;
-							// }
-
 							console.log("Das ist Value", e.target.value);
 
 							setPersonalData((prev) => ({ ...prev, birthday: e.target.value }));
@@ -170,28 +106,8 @@ function UserCredentials() {
 	);
 }
 
-function UserSchedule() {
-	const router = useRouter();
-	const { id } = router.query as { id: string };
-	const [termine, setTermine] = useState<
-		{
-			timestamp: string;
-			typeOfRequest: string;
-		}[]
-	>([]);
-	const baseUrl = useBaseUrl();
-
-	useEffect(() => {
-		async function fetchTermine() {
-			const response = (await (await fetch(`${baseUrl}/api/dbquery/booking/appointment?uuid=${id}`)).json()) as {
-				timestamp: string;
-				typeOfRequest: string;
-			}[];
-			setTermine(response);
-		}
-
-		fetchTermine();
-	}, []);
+export function UserSchedule({ initData }: { initData: AppointmentProps[] }) {
+	const termine = initData;
 
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-amber-400 to-pink-500 xl:row-span-2"}>
@@ -264,7 +180,7 @@ function DisplayTermineComponent({ timestamp, typeOfRequest, index, first, last 
 	);
 }
 
-function UserInfoComponent() {
+export function UserInfoComponent() {
 	return (
 		<div className={"p-1 shadow-xl rounded-xl bg-gradient-to-r from-indigo-400 to-sky-500"}>
 			<div className={"p-4 bg-indigo-50 h-full rounded-xl"}>

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../../lib/database";
-import { PersonalDataProps } from "../../../../components/userDashboard";
+import { UserProps } from "../../../user/[id]/dashboard";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<unknown>) {
 	switch (req.method) {
@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 const updateController = async (req: NextApiRequest, res: NextApiResponse<{ ok: boolean }>) => {
 	const { id } = req.query as { id: string };
-	const { firstName, lastName, birthday, street, zipCode, city } = req.body as PersonalDataProps;
+	const { firstName, lastName, birthday, street, zipCode, city } = req.body as UserProps;
 
 	const splitDate = birthday.split("-");
 
@@ -40,7 +40,7 @@ const updateController = async (req: NextApiRequest, res: NextApiResponse<{ ok: 
 	}
 };
 
-const getController = async (req: NextApiRequest, res: NextApiResponse<PersonalDataProps>) => {
+const getController = async (req: NextApiRequest, res: NextApiResponse<UserProps>) => {
 	const { id } = req.query as { id: string };
 
 	const personalData = await db.user.findFirst({
