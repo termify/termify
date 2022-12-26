@@ -10,7 +10,7 @@ const nextConfig = {
 			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwbnJrd3F5cG1yaHR4bHhneGxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Njc4MjA5MjcsImV4cCI6MTk4MzM5NjkyN30.UVNjRlgEklDfRcnQuIR9yyCzkwx74IPhYHyBLwX0Few",
 		ANON_KEY:
 			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwbnJrd3F5cG1yaHR4bHhneGxhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY2NzgyMDkyNywiZXhwIjoxOTgzMzk2OTI3fQ.UwIKsyxvSLqRfoxwObB-TPBCzwsbXt6POm4UxA68XoQ",
-	},
+		},
 	async headers() {
 		return [
 			{

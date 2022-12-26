@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Modal } from "./modal";
 import GradientButton from "./utility/gradientButton";
@@ -10,6 +10,7 @@ import { Session } from "@supabase/supabase-js";
 import { setCookie } from "../../lib/cookie";
 import { useAuthStore } from "../../store/stores";
 import { ImCross } from "react-icons/im";
+import { getSession, signIn, useSession } from "next-auth/react";
 
 interface AuthForm {
 	authType: "register" | "login";
@@ -41,85 +42,54 @@ export default function AuthForm({ authType, onDone }: AuthForm) {
 	}>({ show: false, type: "none" });
 	const router = useRouter();
 	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+	const session = useSession();
+
+	useEffect(()=>{
+		if (session.status !== "authenticated") return;
+
+		(async function redirect(){
+			if (router.asPath === "/login") await router.push(`/user/${session.data.user?.id}/dashboard`);
+		})();
+
+
+	},[session.status])
 
 	async function handleOnClick(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
-		switch (authType) {
-			case "register":
-				await register();
-				break;
-			case "login":
-				await login();
-				break;
-		}
+		await login();
 	}
 
 	function validateForm(): boolean {
 		return formData.email.includes(".");
 	}
 
-	async function register() {
-		setShowModal({
-			show: true,
-			type: "spinner",
-		});
-
-		if (!validateForm()) {
-			toast.error("Bitte tragen Sie eine valide Email-Adresse ein");
-			setShowModal({ show: false });
-			return;
-		}
-
-		const { msg, error }: AuthResponse = await (
-			await fetch("/api/auth", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					type: "register",
-				},
-				body: JSON.stringify(formData),
-			})
-		).json();
-
-		if (error) {
-			setShowModal({ show: false });
-			toast.error(msg);
-			return;
-		}
-
-		toast.success(msg);
-		onDone!();
-	}
-
 	async function login() {
 		setShowModal({ show: true, type: "spinner" });
+		const response = await signIn("credentials",{
+			email: formData.email,
+			password: formData.password,
+			redirect: false
+		})
 
-		const { msg, error, id, session }: AuthResponse = await (
-			await fetch("/api/auth", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					type: "login",
-				},
-				body: JSON.stringify(formData),
-			})
-		).json();
-
-		if (error) {
+		if (!response?.ok) {
 			setShowModal({ show: false });
-			toast.error(msg);
+			toast.error("Es kam zu einem Fehler beim einloggen");
 			return;
 		}
 
-		const today = new Date();
-		today.setFullYear(today.getFullYear() + 1);
+		// const today = new Date();
+		// today.setFullYear(today.getFullYear() + 1);
 
-		setCookie("auth", JSON.stringify({ id, token: session?.access_token }), today.toUTCString());
-		setLoggedIn(true);
-		toast.success(msg);
-		if (router.asPath === "/login") await router.push(`/user/${id}/dashboard`);
-		else setShowModal({ show: false });
+		// setCookie("auth", JSON.stringify({ id, token: session?.access_token }), today.toUTCString());
+		// setLoggedIn(true);
+
+	
+
+		toast.success("Login war erfolgreich");
+		setShowModal({ show: false });
+		
+		
 	}
 
 	return (

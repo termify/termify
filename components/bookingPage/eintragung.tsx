@@ -1,5 +1,5 @@
 import React, { ComponentProps, useRef, useState } from "react";
-import { useAuthStore, useBookingStore } from "../../store/stores";
+import { useBookingStore } from "../../store/stores";
 import { TbFiles } from "react-icons/tb";
 import { ImCross } from "react-icons/im";
 import { Modal } from "../shared/modal";
@@ -10,8 +10,7 @@ import { suspend } from "suspend-react";
 import { useBaseUrl } from "../../lib/baseUrl";
 import LoadingSpinner from "../shared/loadingSpinner";
 import { supabase } from "../../lib/supabase";
-import { useRouter } from "next/router";
-import { getCookie } from "../../lib/cookie";
+import { useSession } from "next-auth/react";
 
 interface DataOfficeService {
 	id: number;
@@ -33,7 +32,7 @@ function Reason() {
 	const [reason, setReason] = useState<string>("");
 	const [note, setNote] = useState<string>("");
 	const setBookingPage = useBookingStore((state) => state.setPageNumber);
-	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+	const session = useSession();
 	const bookingData = useBookingStore((state) => state.bookingData);
 
 	const baseUrl = useBaseUrl();
@@ -41,8 +40,6 @@ function Reason() {
 	async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setShowModal(true);
-
-		const { auth } = getCookie("auth") as { auth: { id: string } };
 
 		const time = bookingData.time.split(":");
 		const timeStamp = Math.floor(
@@ -60,11 +57,11 @@ function Reason() {
 				for await (const file of files) {
 					const { data: supabaseData, error: supabaseError } = await supabase.storage
 						.from("appointment-bucket")
-						.upload(`${bookingData.officeId}/${auth.id}/${timeStamp}/${file.name}`, file);
+						.upload(`${bookingData.officeId}/${session.data?.user.id}/${timeStamp}/${file.name}`, file);
 				}
 			}
 
-			const response = await (
+			await (
 				await fetch(`${baseUrl}/api/dbquery/booking/appointment`, {
 					method: "POST",
 					headers: {
@@ -72,11 +69,11 @@ function Reason() {
 					},
 					body: JSON.stringify({
 						partnerId: bookingData.officeId,
-						userId: auth.id,
+						userId: session.data?.user.id,
 						timestamp: timeStamp,
 						typeOfRequest: reason,
 						note: note,
-						attachment: files.length > 0 ? `${bookingData.officeId}/${auth.id}/${timeStamp}` : "",
+						attachment: files.length > 0 ? `${bookingData.officeId}/${session.data?.user.id}/${timeStamp}` : "",
 					}),
 				})
 			).json();
@@ -156,7 +153,7 @@ function Reason() {
 				</Modal>
 			)}
 
-			{!isLoggedIn && (
+			{session.status === "unauthenticated" && (
 				<Modal>
 					<RequestForLogin />
 				</Modal>

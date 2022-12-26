@@ -8,8 +8,6 @@ import Abschluss from "../../components/bookingPage/abschluss";
 import LoadingSpinner from "../../components/shared/loadingSpinner";
 import { GetStaticProps, NextPage } from "next";
 import { db } from "../../lib/database";
-import { OfficeData } from "../api/dbquery/booking/office";
-
 export const getStaticProps:GetStaticProps = async (ctx) => {
 
     const stateData = (await db.state.findMany({

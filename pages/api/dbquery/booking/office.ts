@@ -17,6 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 const getController = async (req: NextApiRequest, res: NextApiResponse<OfficeData[]>) => {
     const officeData = (await db.office.findMany()) as unknown as OfficeData[];
-    console.log(officeData);
+
     res.status(200).json(officeData);
 };

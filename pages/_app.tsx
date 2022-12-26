@@ -4,13 +4,15 @@ import Header from "../components/shared/header";
 import Footer from "../components/shared/footer";
 import Container from "../components/shared/container";
 import { Toaster } from "react-hot-toast";
-import ClientSideRenderContainer from "../components/shared/clientSideRenderContainer";
 import Head from "next/head";
 import { useAuthStore, useBookingStore } from "../store/stores";
 import { useEffect, useRef } from "react";
 import { getCookie } from "../lib/cookie";
+import {SessionProvider} from "next-auth/react";
+import { Session } from "next-auth";
 
-function MyApp({ Component, pageProps }: AppProps) {
+
+function MyApp({ Component, pageProps }: AppProps<{session:Session}>) {
 	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
 	const pageDivRef = useRef<HTMLDivElement>(null);
 	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
@@ -30,7 +32,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 	}, [bookingPageNumber]);
 
 	return (
-		<>
+		<SessionProvider>
 			<Head>
 				<title>Termify</title>
 				<link rel={"icon"} type={"image/png"} sizes={"64x6"} href={"/icon.png"} />
@@ -63,7 +65,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 					<Toaster />
 				</div>
 
-		</>
+		</SessionProvider>
 	);
 }
 

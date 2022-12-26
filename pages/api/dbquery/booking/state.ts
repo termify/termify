@@ -40,7 +40,5 @@ const getController = async (req: NextApiRequest, res: NextApiResponse<AllStateD
         },
     })) as unknown as AllStateData[];
 
-    console.log('Data', stateAllData);
-
     res.status(200).json(stateAllData);
 };

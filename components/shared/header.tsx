@@ -13,6 +13,7 @@ import { useAuthStore, useBookingStore } from "../../store/stores";
 import { TbFileSettings } from "react-icons/tb";
 import { useBaseUrl } from "../../lib/baseUrl";
 import { useRouter } from "next/router";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Header() {
 	const setPageNumber = useBookingStore((state) => state.setPageNumber);
@@ -107,24 +108,9 @@ export default function Header() {
 }
 
 function DesktopNavigation() {
-	const [session, setSession] = useState<AuthSession>();
-	const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
 	const [isPartner, setIsPartner] = useState<boolean>(false); 
-	
-	const router = useRouter();
-
-	useEffect(() => {
-		if (!router.isReady) return;
-
-		const authCookie = getCookie("auth") as { auth: { id: string; token: string } };
-
-		if (authCookie) {
-			setSession(authCookie.auth);
-		} else {
-			setSession(undefined);
-		}
-	}, [isLoggedIn,router.isReady]);
-
+	const session = useSession();
 
 	useEffect(()=>{
 		setIsPartner(sessionStorage.getItem("partnerId") ? true : false)
@@ -132,19 +118,23 @@ function DesktopNavigation() {
 
 	return (
 		<div className="hidden gap-4 flex-grow xl:flex xl:items-center xl:justify-end">
-			{session ? (
+			{session.status === "authenticated" ? (
 				<>
 					{isPartner ? (
 						<>
-							<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
+							<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} 
+							// @ts-ignore
+							to={`/user/${session.data?.user.id}/dashboard`} />
 							<NavigationLink
 								icon={<TbFileSettings color="#ffffff" />}
 								name={"Konfiguration"}
-								to={`/user/${session.id}/config`}
+								// @ts-ignore
+								to={`/user/${session.data?.user.id}/config`}
 							/>
 						</>
 					) : (
-						<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.id}/dashboard`} />
+						// @ts-ignore
+						<NavigationLink icon={<RiDashboardFill />} name={"Dashboard"} to={`/user/${session.data?.user.id}/dashboard`} />
 					)}
 					<LogoutLink />
 				</>
@@ -199,12 +189,16 @@ export function NavigationLink({ name, to, setOpen, icon }: NavigationLink) {
 }
 
 export function LogoutLink({ onClick }: SpecialLink) {
-	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+	const baseUrl = useBaseUrl();
+
 
 	async function onClickHandler() {
+
+		await signOut({callbackUrl:`${baseUrl}/booking`});
+
+		// router.replace("/booking");
+
 		toast.success("Erfolgreich ausgeloggt");
-		deleteCookie("auth", "/");
-		setLoggedIn(false);
 
 		if (onClick) onClick();
 	}
