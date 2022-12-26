@@ -8,11 +8,11 @@ import Head from "next/head";
 import { useAuthStore, useBookingStore } from "../store/stores";
 import { useEffect, useRef } from "react";
 import { getCookie } from "../lib/cookie";
-import {SessionProvider} from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
+import { Analytics } from "@vercel/analytics/react";
 
-
-function MyApp({ Component, pageProps }: AppProps<{session:Session}>) {
+function MyApp({ Component, pageProps }: AppProps<{ session: Session }>) {
 	const bookingPageNumber = useBookingStore((state) => state.pageIndex);
 	const pageDivRef = useRef<HTMLDivElement>(null);
 	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps<{session:Session}>) {
 		if (authCookie) {
 			setLoggedIn(true);
 		}
-	}, []);
+	}, [setLoggedIn]);
 
 	useEffect(() => {
 		pageDivRef.current?.scrollIntoView({
@@ -56,15 +56,15 @@ function MyApp({ Component, pageProps }: AppProps<{session:Session}>) {
 				<meta name="google" content="nositelinkssearchbox" key="sitelinks" />
 				<meta name="google" content="notranslate" key="notranslate" />
 			</Head>
-				<div ref={pageDivRef} className="min-h-screen flex flex-col">
-					<Header />
-					<Container>
-						<Component {...pageProps} />
-					</Container>
-					<Footer />
-					<Toaster />
-				</div>
-
+			<div ref={pageDivRef} className="min-h-screen flex flex-col">
+				<Header />
+				<Container>
+					<Component {...pageProps} />
+					<Analytics />
+				</Container>
+				<Footer />
+				<Toaster />
+			</div>
 		</SessionProvider>
 	);
 }
