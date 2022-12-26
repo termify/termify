@@ -4,7 +4,6 @@ import { useBaseUrl } from "../lib/baseUrl";
 import ScheduleClass from "../lib/schedule";
 import toast from "react-hot-toast";
 import { WebApiConfig } from "../pages/api/dbquery/partnersetting/webapiconfig";
-import { suspend } from "suspend-react";
 interface OpeningDays {
 	weekday: string;
 	disabled: boolean;
@@ -14,62 +13,28 @@ interface OpeningDays {
 
 // Opening Ändern von bis => Weekday + Timeslots from und Timeslot
 export const OpeningSettings = () => {
+	const [openeningDays, setOpeneningDays] = useState<OpeningDays[]>([]);
 	const baseUrl = useBaseUrl();
 
-	const [openeningDays, setOpeneningDays] = useState<OpeningDays[]>(() =>
-		suspend(async () => {
-			const partnerId = sessionStorage.getItem("partnerId");
-			if (!partnerId) return;
+	useEffect(() => {
+		const partnerId = sessionStorage.getItem("partnerId");
+		if (!partnerId) return;
 
-			try {
+		try {
+			(async function fetchInitialData() {
 				const response = await (
 					await fetch(`${baseUrl}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
 				).json();
 
-				return response ?? [];
-			} catch (error) {
-				console.error(error);
-			}
-		}, ["partnerId-opening"])
-	);
-
-	// useEffect(() => {
-	// 	const partnerId = sessionStorage.getItem("partnerId");
-	// 	if (!partnerId) return;
-
-	// 	async function fetchOpeningDays() {
-	// 		try {
-	// 			const response = await (
-	// 				await fetch(`${baseUrl}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
-	// 			).json();
-
-	// 			setOpeneningDays(response);
-	// 		} catch (error) {
-	// 			console.error(error);
-	// 		}
-	// 	}
-
-	// 	fetchOpeningDays();
-	// }, []);
-
-	// suspend(async () => {
-	// 	const partnerId = sessionStorage.getItem("partnerId");
-	// 	if (!partnerId) return;
-
-	// 	try {
-	// 		const response = await (
-	// 			await fetch(`${baseUrl}/api/dbquery/partnersetting/opening?partnerId=${partnerId}`)
-	// 		).json();
-
-	// 		setOpeneningDays(response);
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// }, ["partnerId-opening"]);
+				setOpeneningDays(response);
+			})();
+		} catch (error) {
+			console.error(error);
+		}
+	}, []); //eslint-disable-line react-hooks/exhaustive-deps
 
 	function changeAvailablelityDate(index: number) {
 		openeningDays[index].disabled = !openeningDays[index].disabled;
-		// Hope
 		setOpeneningDays([...openeningDays]);
 	}
 
@@ -248,20 +213,22 @@ interface SettingsData {
 // Appointment Settings => Interval und Holidays
 export const AppointmentSettings = () => {
 	const baseUrl = useBaseUrl();
-	const [settingsData, setSettingsData] = useState<SettingsData>(() =>
-		suspend(async () => {
-			const partnerId = sessionStorage.getItem("partnerId");
-			if (!partnerId) return;
+	const [settingsData, setSettingsData] = useState<SettingsData>({ intervall: 0, holydaysOn: true, id: 0 });
 
-			try {
-				return await (
-					await fetch(`${baseUrl}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)
-				).json();
-			} catch (error) {
-				console.error(error);
-			}
-		}, ["partnerId-appointment"])
-	);
+	useEffect(() => {
+		const partnerId = sessionStorage.getItem("partnerId");
+		if (!partnerId) return;
+
+		try {
+			(async function fetchInitialData() {
+				setSettingsData(
+					await (await fetch(`${baseUrl}/api/dbquery/partnersetting/appointmentSettings?partnerId=${partnerId}`)).json()
+				);
+			})();
+		} catch (error) {
+			console.error(error);
+		}
+	}, []); //eslint-disable-line react-hooks/exhaustive-deps
 
 	async function updateSettings() {
 		await toast.promise(
@@ -586,61 +553,24 @@ export const AppointmentSlotSettings = () => {
 // Webapi config
 export const WebApiConfigSettings = () => {
 	const baseUrl = useBaseUrl();
-	const [webApiConfig, setWebApiConfig] = useState<WebApiConfig>(() =>
-		suspend(async () => {
-			const partnerId = sessionStorage.getItem("partnerId");
-			if (!partnerId) return;
+	const [webApiConfig, setWebApiConfig] = useState<WebApiConfig | undefined>(undefined);
 
-			try {
+	useEffect(() => {
+		const partnerId = sessionStorage.getItem("partnerId");
+		if (!partnerId) return;
+
+		try {
+			(async function fetchInitialData() {
 				const response = await (
 					await fetch(`${baseUrl}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
 				).json();
 
-				return { ...response };
-				// setWebApiConfig();
-			} catch (error) {
-				console.error(error);
-			}
-		}, ["partnerId-webapi"])
-	);
-
-	// useEffect(() => {
-	// 	const partnerId = sessionStorage.getItem("partnerId");
-
-	// 	if (!partnerId) {
-	// 		console.error("Keine Partner ID in Storage");
-	// 		return;
-	// 	}
-
-	// 	async function fetchWebApiConfig() {
-	// 		try {
-	// 			const response = (await (
-	// 				await fetch(`${baseUrl}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
-	// 			).json()) as WebApiConfig;
-
-	// 			setWebApiConfig({ ...response });
-	// 		} catch (e) {
-	// 			console.error(e);
-	// 		}
-	// 	}
-
-	// 	fetchWebApiConfig();
-	// }, []);
-
-	// suspend(async () => {
-	// 	const partnerId = sessionStorage.getItem("partnerId");
-	// 	if (!partnerId) return;
-
-	// 	try {
-	// 		const response = await (
-	// 			await fetch(`${baseUrl}/api/dbquery/partnersetting/webapiconfig?partnerId=${partnerId}`)
-	// 		).json();
-
-	// 		setWebApiConfig({ ...response });
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// }, ["partnerId-webapi"]);
+				setWebApiConfig(response);
+			})();
+		} catch (error) {
+			console.error(error);
+		}
+	}, []); //eslint-disable-line react-hooks/exhaustive-deps
 
 	async function uploadWebApi() {
 		const partnerId = sessionStorage.getItem("partnerId");
